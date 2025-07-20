@@ -38,10 +38,10 @@
 // your *plResult.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t WinProcHook(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam, 
+short WinProcHook(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam, 
 						LRESULT* plResult)
 	{
-	int16_t	sRes	= 0; // Assume normal processing.
+	short	sRes	= 0; // Assume normal processing.
 
 	switch (uiMsg)
 		{
@@ -61,7 +61,7 @@ int16_t WinProcHook(HWND hWnd, UINT uiMsg, WPARAM wParam, LPARAM lParam,
 // MOUSE_BUTTON_RIGHT }.
 //
 ///////////////////////////////////////////////////////////////////////////////
-static void WaitClick(int16_t sButton)
+static void WaitClick(short sButton)
 	{
 	while (Blu_GetMouseButton(sButton) == MOUSE_BUTTON_UP)
 		{
@@ -82,9 +82,9 @@ static void WaitClick(int16_t sButton)
 ///////////////////////////////////////////////////////////////////////////////
 #define MCI_TIME_OUT	500
 #define MCI_RETRIES	3
-static int16_t ToggleVideo(CVideo* pvideo)
+static short ToggleVideo(CVideo* pvideo)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	Blu_HookWinProc(WinProcHook);
 
@@ -106,8 +106,8 @@ static int16_t ToggleVideo(CVideo* pvideo)
 		{
 		if (pvideo->Open(VIDEO_FILE, 0, 0, 1, 1, 0) == VIDEO_SUCCESS)
 			{
-			int16_t	sRetries;
-			int32_t	lEndTime = 0L;
+			short	sRetries;
+			long	lEndTime = 0L;
 			for (	sRetries = 0;
 					sRetries < MCI_RETRIES && sRes == 0 && pvideo->IsPlaying() == FALSE;
 				 )
@@ -155,14 +155,14 @@ static int16_t ToggleVideo(CVideo* pvideo)
 //	Test video library functionality.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t AppMain(void)
+short AppMain(void)
 	{
 	CVideo video;
 
-	if (Blu_CreateDisplay(640, 400, (int16_t)Blu_GetDisplayInfo(DI_MONITOR_COLORDEPTH))
+	if (Blu_CreateDisplay(640, 400, (short)Blu_GetDisplayInfo(DI_MONITOR_COLORDEPTH))
 		== 0)
 		{
-		int16_t sButtonDn = FALSE;
+		short sButtonDn = FALSE;
 		CHot	hot;
 
 		if (hot.Create(0, 0, 

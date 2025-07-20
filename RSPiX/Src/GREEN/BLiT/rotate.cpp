@@ -41,11 +41,11 @@ I AM ARCHAIC !  REMOVE ME AT ONCE AND ADD ROTATE96.CPP!
 class RSaveOld
 	{
 public:
-	uint32_t m_type;
-	int16_t sX;
-	int16_t sY;
-	int16_t sW;
-	int16_t sH;
+	ULONG m_type;
+	short sX;
+	short sY;
+	short sW;
+	short sH;
 	};
 
 // I hate doing this, but let's make a type for a square rotation buffer.
@@ -55,20 +55,20 @@ public:
 //
 // Will convert from any 8bpp format.
 //
-int16_t   ConvertToROTBUF(RImage* pImage);
+short   ConvertToROTBUF(RImage* pImage);
 
 // Will convert back to type BMP8
 //
-int16_t   ConvertFromROTBUF(RImage* pImage);
+short   ConvertFromROTBUF(RImage* pImage);
 
 // Will delete pSpecial
 //
-int16_t		DeleteROTBUF(RImage* pImage);
+short		DeleteROTBUF(RImage* pImage);
 
-const int16_t	csFlag = -32767;
-int16_t gsCX = csFlag,gsCY = csFlag; // Will be reset each time to csFlag! (A default code)
+const short	csFlag = -32767;
+short gsCX = csFlag,gsCY = csFlag; // Will be reset each time to csFlag! (A default code)
 
-void	rspSetConvertToROTBUF(int16_t sCenterX,int16_t sCenterY)
+void	rspSetConvertToROTBUF(short sCenterX,short sCenterY)
 	{
 	gsCX = sCenterX;
 	gsCY = sCenterY;
@@ -85,7 +85,7 @@ static const double sqrt2 =  (double)1.414213562373;
 // It does NOT currently Lasso the image!  You must do it fist if you care!
 // It DOES use (cx,cy) as sey by rspSetConvertToROTBUF
 //
-int16_t   ConvertToROTBUF(RImage* pImage)
+short   ConvertToROTBUF(RImage* pImage)
 	{
 	if (!ImageIsUncompressed(pImage->m_type))
 		{
@@ -114,31 +114,31 @@ int16_t   ConvertToROTBUF(RImage* pImage)
 	if (gsCY == csFlag) gsCY = (pImage->m_sHeight >> 1);
 
 	// reset the input parameters to default:
-	int32_t cx = (int32_t)gsCX;
-	int32_t cy = (int32_t)gsCY;
+	long cx = (long)gsCX;
+	long cy = (long)gsCY;
 
 	//****************** APPROXIMATE THE RADIUS *********************
 	// Use the Sprite's dimensions as a simple way to calculate 
 	// it's radius about the cor...
 	// NOTE: sqruared values of shorts must be longs!
-	int32_t	d1 = (SQR(cx)+SQR(cy)); // Distance from (0,0)
-	int32_t	d2 = (SQR(cx)+SQR(pImage->m_sHeight - cy - 1));
-	int32_t	d3 = (SQR(pImage->m_sWidth - cx - 1)+SQR(cy));
-	int32_t	d4 = (SQR(pImage->m_sWidth - cx - 1)+SQR(pImage->m_sHeight - cy - 1));
+	long	d1 = (SQR(cx)+SQR(cy)); // Distance from (0,0)
+	long	d2 = (SQR(cx)+SQR(pImage->m_sHeight - cy - 1));
+	long	d3 = (SQR(pImage->m_sWidth - cx - 1)+SQR(cy));
+	long	d4 = (SQR(pImage->m_sWidth - cx - 1)+SQR(pImage->m_sHeight - cy - 1));
 
-	int32_t lR = MAX(MAX(d1,d2),MAX(d3,d4)); // distance squared
-	lR = (int32_t)(sqrt(double(lR)) + 0.9999); // actual longest distance, rounded up
-	int32_t	lC = (int32_t)(sqrt2 * lR + 1);// round up
-	int32_t	lNewW = (int32_t)(lC<<1); // new buffer width a test:
+	long lR = MAX(MAX(d1,d2),MAX(d3,d4)); // distance squared
+	lR = (long)(sqrt(double(lR)) + 0.9999); // actual longest distance, rounded up
+	long	lC = (long)(sqrt2 * lR + 1);// round up
+	long	lNewW = (long)(lC<<1); // new buffer width a test:
 
 	// Store the rotating window size in this field:
 	pImage->m_sWinWidth = pImage->m_sWinHeight = (lR<<1);
 
 	// Find a new pitch
-	int32_t	lNewP = (lNewW + 15) & ~15;
+	long	lNewP = (lNewW + 15) & ~15;
 
 	// Create a new buffer:
-	imTemp.CreateImage((int16_t)lNewW,(int16_t)lNewW,pImage->m_type,lNewP,
+	imTemp.CreateImage((short)lNewW,(short)lNewW,pImage->m_type,lNewP,
 		pImage->m_sDepth);
 
 	// Find the offset:
@@ -146,12 +146,12 @@ int16_t   ConvertToROTBUF(RImage* pImage)
 	pImage->m_sWinY = lC - cy;
 
 	// BLiT the old image buffer into the new!
-	rspBlit(pImage,&imTemp,(int16_t)0,(int16_t)0,
+	rspBlit(pImage,&imTemp,(short)0,(short)0,
 		pImage->m_sWinX,pImage->m_sWinY,
 		pImage->m_sWidth,pImage->m_sHeight);
 	
 	// Now transfer it ALL back to the original buffer!
-	uint8_t	*pBuf = NULL,*pMem = NULL;
+	UCHAR	*pBuf = NULL,*pMem = NULL;
 	imTemp.DetachData((void**)&pMem,(void**)&pBuf);
 	// Kill Old:
 	pImage->DestroyData();
@@ -166,7 +166,7 @@ int16_t   ConvertToROTBUF(RImage* pImage)
 	pSave->sH = pImage->m_sHeight;
 	pSave->sX = pImage->m_sWinX;
 	pSave->sY = pImage->m_sWinY;
-	pImage->m_pSpecialMem = pImage->m_pSpecial = (uint8_t*) pSave;
+	pImage->m_pSpecialMem = pImage->m_pSpecial = (UCHAR*) pSave;
 
 	pImage->m_type = RImage::ROTBUF;
 	pImage->m_sWidth = imTemp.m_sWidth;
@@ -182,7 +182,7 @@ int16_t   ConvertToROTBUF(RImage* pImage)
 
 // Will convert back to the original type
 //
-int16_t   ConvertFromROTBUF(RImage* pImage)
+short   ConvertFromROTBUF(RImage* pImage)
 	{
 	RSaveOld* pSave = (RSaveOld*)(pImage->m_pSpecial);
 
@@ -202,7 +202,7 @@ int16_t   ConvertFromROTBUF(RImage* pImage)
 
 // Will delete pSpecial
 //
-int16_t		DeleteROTBUF(RImage* pImage)
+short		DeleteROTBUF(RImage* pImage)
 	{
 	delete pImage->m_pSpecial;
 	return 0;
@@ -210,36 +210,36 @@ int16_t		DeleteROTBUF(RImage* pImage)
 
 //************* This will be incorporated into REAL commands later:
 
-typedef	struct	tagPt	{int16_t	x; int16_t	y;} Pt;
+typedef	struct	tagPt	{short	x; short	y;} Pt;
 
 // a 2D line based on 2D coordinates
 typedef	struct	tagLine1
 	{
-	int32_t	lNumX;  	// Fractional accumulator
-	int32_t	lNumY;
-	int32_t	lIncX;  	// Fractional Increment
-	int32_t	lIncY;
-	int32_t	lDelX;  	// Default Integral Increment for slopes > 1 as 
-	int32_t	lDelY;  	// dictated by the Dst W & H....
-	int32_t	lDen;
-	int32_t	lCurX; 	// Current point position
-	int32_t	lCurY;
-	int32_t	lPitchX;	// Conditional adding to current position
-	int32_t	lPitchY;	
+	long	lNumX;  	// Fractional accumulator
+	long	lNumY;
+	long	lIncX;  	// Fractional Increment
+	long	lIncY;
+	long	lDelX;  	// Default Integral Increment for slopes > 1 as 
+	long	lDelY;  	// dictated by the Dst W & H....
+	long	lDen;
+	long	lCurX; 	// Current point position
+	long	lCurY;
+	long	lPitchX;	// Conditional adding to current position
+	long	lPitchY;	
 	}	Line1;
 
 // A 2D line based on a single memory pointer...
 typedef	struct	tagLine2
 	{
-	int32_t	lNumX;  	// Fractional accumulator
-	int32_t	lNumY;
-	int32_t	lIncX;  	// Fractional Increment
-	int32_t	lIncY;
-	int32_t	lDel; 	// Default Integral Increment for slopes > 1 as 
-	int32_t	lDen;
-	uint8_t*	pCur; // Current point position
-	int32_t	lPitchX;	// Conditional adding to current position
-	int32_t	lPitchY;	
+	long	lNumX;  	// Fractional accumulator
+	long	lNumY;
+	long	lIncX;  	// Fractional Increment
+	long	lIncY;
+	long	lDel; 	// Default Integral Increment for slopes > 1 as 
+	long	lDen;
+	UCHAR*	pCur; // Current point position
+	long	lPitchX;	// Conditional adding to current position
+	long	lPitchY;	
 	}	Line2;
 
 // Initialize the integral calculus
@@ -247,9 +247,9 @@ typedef	struct	tagLine2
 
 // d = the number of steps from pt 1 to pt 2...
 inline void initLine(Line1*	pLine,
-							int32_t	x1,int32_t y1,int32_t x2,int32_t y2,int32_t d)
+							long	x1,long y1,long x2,long y2,long d)
 	{
-	int32_t	lDelX = x2 - x1,lDelY = y2 - y1;
+	long	lDelX = x2 - x1,lDelY = y2 - y1;
 
 	pLine->lCurX = x1;
 	pLine->lCurY = y1;
@@ -266,14 +266,14 @@ inline void initLine(Line1*	pLine,
 	}
 
 // d = the number of steps from pt 1 to pt 2...
-inline void initLine(Line2*	pLine,uint8_t*	pBase,int32_t	lPitch,
-							int32_t	x1,int32_t y1,int32_t x2,int32_t y2,int32_t d)
+inline void initLine(Line2*	pLine,UCHAR*	pBase,long	lPitch,
+							long	x1,long y1,long x2,long y2,long d)
 	{
-	int32_t	lDelX = x2 - x1,lDelY = y2 - y1;
+	long	lDelX = x2 - x1,lDelY = y2 - y1;
 
 	pLine->pCur = pBase + x1 + y1 * lPitch;
 	pLine->lDen = d;
-	pLine->lNumX = pLine->lNumY = (int32_t)d>>1;
+	pLine->lNumX = pLine->lNumY = (long)d>>1;
 	pLine->lPitchX = SGN(lDelX);
 	pLine->lPitchY = SGN(lDelY)*lPitch; 
 	pLine->lDel = (lDelX / d) +  (lDelY / d)*lPitch;
@@ -317,8 +317,8 @@ inline	void	incLine(Line2& Line)
 // It currently just clips to the destination buffer:
 //
 void	_RotateShrink(float fDeg,RImage* pimSrc,RImage* pimDst,
-						  int16_t sDstX,int16_t sDstY,int16_t sDstW,int16_t sDstH, // = 2R = lBufferWidth
-						  int16_t sFlipCode)
+						  short sDstX,short sDstY,short sDstW,short sDstH, // = 2R = lBufferWidth
+						  short sFlipCode)
 	{
 #ifdef _DEBUG
 
@@ -337,8 +337,8 @@ void	_RotateShrink(float fDeg,RImage* pimSrc,RImage* pimDst,
 #endif
 	//****************** Destination Clipper ***********************
 
-	int16_t	sClip=0,sClipL=0,sClipR=0,sClipT=0,sClipB=0;
-	int16_t gsClipX,gsClipY,gsClipW,gsClipH;
+	short	sClip=0,sClipL=0,sClipR=0,sClipT=0,sClipB=0;
+	short gsClipX,gsClipY,gsClipW,gsClipH;
 
 	// Init clip rect:
 	gsClipX = 0;   // Cheezy for now...      
@@ -361,21 +361,21 @@ void	_RotateShrink(float fDeg,RImage* pimSrc,RImage* pimDst,
 		double	dCos = cos(dRad);
 		double	dSin = sin(dRad);
 		double 	x,y;
-		int16_t	i,j;
+		short	i,j;
 		Pt	pCorners[4];
 		Line1	l1Left,l1Right;
 		Line2	l2Across; // need 3 lines...
-		int32_t	lP = pimDst->m_lPitch;
-		uint8_t	*pDst,*pDstLine;
+		long	lP = pimDst->m_lPitch;
+		UCHAR	*pDst,*pDstLine;
 		Pt temp;
-		uint8_t	pixel;	// ERROR 8-bit color!
+		UCHAR	pixel;	// ERROR 8-bit color!
 
-		pDst = pimDst->m_pData + (int32_t)sDstX + ((int32_t)(sDstY))*lP;
+		pDst = pimDst->m_pData + (long)sDstX + ((long)(sDstY))*lP;
 
 		pDstLine = pDst;
 
-		int16_t	sR = (int16_t)((pimSrc->m_sWinWidth>>1)); // rotating box half side...
-		int16_t	sC = (int16_t)(sqrt2 * sR); // buffer half side...
+		short	sR = (short)((pimSrc->m_sWinWidth>>1)); // rotating box half side...
+		short	sC = (short)(sqrt2 * sR); // buffer half side...
 
 		x = y = (double)-sR;
 		//sDstW /= sqrt2;// crude patch
@@ -457,7 +457,7 @@ void	_RotateShrink(float fDeg,RImage* pimSrc,RImage* pimDst,
 			incLine(l1Right);
 
 			// Initialize a new rung across...
-			initLine(&l2Across,pimSrc->m_pData,(int16_t)pimSrc->m_lPitch,
+			initLine(&l2Across,pimSrc->m_pData,(short)pimSrc->m_lPitch,
 					l1Left.lCurX,l1Left.lCurY,
 					l1Right.lCurX,l1Right.lCurY,sDstW);
 			}	
@@ -566,14 +566,14 @@ void	BLT_FreeStrafe(Strafe* pStrafe)
 // In this version, You must supply the host structure, which you may define, but which 
 // must contain the following:  
 //
-int16_t rspStrafeRotate(void *pReturnArray,	// Output
-							RImage* pimSrc,int16_t sCenterX,int16_t sCenterY,double dScale, // Input
-							 int16_t sNumFrames,double dStartDeg,double dDegInc,
-							 int16_t sNumLinks,int16_t *psX,int16_t *psY, // input
+short rspStrafeRotate(void *pReturnArray,	// Output
+							RImage* pimSrc,short sCenterX,short sCenterY,double dScale, // Input
+							 short sNumFrames,double dStartDeg,double dDegInc,
+							 short sNumLinks,short *psX,short *psY, // input
 							 // generic user stucture must be an array:
-							 RImage* pIm, int16_t *psHotX, int16_t *psHotY,
-							 int16_t **ppsX,int16_t **ppsY,
-							 int32_t lStructSize)
+							 RImage* pIm, short *psHotX, short *psHotY,
+							 short **ppsX,short **ppsY,
+							 long lStructSize)
 	{
 
 #ifdef _DEBUG
@@ -613,9 +613,9 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 	RImage* pimBuf,*pimScreen;
 	rspNameBuffers(&pimBuf,&pimScreen);
 
-	union { int16_t *pL; uint8_t *pB; } pHotX,pHotY;
-	union { int16_t **ppL; uint8_t *pB; } ppLinkX,ppLinkY;
-	union { RImage **ppI; uint8_t *pB; } ppBuf;
+	union { short *pL; UCHAR *pB; } pHotX,pHotY;
+	union { short **ppL; UCHAR *pB; } ppLinkX,ppLinkY;
+	union { RImage **ppI; UCHAR *pB; } ppBuf;
 
 	// default to a CStrafe:
 	//
@@ -632,7 +632,7 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 	
 	rspSetConvertToROTBUF(sCenterX,sCenterY);
 
-	uint32_t ulOldType  = pimSrc->m_type;
+	ULONG ulOldType  = pimSrc->m_type;
 	if (pimSrc->Convert(RImage::ROTBUF)!= RImage::ROTBUF)
 		{
 		TRACE("rspStrafeRotate: Internal Conversion error\n");
@@ -640,16 +640,16 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 		}
 
 	//Calculate the appropriate height:
-	int16_t sDstH = (int16_t)(dScale * pimSrc->m_sWinHeight);
+	short sDstH = (short)(dScale * pimSrc->m_sWinHeight);
 
 	// Make a copy of the input links so they can be center adjusted
-	int16_t *psLinkX = NULL, *psLinkY = NULL;
-	int16_t j;
+	short *psLinkX = NULL, *psLinkY = NULL;
+	short j;
 
 	if (sNumLinks > 0)
 		{
-		psLinkX = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
-		psLinkY = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
+		psLinkX = (short*)calloc(sizeof(short),sNumLinks);
+		psLinkY = (short*)calloc(sizeof(short),sNumLinks);
 
 		for (j=0;j<sNumLinks;j++)
 			{
@@ -659,7 +659,7 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 		}
 
 	// DO the strafing:
-	int16_t i;
+	short i;
 	double	scale = (double)sDstH / (double) pimSrc->m_sWinHeight;
 
 	for (i=0;i<sNumFrames;i++,dCurDeg += dDegInc)
@@ -676,8 +676,8 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 		_RotateShrink(dCurDeg,pimSrc,(*ppBuf.ppI),0,0,sDstH,sDstH);
 		
 		// Get the coordinates:
-		int16_t sX=0,sY=0,sW=(int16_t)(*(ppBuf.ppI))->m_sWidth,sH = (int16_t)(*(ppBuf.ppI))->m_sHeight;
-		rspLasso((uint8_t)0,(*(ppBuf.ppI)),sX,sY,sW,sH);
+		short sX=0,sY=0,sW=(short)(*(ppBuf.ppI))->m_sWidth,sH = (short)(*(ppBuf.ppI))->m_sHeight;
+		rspLasso((UCHAR)0,(*(ppBuf.ppI)),sX,sY,sW,sH);
 
 		rspCrop((*(ppBuf.ppI)),sX,sY,sW,sH);
 
@@ -693,8 +693,8 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 
 		if (sNumLinks > 0)
 			{
-			*(ppLinkX.ppL) = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
-			*(ppLinkY.ppL) = (int16_t*)calloc(sizeof(int16_t),sNumLinks);
+			*(ppLinkX.ppL) = (short*)calloc(sizeof(short),sNumLinks);
+			*(ppLinkY.ppL) = (short*)calloc(sizeof(short),sNumLinks);
 
 			double dRad = dCurDeg *  0.01745329251994;
 			double dSin = sin(dRad)*scale;
@@ -702,8 +702,8 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 
 			for (j=0;j<sNumLinks;j++)
 				{
-				(*(ppLinkX.ppL))[j] = (int16_t)(dCos * psLinkX[j] - dSin * psLinkY[j]);
-				(*(ppLinkY.ppL))[j] = (int16_t)(dCos * psLinkY[j] + dSin * psLinkX[j]);
+				(*(ppLinkX.ppL))[j] = (short)(dCos * psLinkX[j] - dSin * psLinkY[j]);
+				(*(ppLinkY.ppL))[j] = (short)(dCos * psLinkY[j] + dSin * psLinkX[j]);
 				}
 			}
 
@@ -730,3 +730,5 @@ int16_t rspStrafeRotate(void *pReturnArray,	// Output
 	
 	return NULL;
 	}
+
+

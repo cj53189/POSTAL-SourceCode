@@ -27,9 +27,9 @@
 class CAlphaAnim
 	{
 	public:
-		int16_t m_sNumAlphas;										// Number of alpha images (could be 0!)
-		int16_t m_sX;													// Offset from hotspot to upper-left corner of image
-		int16_t m_sY;													// Offset from hotspot to upper-left corner of image
+		short m_sNumAlphas;										// Number of alpha images (could be 0!)
+		short m_sX;													// Offset from hotspot to upper-left corner of image
+		short m_sY;													// Offset from hotspot to upper-left corner of image
 		RImage m_imColor;											// "Normal" 8-bit color image
 		RImage* m_pimAlphaArray;								// Array of alpha image's (could be empty!)
 
@@ -73,7 +73,7 @@ class CAlphaAnim
 			m_sY = 0;
 			}
 
-		void Alloc(int16_t sNumAlphas)
+		void Alloc(short sNumAlphas)
 			{
 			Free();
 			if (sNumAlphas > 0)
@@ -90,25 +90,25 @@ class CAlphaAnim
 			m_pimAlphaArray = 0;
 			}
 
-		int16_t Load(RFile* pFile)
+		short Load(RFile* pFile)
 			{
 			pFile->Read(&m_sNumAlphas);
 			pFile->Read(&m_sX);
 			pFile->Read(&m_sY);
 			m_imColor.Load(pFile);
 			Alloc(m_sNumAlphas);
-			for (int16_t s = 0; s < m_sNumAlphas; s++)
+			for (short s = 0; s < m_sNumAlphas; s++)
 				m_pimAlphaArray[s].Load(pFile);
 			return pFile->Error();
 			}
 
-		int16_t Save(RFile* pFile)
+		short Save(RFile* pFile)
 			{
 			pFile->Write(m_sNumAlphas);
 			pFile->Write(m_sX);
 			pFile->Write(m_sY);
 			m_imColor.Save(pFile);
-			for (int16_t s = 0; s < m_sNumAlphas; s++)
+			for (short s = 0; s < m_sNumAlphas; s++)
 				m_pimAlphaArray[s].Save(pFile);
 			return pFile->Error();
 			}

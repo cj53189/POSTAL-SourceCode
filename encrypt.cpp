@@ -83,13 +83,13 @@ static char *ms_aszSeed[NUM_KEYS]=				{	"S3D5Lf6klfdsjiureLJKHLKmnblkjshgwieourL
 
 
 
-static uint16_t ms_usCRCtable[UCHAR_MAX + 1];
-static uint16_t ms_usCRC;
+static unsigned short ms_usCRCtable[UCHAR_MAX + 1];
+static unsigned short ms_usCRC;
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Modular functions.
 //////////////////////////////////////////////////////////////////////////////////////
-int16_t Verify(char *szSource,int16_t sLength,uint16_t usCRC);
+short Verify(char *szSource,short sLength,unsigned short usCRC);
 void MakeCRCTable();
 //////////////////////////////////////////////////////////////////////////////////////
 // Globally externable variables.
@@ -111,9 +111,9 @@ void MakeCRCTable();
 //	History:			03/25/97, AJM,		Created.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-int16_t Encrypt(char* szInputString,char* szOutputString,int16_t sSourceLength)
+short Encrypt(char* szInputString,char* szOutputString,short sSourceLength)
 	{
-	int16_t		rc=0,				// assume success
+	short		rc=0,				// assume success
 				sIndex=0,
 				sStartIndex=GetRandom()%KEY_LENGTH,
 				sCurrentKey=GetRandom()%NUM_KEYS,
@@ -175,10 +175,10 @@ int16_t Encrypt(char* szInputString,char* szOutputString,int16_t sSourceLength)
 //	History:			03/25/97, AJM,		Created.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-int16_t Decrypt(char* szInputString,char* szOutputString,int16_t sSourceLength)
+short Decrypt(char* szInputString,char* szOutputString,short sSourceLength)
 	{
 	sSourceLength -= 2;
-	int16_t rc=0,				// assume success
+	short rc=0,				// assume success
 			sStartIndex=szInputString[1],
 			sIndex=sSourceLength,
 			sCurrentKey=szInputString[0],
@@ -252,9 +252,9 @@ int16_t Decrypt(char* szInputString,char* szOutputString,int16_t sSourceLength)
 //	History:			03/25/97, AJM,		Created.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-int16_t Encrypt(char* szFileName,char* szInputString)
+short Encrypt(char* szFileName,char* szInputString)
 	{
-	int16_t rc=-1,	//assume failure
+	short rc=-1,	//assume failure
 			sLength=strlen(szInputString);
 	RFile cnFile;
 	char	szEncrypted[MAX_STRING_LENGTH];
@@ -267,7 +267,7 @@ int16_t Encrypt(char* szFileName,char* szInputString)
 			{
 			MakeCRCTable();
 			
-			for (int16_t i=0;i<sLength;i++)
+			for (short i=0;i<sLength;i++)
 				UPDATE_CRC(szEncrypted[i]);			
 
 			//grow 2 bytes for internal info
@@ -298,13 +298,13 @@ int16_t Encrypt(char* szFileName,char* szInputString)
 //	History:			03/25/97, AJM,		Created.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-int16_t Decrypt(char* szFileName,char* szOutputString)
+short Decrypt(char* szFileName,char* szOutputString)
 	{
-	int16_t rc=-1,		//assume failure
+	short rc=-1,		//assume failure
 			sLength;
 	RFile cnFile;
 	char szDecrypted[MAX_STRING_LENGTH];
-	uint16_t usCRC=0;
+	unsigned short usCRC=0;
 
 	if(cnFile.Open(szFileName,"rb",RFile::LittleEndian)==0)
 		{
@@ -337,13 +337,13 @@ int16_t Decrypt(char* szFileName,char* szOutputString)
 //	History:			03/25/97, AJM,		Created.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-int16_t Verify(char *szSource,int16_t sLength,uint16_t usCRC)
+short Verify(char *szSource,short sLength,unsigned short usCRC)
 	{
-	int16_t rc=0;	//assume success
+	short rc=0;	//assume success
 	
 	ms_usCRC=0;
 
-	for (int16_t i=0;i<sLength;i++)
+	for (short i=0;i<sLength;i++)
 		UPDATE_CRC(szSource[i]);			
 
 	if(ms_usCRC!=usCRC)
@@ -358,7 +358,7 @@ int16_t Verify(char *szSource,int16_t sLength,uint16_t usCRC)
 
 void MakeCRCTable()
 	{
-	uint16_t i, j, r;
+	unsigned short i, j, r;
 
 	for (i = 0; i <= UCHAR_MAX; i++) 
 		{

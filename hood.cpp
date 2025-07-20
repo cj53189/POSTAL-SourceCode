@@ -231,7 +231,7 @@ CHood::CHood(CRealm* pRealm)
 	m_pTerrainMap		= NULL;
 	m_pLayerMap			= NULL;
 
-	int16_t i;
+	short i;
 	for (i = 0; i < MaxLayers; i++)
 		{
 		m_apspryAlphas[i]		= NULL;
@@ -294,13 +294,13 @@ CHood::~CHood()
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::Load(								// Returns 0 if successfull, non-zero otherwise
+short CHood::Load(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,									// In:  File to load from
 	bool bEditMode,								// In:  True for edit mode, false otherwise
-	int16_t sFileCount,								// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)							// In:  Version of file format to load.
+	short sFileCount,								// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)							// In:  Version of file format to load.
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// In most cases, the base class Load() should be called.
 	sResult	= CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -367,7 +367,7 @@ int16_t CHood::Load(								// Returns 0 if successfull, non-zero otherwise
 
 			case 29:
 			case 28:
-				int16_t	sDummy2dResPathIndex;	// This is no longer stored here.
+				short	sDummy2dResPathIndex;	// This is no longer stored here.
 				pFile->Read(&sDummy2dResPathIndex);
 
 			case 27:
@@ -431,11 +431,11 @@ int16_t CHood::Load(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::Save(								// Returns 0 if successfull, non-zero otherwise
+short CHood::Save(								// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,									// In:  File to save to
-	int16_t sFileCount)								// In:  File count (unique per file, never 0)
+	short sFileCount)								// In:  File count (unique per file, never 0)
 	{
-	int16_t	sResult	= 0;
+	short	sResult	= 0;
 
 	// In most cases, the base class Save() should be called.
 	sResult	= CThing::Save(pFile, sFileCount);
@@ -473,7 +473,7 @@ int16_t CHood::Save(								// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CHood::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -482,7 +482,7 @@ int16_t CHood::Startup(void)								// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CHood::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
 	return 0;
 	}
@@ -539,7 +539,7 @@ static void BrowseBtnUp(	// Returns nothing.  Called on button released in
 		strcpy(szSystemPath, FullPathHoods("res/hoods/") );
 		strcat(szSystemPath, pguiBaseName->m_szText);
 
-		int16_t	sResult;
+		short	sResult;
 		do {
 			sResult	= SubPathOpenBox(			// Returns 0 on success, negative on error, 1 if 
 														// not subpathable (i.e., returned path is full path).
@@ -571,7 +571,7 @@ static void BrowseBtnUp(	// Returns nothing.  Called on button released in
 			strcpy(szSystemPath, rspPathFromSystem(szSystemPath) );
 
 			// Get rid of extension.
-			int16_t	sIndex;
+			short	sIndex;
 			for (sIndex = 0; szSystemPath[sIndex]; sIndex++)
 				{
 				// If this is a dot representing the beginning of an extension . . .
@@ -592,12 +592,12 @@ static void BrowseBtnUp(	// Returns nothing.  Called on button released in
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CHood::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	char	szScale3d[256];
 	char	szShadowLength[256];
 
@@ -664,7 +664,7 @@ int16_t CHood::EditNew(									// Returns 0 if successfull, non-zero otherwise
 			RSP_SAFE_GUI_REF_VOID(pguiScaleHeights, Compose() );
 
 			RSP_SAFE_GUI_REF(pguiBrowse, m_bcUser = BrowseBtnUp);
-			RSP_SAFE_GUI_REF(pguiBrowse, m_ulUserInstance = (U64)pguiBaseName);
+			RSP_SAFE_GUI_REF(pguiBrowse, m_ulUserInstance = (ULONG)pguiBaseName);
 
 			switch (pgui2dResPaths->m_type)
 				{
@@ -676,7 +676,7 @@ int16_t CHood::EditNew(									// Returns 0 if successfull, non-zero otherwise
 					{
 					RListBox*	plb	=  (RListBox*)pgui2dResPaths;
 
-					int16_t	sIndex;
+					short	sIndex;
 					for (sIndex = 0; sIndex < CRealm::Num2dPaths; sIndex++)
 						{
 						RGuiItem*	pgui	= plb->AddString(CRealm::ms_apsz2dResPaths[sIndex]);
@@ -793,7 +793,7 @@ int16_t CHood::EditNew(									// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::EditModify(void)
+short CHood::EditModify(void)
 	{
 	return EditNew(0, 0, 0);
 	}
@@ -802,10 +802,10 @@ int16_t CHood::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	int16_t /*sX*/,											// In:  New x coord
-	int16_t /*sY*/,											// In:  New y coord
-	int16_t /*sZ*/)											// In:  New z coord
+short CHood::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	short /*sX*/,											// In:  New x coord
+	short /*sY*/,											// In:  New y coord
+	short /*sZ*/)											// In:  New z coord
 	{
 	return 0;
 	}
@@ -830,9 +830,9 @@ void CHood::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Init the hood
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::Init(void)									// Returns 0 if successfull, non-zero otherwise
+short CHood::Init(void)									// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// If first call . . .
 	if (m_sNumInits++ == 0)
@@ -857,7 +857,7 @@ int16_t CHood::Init(void)									// Returns 0 if successfull, non-zero otherwis
 			m_pRealm->m_scene.UpdateSprite(pSprite2);
 
 			// Attempt to load all layers . . .
-			int32_t	lIndex;
+			long	lIndex;
 			// Put the contents of the various spry's onto the other layers
 			for (lIndex	= 0; lIndex < MaxLayers; lIndex++)
 				{
@@ -874,7 +874,7 @@ int16_t CHood::Init(void)									// Returns 0 if successfull, non-zero otherwis
 						pSprite2->m_sY2 = pSprite->m_sY;
 						pSprite2->m_sPriority = pSprite->m_sZ;
 						pSprite2->m_pImage = pSprite->m_pImage;
-						pSprite2->m_sLayer = CRealm::LayerAlpha1 + (int16_t)lIndex * (CRealm::LayerAlpha2 - CRealm::LayerAlpha1);
+						pSprite2->m_sLayer = CRealm::LayerAlpha1 + (short)lIndex * (CRealm::LayerAlpha2 - CRealm::LayerAlpha1);
 						pSprite2->m_sInFlags = CSprite::InDeleteOnClear | CSprite::InAlpha;
 						m_pRealm->m_scene.UpdateSprite(pSprite2);
 
@@ -895,7 +895,7 @@ int16_t CHood::Init(void)									// Returns 0 if successfull, non-zero otherwis
 						pSprite2->m_sY2 = pSprite->m_sY;
 						pSprite2->m_sPriority = pSprite->m_sZ;
 						pSprite2->m_pImage = pSprite->m_pImage;
-						pSprite2->m_sLayer = CRealm::LayerOpaque1 + (int16_t)lIndex * (CRealm::LayerOpaque2 - CRealm::LayerOpaque1);
+						pSprite2->m_sLayer = CRealm::LayerOpaque1 + (short)lIndex * (CRealm::LayerOpaque2 - CRealm::LayerOpaque1);
 						pSprite2->m_sInFlags = CSprite::InDeleteOnClear | CSprite::InOpaque;
 						m_pRealm->m_scene.UpdateSprite(pSprite2);
 						
@@ -918,8 +918,8 @@ int16_t CHood::Init(void)									// Returns 0 if successfull, non-zero otherwis
 			// Allocate the Smashatorium:  Pick tile size greater than any normal object radius...
 			m_pRealm->m_smashatorium.Destroy();
 			m_pRealm->m_smashatorium.Alloc(m_pRealm->GetRealmWidth(),m_pRealm->GetRealmHeight(),
-				int16_t(MAX_SMASHEE_W * m_dScale3d),  // I'm assuming this scales with size
-				int16_t(MAX_SMASHEE_H * m_dScale3d) );
+				short(MAX_SMASHEE_W * m_dScale3d),  // I'm assuming this scales with size
+				short(MAX_SMASHEE_H * m_dScale3d) );
 			}
 
 		#endif
@@ -960,9 +960,9 @@ void CHood::SetupPipeline(void)	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Kill the hood
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::Kill(void)									// Returns 0 if successfull, non-zero otherwise
+short CHood::Kill(void)									// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	// Free resources
 	sResult = FreeResources();
@@ -974,13 +974,13 @@ int16_t CHood::Kill(void)									// Returns 0 if successfull, non-zero otherwis
 // Helper to load and convert SPRYs.
 ////////////////////////////////////////////////////////////////////////////////
 inline
-int16_t SpryLoadConv(			// Returns 0 on success.
+short SpryLoadConv(			// Returns 0 on success.
 	RResMgr*	presmgr,			// In:  ResMgr to load from.
 	RSpry**	ppspry,			// Out: Ptr to SPRY resource.
 	char*		pszFileName,	// In:  File/Res name of .SAY file.
 	RImage::Type	type)		// In:  Destination type.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (rspGetResource(
 		presmgr,
@@ -1017,9 +1017,9 @@ extern int wideScreenWidth;
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CHood::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// If all resources were already successfully loaded, then don't do this again.
 	// Note that if only some of them loaded and then an error occurred, we'll
@@ -1071,9 +1071,9 @@ int16_t CHood::GetResources(void)						// Returns 0 if successfull, non-zero oth
 			}
 
 		// Attempt to load all layers . . .
-		int32_t	lIndex;
-		int16_t	sNumAlphaLayersLoaded	= 0;
-		int16_t	sNumOpaqueLayersLoaded	= 0;
+		long	lIndex;
+		short	sNumAlphaLayersLoaded	= 0;
+		short	sNumOpaqueLayersLoaded	= 0;
 		for (lIndex	= 0; lIndex < MaxLayers; lIndex++)
 			{
 			// Make alpha layer name.
@@ -1229,15 +1229,14 @@ int16_t CHood::GetResources(void)						// Returns 0 if successfull, non-zero oth
 		{
 			for (int x=0;x<stretched->m_sWidth;x++)
 			{
-				uint8_t* dest = stretched->m_pData + n * stretched->m_lPitch + x;
-				uint8_t* src = m_pimTopBar->m_pData + n * m_pimTopBar->m_lPitch + (int)((float)x * widthScale);
+				UCHAR* dest = stretched->m_pData + n * stretched->m_lPitch + x;
+				UCHAR* src = m_pimTopBar->m_pData + n * m_pimTopBar->m_lPitch + (int)((float)x * widthScale);
 				*dest = *src;
 			}
 			//memcpy(ms_pimCompositeBufferScaled->m_pData + n * ms_pimCompositeBufferScaled->m_lPitch,
 			//		ms_pimCompositeBuffer->m_pData + n * ms_pimCompositeBuffer->m_lPitch,ms_pimCompositeBuffer->m_sWidth);
 		}
-		
-		rspReleaseResource(&(m_pRealm->m_resmgr), &m_pimTopBar);
+		//TODO free m_pimTopBar
 		m_pimTopBar = stretched;
 
 
@@ -1257,9 +1256,9 @@ Error:
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CHood::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CHood::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Don't check whether resources exist!  Even if they were only partially
 	// loaded (due to an error during the load process) we still want to clear
@@ -1269,7 +1268,7 @@ int16_t CHood::FreeResources(void)						// Returns 0 if successfull, non-zero ot
 	if (m_pimBackground != NULL)
 		rspReleaseResource(&(m_pRealm->m_resmgr), &m_pimBackground);
 
-	int32_t	lIndex;
+	long	lIndex;
 	for (lIndex	= 0; lIndex < MaxLayers; lIndex++)
 		{
 		if (m_apspryAlphas[lIndex] != NULL)
@@ -1314,7 +1313,7 @@ int16_t CHood::FreeResources(void)						// Returns 0 if successfull, non-zero ot
 	if (m_pimFullBarSelected)
 		rspReleaseResource(&(m_pRealm->m_resmgr), &m_pimFullBarSelected);
 	if (m_pimTopBar)
-		delete m_pimTopBar;
+		rspReleaseResource(&(m_pRealm->m_resmgr), &m_pimTopBar);
 
 	// Resources no longer exist for sure.
 	m_bResourcesExist = false;

@@ -81,20 +81,20 @@ class CBarrel : public CThing3d
 
 		CAnim3D*	m_pPreviousAnim;	// Previous state's animation
 
-		int16_t					m_sSphereRadius;	// Radius of the grenader's current frame
-		int16_t					m_sSphereX;			// Location of the grenader's sphere center
-		int16_t					m_sSphereY;			// Location of the grenader's sphere center
+		short					m_sSphereRadius;	// Radius of the grenader's current frame
+		short					m_sSphereX;			// Location of the grenader's sphere center
+		short					m_sSphereY;			// Location of the grenader's sphere center
 
-		int16_t					m_sScreenRadius;	// Object's radius
+		short					m_sScreenRadius;	// Object's radius
 		bool					m_bSpecial;			// Special dude-destroy-only barrel;
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
-		static int32_t ms_lExplosionWait;		// Amount of time to wait before staring fire
-		static int32_t ms_lExplosionDelay;		// Time before explosion triggers another.
-		static int16_t ms_sNumFires;				// Number of fires to create after explosion
+		static long ms_lExplosionWait;		// Amount of time to wait before staring fire
+		static long ms_lExplosionDelay;		// Time before explosion triggers another.
+		static short ms_sNumFires;				// Number of fires to create after explosion
 
 	//---------------------------------------------------------------------------
 	// Constructor(s) / destructor
@@ -131,11 +131,11 @@ class CBarrel : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CBarrel(pRealm);
 			if (*ppNew == 0)
 				{
@@ -150,22 +150,22 @@ class CBarrel : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -177,36 +177,36 @@ class CBarrel : public CThing3d
 		void Update(void);
 
 		// Find angle to a CDude
-		int16_t FindDirection(void);
+		short FindDirection(void);
 
 		// Find the squared distance to the CDude (to avoid sqrt)
 		double SQDistanceToDude(void);
 
 		// Set a pointer to the guy you are tracking for other guy related
 		// functions like FindDirection and SQDistanceToGuy
-		int16_t SelectDude(void);
+		short SelectDude(void);
 
 		// Called by editor to init new object at specified position
-		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditNew(												// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 	//---------------------------------------------------------------------------
 	// Internal functions
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Initialize states, positions etc.
-		int16_t Init(void);
+		short Init(void);
 
 		// Message handling functions ////////////////////////////////////////////
 

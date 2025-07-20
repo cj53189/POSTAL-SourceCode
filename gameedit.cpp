@@ -716,6 +716,7 @@
 #include "game.h"
 #include "update.h"
 #include "realm.h"
+#include "camera.h"
 #include "localize.h"
 #include "hood.h"
 #include "bouy.h"
@@ -1040,10 +1041,10 @@
 
 typedef struct TAG_Line
 {
-	int16_t sX0;
-	int16_t sY0;
-	int16_t sX1;
-	int16_t sY1;
+	short sX0;
+	short sY0;
+	short sX1;
+	short sY1;
 
 	bool operator < (const TAG_Line& rhs) const
 	{
@@ -1106,8 +1107,8 @@ typedef struct
 	RScrollBar*	psbVert;
 	RScrollBar*	psbHorz;
 	CCamera		cam;
-	int16_t			sViewW;
-	int16_t			sViewH;
+	short			sViewW;
+	short			sViewH;
 	} View;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1124,22 +1125,22 @@ lineset m_NetLines;
 static bool	ms_bDrawNetwork = true;
 
 // ID of item most recently pressed or 0, if none.
-static int32_t	ms_lPressedId	= 0;
+static long	ms_lPressedId	= 0;
 // Realm filename.  Assuming only one Realm loaded at once.
 static char	ms_szFileName[RSP_MAX_PATH]	= "";
 
-static int16_t	ms_sMoving		= FALSE;	// TRUE, if moving/placing a thing (ms_pthingSel).
+static short	ms_sMoving		= FALSE;	// TRUE, if moving/placing a thing (ms_pthingSel).
 
 static CThing*	ms_pthingSel	= NULL;	// CThing* to thing currently selected.
 static RHot*	ms_photSel		= NULL;	// RHot* to hotbox associated with selected thing.
 
 // Initial width and height of display so we can
 // restore video mode when done editting.
-static int16_t	ms_sInitialDisplayWidth		= 0;
-static int16_t	ms_sInitialDisplayHeight	= 0;
-static int16_t	ms_sInitialDeviceDepth		= 0;
-static int16_t	ms_sInitialDeviceWidth		= 0;
-static int16_t	ms_sInitialDeviceHeight		= 0;
+static short	ms_sInitialDisplayWidth		= 0;
+static short	ms_sInitialDisplayHeight	= 0;
+static short	ms_sInitialDeviceDepth		= 0;
+static short	ms_sInitialDeviceWidth		= 0;
+static short	ms_sInitialDeviceHeight		= 0;
 
 // The current camera.
 // Scrollbars' callback update camera pointed to by this.
@@ -1155,10 +1156,10 @@ static RHot*	ms_photHood	= NULL;
 
 // This is the hotbox priority of the farthest item from the user.
 // Start out as close to front as possible.
-static int16_t	ms_sBackPriority	= FRONTMOST_HOT_PRIORITY;
+static short	ms_sBackPriority	= FRONTMOST_HOT_PRIORITY;
 
 // Made this global (was static in GetCursor()) for temp.
-static int16_t	ms_sDragState = 0;
+static short	ms_sDragState = 0;
 
 // Root level GUIs to load from *.gui files.
 static RGuiItem*	ms_pguiRealmBar		= NULL;
@@ -1197,7 +1198,7 @@ static TriggerRgn		ms_argns[256];
 static CPylon*			ms_pylonEdit	= NULL;	// NULL for none.
 
 // Current block size for drawing.
-static int16_t			ms_sDrawBlockSize	= 5;
+static short			ms_sDrawBlockSize	= 5;
 
 // Sprite used to draw pylon trigger region in the editor.
 static CSprite2		ms_spriteTriggerRgn;
@@ -1207,7 +1208,7 @@ static RFile			ms_filePaste;
 
 // File count used for items in the paste buffer (always decremented so we
 // can guarantee that statics are saved).
-static int16_t			ms_sFileCount		= -1;
+static short			ms_sFileCount		= -1;
 
 // Type of item to paste.
 static CThing::ClassIDType	ms_idPaste;
@@ -1220,17 +1221,17 @@ static U16				ms_u16TerrainMask;
 static U16				ms_u16LayerMask;
 
 // Used by RFile callback function
-static int32_t		ms_lRFileCallbackTime;
-static int32_t		ms_lFileBytesSoFar;
+static long		ms_lRFileCallbackTime;
+static long		ms_lFileBytesSoFar;
 static char		ms_szFileOpDescriptionFrmt[512];
 static RPrint	ms_printFile;
-static int16_t	ms_sFileOpTextX;
-static int16_t	ms_sFileOpTextY;
-static int16_t	ms_sFileOpTextW;
-static int16_t	ms_sFileOpTextH;
+static short	ms_sFileOpTextX;
+static short	ms_sFileOpTextY;
+static short	ms_sFileOpTextW;
+static short	ms_sFileOpTextH;
 
 // Amount to scroll off edge of realm.
-static int32_t	ms_lEdgeOvershoot	= 1000;
+static long	ms_lEdgeOvershoot	= 1000;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Function prototypes
@@ -1240,63 +1241,62 @@ static int32_t	ms_lEdgeOvershoot	= 1000;
 static bool DoInput(		// Returns true when done.
 	CRealm*	prealm,		// Ptr to current realm.
 	CCamera*	pcamera,		// Ptr to current camera.
-	int16_t*	psCursorX,	// Out: Cursor X position.
-	int16_t*	psCursorY,	// Out: Cursor Y position.
-	int16_t*	psCursorZ);	// Out: Cursor Z position.
+	short*	psCursorX,	// Out: Cursor X position.
+	short*	psCursorY,	// Out: Cursor Y position.
+	short*	psCursorZ);	// Out: Cursor Z position.
 
 // Do ALL editor output.
 static void DoOutput(	// Returns nothing.
 	CRealm*	prealm,		// Ptr to current realm.
 	CCamera*	pcamera,		// Ptr to current camera.
-	int16_t		sCursorX,	// Cursor X position.
-	int16_t		sCursorY,	// Cursor Y position.
-	int16_t		sCursorZ);	// Cursor Z position.
+	short		sCursorX,	// Cursor X position.
+	short		sCursorY,	// Cursor Y position.
+	short		sCursorZ);	// Cursor Z position.
 
 static void GetCursor(	// Returns nothing.
 	RInputEvent*	pie,	// In:  Input event.
 								// Out: pie->sUsed = TRUE, if used.
-	int16_t* psX,				// Out: X coord of event.
-	int16_t* psY,				// Out: Y coord of event.
-	int16_t* psZ,				// Out: Z coord of event.
-	int16_t* psEvent);		// Out: Event type.
+	short* psX,				// Out: X coord of event.
+	short* psY,				// Out: Y coord of event.
+	short* psZ,				// Out: Z coord of event.
+	short* psEvent);		// Out: Event type.
 
-static int16_t InitCursor(
+static short InitCursor(
 	void);
 
 static void KillCursor(
 	void);
 
 static void DrawCursor(
-	int16_t sCursorX,										// In:  Cursor hotspot x coord
-	int16_t sCursorY,										// In:  Cursor hotspot y coord
-	int16_t sCursorZ,										// In:  Cursor hotspot z coord
+	short sCursorX,										// In:  Cursor hotspot x coord
+	short sCursorY,										// In:  Cursor hotspot y coord
+	short sCursorZ,										// In:  Cursor hotspot z coord
 	RImage* pimDst,										// In:  Image to draw to
 	CRealm* prealm,										// In:  Realm.
 	CCamera* pcamera);									// In:  Camera on prealm.
 
-static int16_t NewRealm(
+static short NewRealm(
 	CRealm* prealm);
 
-static int16_t CloseRealm(
+static short CloseRealm(
 	CRealm* prealm);
 
-static int16_t LoadRealm(
+static short LoadRealm(
 	CRealm* prealm);
 
-static int16_t SaveRealm(				// Returns 0 on success.             
+static short SaveRealm(				// Returns 0 on success.             
 	CRealm* prealm,					// In:  Realm to save.               
 	char* pszRealmName,				// In:  Filename to save as.         
 	bool	bSaveTriggerRegions);	// In:  Save the trigger regions too.
 
-static int16_t SaveRealm(
+static short SaveRealm(
 	CRealm* prealm);
 
-static int16_t SaveRealmAs(
+static short SaveRealmAs(
 	CRealm* prealm);
 
 static void PlayRealm(				// Returns nothing.
 	CRealm*	prealm,					// In:  Realm to play.
-	CCamera* pcamera,  
 	CThing*	pthingSel);				// In:  Currently selected CThing which can
 											// be used to give PlayRealm() a hint on which
 											// of several things the user wants to use.
@@ -1305,12 +1305,12 @@ static void PlayRealm(				// Returns nothing.
 
 // Create a new CThing derived object of type id in prealm at the specified
 // position.
-static int16_t CreateNewThing(		// Returns 0 on success.
+static short CreateNewThing(		// Returns 0 on success.
 	CRealm*	prealm,					// In:  Realm to add new CThing to.
 	CThing::ClassIDType	id,		// ID of new CThing type to create.
-	int16_t		sPosX,					// Position for new CThing.
-	int16_t		sPosY,					// Position for new CThing.
-	int16_t		sPosZ,					// Position for new CThing.
+	short		sPosX,					// Position for new CThing.
+	short		sPosY,					// Position for new CThing.
+	short		sPosZ,					// Position for new CThing.
 	CThing**	ppthing,					// Out: Pointer to new thing.
 	RHot**	pphot,					// Out: Pointer to new hotbox for thing.
 	RFile*	pfile = NULL);			// In:  Optional file to load from (instead of EditNew()).
@@ -1320,9 +1320,9 @@ static int16_t CreateNewThing(		// Returns 0 on success.
 static void MoveThing(				// Returns nothing.
 	CThing*	pthing,					// Thing to move.
 	RHot*		phot,						// Thing's hotbox.
-	int16_t		sPosX,					// New position.
-	int16_t		sPosY,					// New position.
-	int16_t		sPosZ);					// New position.
+	short		sPosX,					// New position.
+	short		sPosY,					// New position.
+	short		sPosZ);					// New position.
 
 // Enlarges the display area.
 static void OnEnlargeDisplay(
@@ -1336,26 +1336,26 @@ static void OnReduceDisplay(
 
 // Set display mode such that display area is as
 // specified.
-static int16_t SetDisplayArea(	// Returns 0 on success.
-	int16_t	sDisplayD,				// New depth of display.
-	int16_t	sDisplayW,				// New width of display area.
-	int16_t	sDisplayH);				// New height of display area.
+static short SetDisplayArea(	// Returns 0 on success.
+	short	sDisplayD,				// New depth of display.
+	short	sDisplayW,				// New width of display area.
+	short	sDisplayH);				// New height of display area.
 
 // Set display mode and display area such that camera view
 // is specified size.
-static int16_t SetCameraArea(void);	// Returns 0 on success.
+static short SetCameraArea(void);	// Returns 0 on success.
 
 // Adjust the display area by the specified deltas.
-static int16_t AdjustDisplaySize(	// Returns 0 on success.
-	int16_t	sAdjustX,					// Amount to increase width of display area.
+static short AdjustDisplaySize(	// Returns 0 on success.
+	short	sAdjustX,					// Amount to increase width of display area.
 											// Can be negative to decrease.
-	int16_t	sAdjustY,					// Amount to increase height of display area.
+	short	sAdjustY,					// Amount to increase height of display area.
 											// Can be negative to decrease.
 	CCamera* pcamera,					// Camera to update.
 	CRealm*	prealm);					// Realm to update.
 
 // Update screen size sensitive objects.
-static int16_t SizeUpdate(		// Returns 0 on success.
+static short SizeUpdate(		// Returns 0 on success.
 	CCamera* pcamera,				// Camera to update.
 	CRealm*	prealm);				// Realm to update.
 
@@ -1388,7 +1388,7 @@ static void DrawBouyLink(		// Returns nothing.
 	CCamera*	pcamera);			// In:  View of prealm.
 
 // AddLine - add the newly drawn line to the set of lines.
-static void AddNewLine(int16_t sX0, int16_t sY0, int16_t sX1, int16_t sY1);
+static void AddNewLine(short sX0, short sY0, short sX1, short sY1);
 
 // Writes out a log of connected bouys.  This is for debugging only
 static void NetLog(CNavigationNet* pNavNet);
@@ -1411,7 +1411,7 @@ static CGameEditThing* GetEditorThing(	// Returns ptr to editor thing for
 	CRealm*	prealm);							// Realm to get editor thing from.
 
 // Creates a view and adds it to the list of views.
-static int16_t AddView(		// Returns 0 on success.
+static short AddView(		// Returns 0 on success.
 	CRealm*	prealm);			// In:  Realm in which to setup camera.
 
 // Kills a view and removes it from the list of views.
@@ -1423,7 +1423,7 @@ static void RemoveView(		// Returns nothing.
 static void RemoveViews(void);
 
 // Creates a new View and adds it to the list of Views.
-static int16_t CreateView(					// Returns 0 on success.
+static short CreateView(					// Returns 0 on success.
 	View**	ppview,							// Out: New view, if not NULL.
 	CRealm*	prealm);							// In:  Realm in which to setup camera.
 
@@ -1465,9 +1465,9 @@ static void CancelDrag(CRealm* prealm);// Returns nothing.
 
 // Place any thing being dragged.
 static void DragDrop(	// Returns nothing.
-	int16_t sDropX,			// In:  Drop x position.
-	int16_t sDropY,			// In:  Drop y position.
-	int16_t sDropZ);			// In:  Drop z position.
+	short sDropX,			// In:  Drop x position.
+	short sDropY,			// In:  Drop y position.
+	short sDropZ);			// In:  Drop z position.
 
 // Move focus to next item in realm's thing list.
 static void NextItem(	// Returns nothing.
@@ -1478,17 +1478,17 @@ static void PrevItem(	// Returns nothing.
 	CRealm*	prealm);		// In:  The realm we want the next thing in.
 
 // Load the trigger regions for the specified realm.
-static int16_t LoadTriggerRegions(	// Returns 0 on success.
+static short LoadTriggerRegions(	// Returns 0 on success.
 	char*	pszRealmName);				// In:  Name of the REALM (*.RLM) file.
 											// The .ext is stripped and .rgn is appended.
 
 // Save the trigger regions for the specified realm.
-static int16_t SaveTriggerRegions(	// Returns 0 on success.
+static short SaveTriggerRegions(	// Returns 0 on success.
 	char*	pszRealmName, 				// In:  Name of the REALM (*.RLM) file.
 	CRealm* prealm);					// The .ext is stripped and .rgn is appended.
 
 // Create the trigger attribute layer for the realm
-static int16_t CreateTriggerRegions(	// Returns 0 on success.
+static short CreateTriggerRegions(	// Returns 0 on success.
 	CRealm*	prealm		);			// In:  Access of Realm Info
 
 // Change or clear the current pylon being edited.
@@ -1516,32 +1516,55 @@ static void DelMost(		// Return nothing
 	CRealm* prealm);		// In:  Current realm
 
 // Copy a thing to the paste buffer.
-static int16_t CopyItem(	// Returns 0 on success.
+static short CopyItem(	// Returns 0 on success.
 	CThing* pthingCopy);	// In:  CThing to copy.
 
 // Copy a thing to the paste buffer.
-static int16_t PasteItem(	// Returns 0 on success.
+static short PasteItem(	// Returns 0 on success.
 	CRealm*	prealm,		// In:  The realm to paste into.
-	int16_t		sX,			// In:  Location for new thing.
-	int16_t		sY,			// In:  Location for new thing.
-	int16_t		sZ);			// In:  Location for new thing.
+	short		sX,			// In:  Location for new thing.
+	short		sY,			// In:  Location for new thing.
+	short		sZ);			// In:  Location for new thing.
+
+// Map a screen coordinate to a realm coordinate.
+// Note that this function's *psRealmY output is always
+// the height specified by the realm's attribute map
+// at the resulting *psRealmX, *psRealmZ.
+static void MapScreen2Realm(	// Returns nothing.
+	CRealm*	prealm,				// In:  Realm.
+	CCamera*	pcamera,				// In:  View of prealm.
+	short sScreenX,				// In:  Screen x coord.
+	short sScreenY,				// In:  Screen y coord.
+	short* psRealmX,				// Out: Realm x coord.
+	short* psRealmY,				// Out: Realm y coord (always via realm's height map).
+	short* psRealmZ);				// Out: Realm z coord.
+
+// Map a realm coordinate to a screen coordinate.
+static void Maprealm2Screen(	// Returns nothing.
+	CRealm*	prealm,				// In:  Realm.
+	CCamera*	pcamera,				// In:  View of prealm.
+	short		sRealmX,				// In:  Realm x coord.
+	short		sRealmY,				// In:  Realm y coord.
+	short		sRealmZ,				// In:  Realm z coord.
+	short*	psScreenX,			// Out: Screen x coord.
+	short*	psScreenY);			// Out: Screen y coord.
 
 // Blit attribute areas lit by the specified mask into the specified image.
 static void AttribBlit(			// Returns nothing.
 	RMultiGrid*	pmg,				// In:  Multigrid of attributes.
 	U16			u16Mask,			// In:  Mask of important attributes.
 	RImage*		pimDst,			// In:  Destination image.
-	int16_t			sSrcX,			// In:  Where in Multigrid to start.
-	int16_t			sSrcY,			// In:  Where in Multigrid to start.
-	int16_t			sW,				// In:  How much of multigrid to use.
-	int16_t			sH);				// In:  How much of multigrid to use.
+	short			sSrcX,			// In:  Where in Multigrid to start.
+	short			sSrcY,			// In:  Where in Multigrid to start.
+	short			sW,				// In:  How much of multigrid to use.
+	short			sH);				// In:  How much of multigrid to use.
 
 // Callback for attrib mask multibtns.
 static void AttribMaskBtnPressed(	// Returns nothing.
 	RGuiItem*	pgui_pmb);				// In:  Ptr to the pressed GUI (which is a multibtn).
 
 // Resizes the attribute sprite, if allocated.
-static int16_t SizeShowAttribsSprite(void);	// Returns 0 on success.
+static short SizeShowAttribsSprite(void);	// Returns 0 on success.
 
 // Convert a .RLM filename to a .RGN one.
 static void RlmNameToRgnName(	// Returns nothing.
@@ -1549,18 +1572,18 @@ static void RlmNameToRgnName(	// Returns nothing.
 	char* pszRgnName);		// Out: .RGN name.
 
 // Our RFile callback
-static void MyRFileCallback(int32_t lBytes);
+static void MyRFileCallback(long lBytes);
 
 // Update selection info in the info GUI.
 static void UpdateSelectionInfo(	// Returns nothing.
 	bool bTitle = false);			// In:  true to update the title info as well.
 
-static int16_t TmpFileName(								// Returns 0 if successfull, non-zero otherwise
+static short TmpFileName(								// Returns 0 if successfull, non-zero otherwise
 	char* pszFileName,									// Out: Temp file name returned here
-	int16_t sMaxSize);										// In:  Maximum size of file name
+	short sMaxSize);										// In:  Maximum size of file name
 
 // Show statistics for the specified realm.
-static int16_t ShowRealmStatistics(	// Returns 0 on success.
+static short ShowRealmStatistics(	// Returns 0 on success.
 	CRealm*	prealm,						// In:  Realm to get stats on.
 	CThing** ppthing);					// Out: Selected thing, if not NULL.
 
@@ -1577,8 +1600,8 @@ static void KillFileCounter(void);	// Returns nothing.
 // Callback from realm during time intensive operations.
 static bool RealmOpProgress(			// Returns true to continue; false to
 												// abort operation.
-	int16_t	sLastItemProcessed,			// In:  Number of items processed so far.
-	int16_t	sTotalItemsToProcess);		// In:  Total items to process.
+	short	sLastItemProcessed,			// In:  Number of items processed so far.
+	short	sTotalItemsToProcess);		// In:  Total items to process.
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -1587,7 +1610,7 @@ static bool RealmOpProgress(			// Returns true to continue; false to
 ////////////////////////////////////////////////////////////////////////////////
 inline void SetPressedCall(	// Returns nothing.
 	RGuiItem*	pguiRoot,		// Root item.
-	int32_t	lId)						// ID of GUI item to set.
+	long	lId)						// ID of GUI item to set.
 	{
 	ASSERT(pguiRoot != NULL);
 
@@ -1610,10 +1633,10 @@ inline void SetPressedCall(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 inline void SetMBValsAndCallback(		// Returns nothing.
 	RGuiItem*	pguiRoot,					// In:  Root item.
-	int32_t			lId,							// In:  ID of child to set user vals on.
+	long			lId,							// In:  ID of child to set user vals on.
 	U32			u32UserInstance,			// In:  Value for m_ulUserInstance.
 	U32			u32UserData,				// In:  Value for m_ulUserData.
-	int16_t			sState)						// In:  Initial MultiBtn state.
+	short			sState)						// In:  Initial MultiBtn state.
 	{
 	RMultiBtn*	pmb	= (RMultiBtn*)pguiRoot->GetItemFromId(lId);
 	if (pmb)
@@ -1793,7 +1816,7 @@ extern void GameEdit(
 					if (pguiItem != NULL)
 						{
 						pguiItem->m_lId			= LIST_ITEM_GUI_ID_BASE + idCur;
-						pguiItem->m_ulUserData	= (uint32_t)idCur;
+						pguiItem->m_ulUserData	= (ULONG)idCur;
 
 						// Set the callback on pressed.
 						pguiItem->m_bcUser		= ListItemPressedCall;
@@ -1823,7 +1846,7 @@ extern void GameEdit(
 			ASSERT(ms_plbLayers->m_type == RGuiItem::ListBox);
 
 			// Add available layers to listbox.
-			int16_t	sLayer;
+			short	sLayer;
 			for (sLayer	= CRealm::LayerBg; sLayer < CRealm::TotalLayers; sLayer++)
 				{
 				// Add string for each item to listbox.
@@ -1831,7 +1854,7 @@ extern void GameEdit(
 				if (pguiItem != NULL)
 					{
 					// Remember which layer it's associated with.
-					pguiItem->m_ulUserData	= (uint32_t)sLayer;
+					pguiItem->m_ulUserData	= (ULONG)sLayer;
 					// We'll need to know when these are pressed.
 					pguiItem->m_bcUser	= ListItemPressedCall;
 					pguiItem->m_lId		= GUI_ID_TOGGLE_LAYER;
@@ -1873,10 +1896,10 @@ extern void GameEdit(
 			ms_pguiNavNets->SetVisible(ms_pguiNavNets->m_sVisible);
 
 			// ---------- Show Attribs --------
-			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_LAYERS, (U64)(&ms_u16LayerMask), REALM_ATTR_LAYER_MASK, 1);
-			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_HEIGHT, (U64)(&ms_u16TerrainMask), REALM_ATTR_HEIGHT_MASK, 1);
-			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_NOWALK, (U64)(&ms_u16TerrainMask), REALM_ATTR_NOT_WALKABLE, 1);
-			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_LIGHT, (U64)(&ms_u16TerrainMask), REALM_ATTR_LIGHT_BIT, 1);
+			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_LAYERS, (U32)(&ms_u16LayerMask), REALM_ATTR_LAYER_MASK, 1);
+			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_HEIGHT, (U32)(&ms_u16TerrainMask), REALM_ATTR_HEIGHT_MASK, 1);
+			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_NOWALK, (U32)(&ms_u16TerrainMask), REALM_ATTR_NOT_WALKABLE, 1);
+			SetMBValsAndCallback(ms_pguiShowAttribs, GUI_ID_ATTRIB_LIGHT, (U32)(&ms_u16TerrainMask), REALM_ATTR_LIGHT_BIT, 1);
 
 			ms_pguiShowAttribs->SetVisible(TRUE);
 
@@ -1926,7 +1949,7 @@ extern void GameEdit(
 
 			// Make sure the system cursor is visible.
 			// Store show level so we can restore it.
-			int16_t	sCursorShowLevel	= rspGetMouseCursorShowLevel();
+			short	sCursorShowLevel	= rspGetMouseCursorShowLevel();
 			rspSetMouseCursorShowLevel(1);
 
 			// User must load an existing realm or start a new one to go any further
@@ -1943,7 +1966,7 @@ extern void GameEdit(
 			//////////////////////////////////////////////////////////////////////
 
 			bExit = false;
-			int16_t	sCursorX, sCursorY, sCursorZ;
+			short	sCursorX, sCursorY, sCursorZ;
 			while (!bExit)
 				{
 				///////////////////////////////////////////////////////////////////
@@ -2054,16 +2077,16 @@ extern void GameEdit(
 static bool DoInput(		// Returns true when done.
 	CRealm*	prealm,		// Ptr to current realm.
 	CCamera*	pcamera,		// Ptr to current camera.
-	int16_t*	psCursorX,	// Out: Cursor X position.
-	int16_t*	psCursorY,	// Out: Cursor Y position.
-	int16_t*	psCursorZ)	// Out: Cursor Z position.
+	short*	psCursorX,	// Out: Cursor X position.
+	short*	psCursorY,	// Out: Cursor Y position.
+	short*	psCursorZ)	// Out: Cursor Z position.
 	{
 	bool	bExit	= false;
 
-	int16_t sCursorX;
-	int16_t sCursorY;
-	int16_t sCursorZ;
-	int16_t sCursorEvent;
+	short sCursorX;
+	short sCursorY;
+	short sCursorZ;
+	short sCursorEvent;
 	RInputEvent	ie;
 
 	// Get next input event.
@@ -2103,18 +2126,18 @@ static bool DoInput(		// Returns true when done.
 		// If editting a pylon trigger region . . .
 		if (ms_pylonEdit != NULL)
 			{
-			static int16_t	sButtons	= 0;
+			static short	sButtons	= 0;
 			// Get cursor position and event
 			GetCursor(&ie, &sCursorX, &sCursorY, &sCursorZ, &sCursorEvent);
 			
-			uint8_t	ucId	= ms_pylonEdit->m_ucID;
+			UCHAR	ucId	= ms_pylonEdit->m_ucID;
 
 			static U8*	pau8KeyStatus	= rspGetKeyStatusArray();
 
 			// Move unit for arrow key movement of region.
 			// Note: Combinations of SHIFT, CONTROL, and ALT
 			// provide super fast movement.
-			int16_t	sMoveUnit	= 1;
+			short	sMoveUnit	= 1;
 			if (pau8KeyStatus[RSP_SK_SHIFT] & 1)
 				sMoveUnit	*= 2;
 			if (pau8KeyStatus[RSP_SK_CONTROL] & 1)
@@ -2238,8 +2261,8 @@ static bool DoInput(		// Returns true when done.
 					ie.lKey = (ie.lKey & 0xffff0000) | toupper(ie.lKey & 0xffff);
 
 				// In case we're gonna scroll, set amount based on CTRL key status
-				int16_t sScrollX = EDIT_SCROLL_AMOUNT;
-				int16_t sScrollY = EDIT_SCROLL_AMOUNT;
+				short sScrollX = EDIT_SCROLL_AMOUNT;
+				short sScrollY = EDIT_SCROLL_AMOUNT;
 				if (ie.lKey & RSP_GKF_CONTROL)
 					{
 					sScrollX = pcamera->m_sViewW;
@@ -2588,8 +2611,8 @@ static bool DoInput(		// Returns true when done.
 							ASSERT(ms_photSel != NULL);
 
 							// Get hotspot for item in 2D.
-							int16_t	sOffsetX;
-							int16_t	sOffsetY;
+							short	sOffsetX;
+							short	sOffsetY;
 							ms_pthingSel->EditHotSpot(&sOffsetX, &sOffsetY);
 
 							// Reposition cursor to hotspot.
@@ -2636,8 +2659,8 @@ static bool DoInput(		// Returns true when done.
 						if (pNavNet)
 							UpdateNetLines(pNavNet);
 
-						int16_t	sScreenX;
-						int16_t	sScreenY;
+						short	sScreenX;
+						short	sScreenY;
 
 						Maprealm2Screen(
 							prealm,
@@ -2745,7 +2768,7 @@ static bool DoInput(		// Returns true when done.
 						CancelDrag(prealm);
 
 						// Simulate playing the realm
-						PlayRealm(prealm, pcamera,ms_pthingSel);
+						PlayRealm(prealm, ms_pthingSel);
 
 						// Restore global camera.
 						ms_pcameraCur	= pcamera;
@@ -2937,7 +2960,7 @@ static bool DoInput(		// Returns true when done.
 				if (ms_pguiMapZone->m_sPressed != FALSE)
 					{
 					// Determine position.
-					int16_t	sPosX, sPosY;
+					short	sPosX, sPosY;
 					rspGetMouse(&sPosX, &sPosY, NULL);
 					ms_pguiMapZone->TopPosToClient(&sPosX, &sPosY);
 					// Map position into map coords scroll to it.
@@ -2975,9 +2998,9 @@ static bool DoInput(		// Returns true when done.
 static void DoOutput(	// Returns nothing.
 	CRealm*	prealm,		// Ptr to current realm.
 	CCamera*	pcamera,		// Ptr to current camera.
-	int16_t		sCursorX,	// Cursor X position.
-	int16_t		sCursorY,	// Cursor Y position.
-	int16_t		sCursorZ)	// Cursor Z position.
+	short		sCursorX,	// Cursor X position.
+	short		sCursorY,	// Cursor Y position.
+	short		sCursorZ)	// Cursor Z position.
 	{
 	// If not in menu . . .
 	if (GetCurrentMenu() == NULL)
@@ -3056,7 +3079,7 @@ static void DoOutput(	// Returns nothing.
 		if (ms_pthingSel != NULL)
 			{
 			static RRect	rc;
-			static int16_t	sColorSwap	= 0;
+			static short	sColorSwap	= 0;
 			sColorSwap	= (sColorSwap + 1) % 2;
 
 			ms_pthingSel->EditRect(&rc);
@@ -3130,7 +3153,7 @@ static void DoOutput(	// Returns nothing.
 		// If editting a pylon . . .
 		if (ms_pylonEdit != NULL)
 			{
-			uint8_t	ucId	= ms_pylonEdit->m_ucID;
+			UCHAR	ucId	= ms_pylonEdit->m_ucID;
 			ASSERT(ms_argns[ucId].pimRgn != NULL);
 
 			// Draw trigger region.
@@ -3202,31 +3225,31 @@ static void DoOutput(	// Returns nothing.
 static void GetCursor(	// Returns nothing.
 	RInputEvent*	pie,	// In:  Input event.
 								// Out: pie->sUsed = TRUE, if used.
-	int16_t* psX,				// Out: X coord of event.
-	int16_t* psY,				// Out: Y coord of event.
-	int16_t* psZ,				// Out: Z coord of event.
-	int16_t* psEvent)		// Out: Event type.
+	short* psX,				// Out: X coord of event.
+	short* psY,				// Out: Y coord of event.
+	short* psZ,				// Out: Z coord of event.
+	short* psEvent)		// Out: Event type.
 	{
 	// Init mouse drag stuff
-	static int16_t sDragX;
-	static int16_t sDragY;
-	static int32_t lDragTime;
+	static short sDragX;
+	static short sDragY;
+	static long lDragTime;
 
 	// Init mouse pressed stuff.
-	static int16_t sPressed	= FALSE;
+	static short sPressed	= FALSE;
 
 	// Init cursor stuff
-	static int16_t sCursorY = 0;
-	static int16_t sOrigCursorY;
+	static short sCursorY = 0;
+	static short sOrigCursorY;
 
 	// Default to no event
 	*psEvent = CURSOR_NOTHING;
 
 	ASSERT(pie != NULL);
 
-	int16_t sMouseX			= pie->sPosX;
-	int16_t sMouseY			= pie->sPosY;
-	int16_t sButtonEvent	= pie->sEvent;
+	short sMouseX			= pie->sPosX;
+	short sMouseY			= pie->sPosY;
+	short sButtonEvent	= pie->sEvent;
 
 	// If mouse event . . .
 	if (pie->type == RInputEvent::Mouse)
@@ -3402,10 +3425,10 @@ static void GetCursor(	// Returns nothing.
 // Init cursor
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t InitCursor(
+static short InitCursor(
 	void)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	m_pimCursorBase = new RImage;
 	ASSERT(m_pimCursorBase != NULL);
@@ -3468,20 +3491,20 @@ static void KillCursor(
 //
 ////////////////////////////////////////////////////////////////////////////////
 static void DrawCursor(
-	int16_t sCursorX,										// In:  Cursor hotspot x coord
-	int16_t sCursorY,										// In:  Cursor hotspot y coord
-	int16_t sCursorZ,										// In:  Cursor hotspot z coord
+	short sCursorX,										// In:  Cursor hotspot x coord
+	short sCursorY,										// In:  Cursor hotspot y coord
+	short sCursorZ,										// In:  Cursor hotspot z coord
 	RImage* pimDst,										// In:  Image to draw to
 	CRealm* prealm,										// In:  Realm.
 	CCamera* pcamera)										// In:  Camera on prealm.
 	{
 	// Convert to 2D.
-	int16_t	sBaseX2;
-	int16_t	sBaseY2;
+	short	sBaseX2;
+	short	sBaseY2;
 	Maprealm2Screen(prealm, pcamera, sCursorX, 0, sCursorZ, &sBaseX2, &sBaseY2);
 
-	int16_t	sTipX2;
-	int16_t	sTipY2;
+	short	sTipX2;
+	short	sTipY2;
 	Maprealm2Screen(prealm, pcamera, sCursorX, sCursorY, sCursorZ, &sTipX2, &sTipY2);
 
 	// Draw the base (I think this is the hotspot).
@@ -3506,10 +3529,10 @@ static void DrawCursor(
 		short sMin = MIN(sCursorZ, (short)(sCursorZ - sCursorY));
 		short sMax = MAX(sCursorZ, (short)(sCursorZ - sCursorY));
 		for (short y = sMin; y <= sMax; y++)
-			rspPlot((uint8_t)255, pimDst, sCursorX, y);
+			rspPlot((UCHAR)255, pimDst, sCursorX, y);
 #else
 		rspLine(
-			(uint8_t)255,
+			(UCHAR)255,
 			pimDst,
 			sBaseX2,
 			sBaseY2,
@@ -3525,10 +3548,10 @@ static void DrawCursor(
 // Create new realm
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t NewRealm(
+static short NewRealm(
 	CRealm* prealm)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Close realm in case it contains anything
 	sResult	= CloseRealm(prealm);
@@ -3544,7 +3567,7 @@ static int16_t NewRealm(
 		prealm->m_resmgr.SetBasePath(g_GameSettings.m_szNoSakDir);
 
 		CThing*	pthing;
-		int16_t		sResult	= CreateNewThing(prealm, CThing::CHoodID, 0, 0, 0, &pthing, &ms_photHood);
+		short		sResult	= CreateNewThing(prealm, CThing::CHoodID, 0, 0, 0, &pthing, &ms_photHood);
 		// Create hood object because we can't really do anything without it
 		if (sResult == 0)
 			{
@@ -3594,10 +3617,10 @@ static int16_t NewRealm(
 // Close realm.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t CloseRealm(
+static short CloseRealm(
 	CRealm* prealm)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Cancel drag, if one is in progress.
 	CancelDrag(prealm);
@@ -3664,7 +3687,7 @@ static int16_t CloseRealm(
 			}
 
 		// Clean up trigger regions.
-		int16_t i;
+		short i;
 		for (i = 0; i < NUM_ELEMENTS(ms_argns); i++)
 			{
 			ms_argns[i].Destroy();
@@ -3694,10 +3717,10 @@ static int16_t CloseRealm(
 // Load realm.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t LoadRealm(
+static short LoadRealm(
 	CRealm* prealm)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Close current realm.
 	sResult	= CloseRealm(prealm);
@@ -3766,7 +3789,7 @@ static int16_t LoadRealm(
 						rc.sH,							// Dimensions.
 						ThingHotCall,					// Callback.
 						TRUE,								// TRUE, if active.
-						(U64)phood,						// User value (CThing*).
+						(U32)phood,						// User value (CThing*).
 						FRONTMOST_HOT_PRIORITY);	// New items towards front.
 					// If successful . . .
 					if (ms_photHood != NULL)
@@ -3774,7 +3797,7 @@ static int16_t LoadRealm(
 						// Setup hotboxes for all objects.
 						CListNode<CThing>* pList;
 						CThing*  pthing;
-						int16_t	sActivateHot;
+						short	sActivateHot;
 						pList = prealm->m_everythingHead.m_pnNext;
 						while (pList->m_powner != NULL && sResult == 0)
 							{
@@ -3811,7 +3834,7 @@ static int16_t LoadRealm(
 									rc.sH,							// Dimensions.
 									ThingHotCall,					// Callback.
 									sActivateHot,					// TRUE, if initially active.
-									(U64)pthing,					// User value (CThing*).
+									(U32)pthing,					// User value (CThing*).
 									FRONTMOST_HOT_PRIORITY);	// New items towards front.
 
 								// If successful . . .
@@ -3857,8 +3880,8 @@ static int16_t LoadRealm(
 				else
 					{
 					// Make sure our loaded settings are unaffected.
-					int16_t	sViewPosX	= 0;
-					int16_t	sViewPosY	= 0;
+					short	sViewPosX	= 0;
+					short	sViewPosY	= 0;
 					if (ms_pgething != NULL)
 						{
 						sViewPosX	= ms_pgething->m_sViewPosX;
@@ -3921,10 +3944,10 @@ static int16_t LoadRealm(
 // Save realm as . . .
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SaveRealmAs(
+static short SaveRealmAs(
 	CRealm* prealm)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	#ifdef DISABLE_EDITOR_SAVE_AND_PLAY
 		rspMsgBox(
@@ -3963,10 +3986,10 @@ static int16_t SaveRealmAs(
 // Save realm
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SaveRealm(
+static short SaveRealm(
 	CRealm* prealm)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	// If filename . . .
 	if (strcmp(ms_szFileName, FullPathVD(INITIAL_REALM_DIR)) != 0)
@@ -3990,12 +4013,12 @@ static int16_t SaveRealm(
 // Save realm with specified name.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SaveRealm(			// Returns 0 on success.
+static short SaveRealm(			// Returns 0 on success.
 	CRealm* prealm,				// In:  Realm to save.
 	char* pszRealmName,			// In:  Filename to save as.
 	bool	bSaveTriggerRegions)	// In:  Save the trigger regions too.
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	#ifdef DISABLE_EDITOR_SAVE_AND_PLAY
 		rspMsgBox(
@@ -4049,7 +4072,6 @@ static int16_t SaveRealm(			// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 static void PlayRealm(
 	CRealm*	pEditRealm,				// In:  Realm to play.
-	CCamera* pcamera,
 	CThing*	pthingSel)				// In:  Currently selected CThing which can
 											// be used to give PlayRealm() a hint on which
 											// of several things the user wants to use.
@@ -4063,7 +4085,7 @@ static void PlayRealm(
 			"Sorry, but the play feature is disabled.");
 	#else
 		// This is not returned by the function, but used internally
-		int16_t sResult = 0;
+		short sResult = 0;
 
 		// Enable RMix's autopump.
 		RMix::SetAutoPump(TRUE);
@@ -4295,7 +4317,7 @@ static void PlayRealm(
 						CDude*	pdudeLocal	= NULL;
 						if (prealm->m_idbank.GetThingByID((CThing**)&pdudeLocal, u16IdDude) == 0)
 							{
-							pdudeLocal->m_sTextureIndex = MAX((int16_t)0, MIN((int16_t)(CDude::MaxTextures - 1), g_GameSettings.m_sPlayerColorIndex));
+							pdudeLocal->m_sTextureIndex = MAX((short)0, MIN((short)(CDude::MaxTextures - 1), g_GameSettings.m_sPlayerColorIndex));
 
 							// Don't use later.
 							pdudeLocal	= NULL;
@@ -4321,10 +4343,10 @@ static void PlayRealm(
 							INFO_STATUS_RECT_W,
 							INFO_STATUS_RECT_H);
 
-						int32_t	lLastDispTime			= 0;
-						int32_t	lFramesTime				= 0;
-						int32_t	lUpdateDisplayTime	= 0;
-						int32_t	lNumFrames				= 0;
+						long	lLastDispTime			= 0;
+						long	lFramesTime				= 0;
+						long	lUpdateDisplayTime	= 0;
+						long	lNumFrames				= 0;
 
 						RPrint	printDisp;
 						printDisp.SetFont(DISP_INFO_FONT_H, &g_fontBig);
@@ -4456,7 +4478,7 @@ static void PlayRealm(
 												{
 												RRect	rc;
 												pthingTrack->EditRect(&rc);
-												int16_t	sHotX, sHotY;
+												short	sHotX, sHotY;
 												pthingTrack->EditHotSpot(&sHotX, &sHotY);
 
 												grip.ResetTarget(rc.sX + sHotX, rc.sY + sHotY, rc.sH / 2);
@@ -4542,7 +4564,7 @@ static void PlayRealm(
 							// Get local player input and
 							// Set controls for the one-and-only CDude
 							// Allow cheats.
-							SetInput(0, GetLocalInput(prealm, pcamera, 0, &ie));//Since it is singleplayer local dude id is 0
+							SetInput(0, GetLocalInput(prealm, &ie));
 
 							// If exit requested . . .
 							if (bExitRequest == true)
@@ -4589,13 +4611,13 @@ static void PlayRealm(
 								{
 								RRect	rc;
 								pthingTrack->EditRect(&rc);
-								int16_t	sHotX, sHotY;
+								short	sHotX, sHotY;
 								pthingTrack->EditHotSpot(&sHotX, &sHotY);
 
 								sHotX	+= rc.sX;
 								sHotY	+= rc.sY;
 
-								int16_t	sRealmX, sRealmY, sRealmZ;
+								short	sRealmX, sRealmY, sRealmZ;
 								// Convert to realm.
 								MapScreen2Realm(
 									prealm,									// In:  Realm.
@@ -4750,17 +4772,17 @@ static void PlayRealm(
 // position.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t CreateNewThing(		// Returns 0 on success.
+static short CreateNewThing(		// Returns 0 on success.
 	CRealm*	prealm,					// In:  Realm to add new CThing to.
 	CThing::ClassIDType	id,		// ID of new CThing type to create.
-	int16_t		sPosX,					// Position for new CThing.
-	int16_t		sPosY,					// Position for new CThing.
-	int16_t		sPosZ,					// Position for new CThing.
+	short		sPosX,					// Position for new CThing.
+	short		sPosY,					// Position for new CThing.
+	short		sPosZ,					// Position for new CThing.
 	CThing**	ppthing,					// Out: Pointer to new thing.
 	RHot**	pphot,					// Out: Pointer to new hotbox for thing.
 	RFile*	pfile/* = NULL*/)		// In:  Optional file to load from (instead of EditNew()).
 	{
-	int16_t		sError		= 0;
+	short		sError		= 0;
 
 	// Don't allow more than one CHood . . .
 	if ((id == CThing::CHoodID) && (prealm->m_asClassNumThings[CThing::CHoodID] > 0))
@@ -4828,7 +4850,7 @@ static int16_t CreateNewThing(		// Returns 0 on success.
 					// If successful so far . . .
 					if (sError == 0)
 						{
-						int16_t sActivateHot	= TRUE;
+						short sActivateHot	= TRUE;
 
 						// Some types may need to hook in here.
 						switch ( (*ppthing)->GetClassID() )
@@ -4855,7 +4877,7 @@ static int16_t CreateNewThing(		// Returns 0 on success.
 							rc.sH,							// Dimensions.
 							ThingHotCall,					// Callback.
 							sActivateHot,					// TRUE, if initially active.
-							(U64)*ppthing,					// User value (CThing*).
+							(U32)*ppthing,					// User value (CThing*).
 							FRONTMOST_HOT_PRIORITY);	// New items towards front.
 
 						if (*pphot != NULL)
@@ -4887,7 +4909,7 @@ static int16_t CreateNewThing(		// Returns 0 on success.
 									if (pdude->m_sDudeNum == 0)
 										{
 										// Set him to the user selected color.
-										pdude->m_sTextureIndex = MAX((int16_t)0, MIN((int16_t)(CDude::MaxTextures - 1), g_GameSettings.m_sPlayerColorIndex));
+										pdude->m_sTextureIndex = MAX((short)0, MIN((short)(CDude::MaxTextures - 1), g_GameSettings.m_sPlayerColorIndex));
 										}
 
 									break;
@@ -4945,9 +4967,9 @@ static int16_t CreateNewThing(		// Returns 0 on success.
 static void MoveThing(				// Returns nothing.
 	CThing*	pthing,					// Thing to move.
 	RHot*		phot,						// Thing's hotbox.
-	int16_t		sPosX,					// New position.
-	int16_t		sPosY,					// New position.
-	int16_t		sPosZ)					// New position.
+	short		sPosX,					// New position.
+	short		sPosY,					// New position.
+	short		sPosZ)					// New position.
 	{
 	ASSERT(pthing != NULL);
 	ASSERT(phot != NULL);
@@ -5003,14 +5025,14 @@ static void OnReduceDisplay(
 // specified.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SetDisplayArea(	// Returns 0 on success.
-	int16_t	sDeviceD,				// New depth of display.
-	int16_t	sDisplayW,				// New width of display area.
-	int16_t	sDisplayH)				// New height of display area.
+static short SetDisplayArea(	// Returns 0 on success.
+	short	sDeviceD,				// New depth of display.
+	short	sDisplayW,				// New width of display area.
+	short	sDisplayH)				// New height of display area.
 	{
-	int16_t	sError	= 0;
-	int16_t	sDeviceW, sDeviceH;
-	int16_t	sDeviceScaling	= FALSE;
+	short	sError	= 0;
+	short	sDeviceW, sDeviceH;
+	short	sDeviceScaling	= FALSE;
 	// Get device size/mode for this display size.
 	sError = rspSuggestVideoMode(
 		sDeviceD,
@@ -5078,14 +5100,14 @@ static int16_t SetDisplayArea(	// Returns 0 on success.
 // is specified size.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SetCameraArea(void)	// Returns 0 on success.
+static short SetCameraArea(void)	// Returns 0 on success.
 	{
-	int16_t	sDepth	= 8;	// Safety.
+	short	sDepth	= 8;	// Safety.
 	rspGetVideoMode(&sDepth);
 	
 	// Determine display area for this camera size.
-	int16_t	sDisplayW	= g_GameSettings.m_sEditorViewWidth;//sCameraW + DISPLAY_RIGHT_BORDER;
-	int16_t	sDisplayH	= g_GameSettings.m_sEditorViewHeight;//sCameraH + DISPLAY_BOTTOM_BORDER;
+	short	sDisplayW	= g_GameSettings.m_sEditorViewWidth;//sCameraW + DISPLAY_RIGHT_BORDER;
+	short	sDisplayH	= g_GameSettings.m_sEditorViewHeight;//sCameraH + DISPLAY_BOTTOM_BORDER;
 
 	// Set the display area/mode.
 	return SetDisplayArea(sDepth, sDisplayW, sDisplayH);
@@ -5096,19 +5118,19 @@ static int16_t SetCameraArea(void)	// Returns 0 on success.
 // Adjust the display area by the specified deltas.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t AdjustDisplaySize(	// Returns 0 on success.
-	int16_t	sAdjustX,					// Amount to increase width of display area.
+static short AdjustDisplaySize(	// Returns 0 on success.
+	short	sAdjustX,					// Amount to increase width of display area.
 											// Can be negative to decrease.
-	int16_t	sAdjustY,					// Amount to increase height of display area.
+	short	sAdjustY,					// Amount to increase height of display area.
 											// Can be negative to decrease.
 	CCamera* pcamera,					// Camera to update.
 	CRealm*	prealm)					// Realm to update.
 	{
-	int16_t	sError		= 0;
+	short	sError		= 0;
 
-	int16_t	sDisplayW	= 640;	// Safety.
-	int16_t	sDisplayH	= 480;	// Safety.
-	int16_t	sDeviceD		= 8;		// Safety.
+	short	sDisplayW	= 640;	// Safety.
+	short	sDisplayH	= 480;	// Safety.
+	short	sDeviceD		= 8;		// Safety.
 
 	// Get current settings.
 	rspGetVideoMode(
@@ -5140,15 +5162,15 @@ static int16_t AdjustDisplaySize(	// Returns 0 on success.
 // Update screen size sensitive objects.
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SizeUpdate(		// Returns 0 on success.
+static short SizeUpdate(		// Returns 0 on success.
 	CCamera* pcamera,				// Camera to update.
 	CRealm*	prealm)				// Realm to update.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
-	int16_t	sDisplayW	= 640;	// Safety.
-	int16_t	sDisplayH	= 480;	// Safety.
-	int16_t	sDisplayD	= 8;		// Safety.
+	short	sDisplayW	= 640;	// Safety.
+	short	sDisplayH	= 480;	// Safety.
+	short	sDisplayD	= 8;		// Safety.
 
 	// Get current settings.
 	rspGetVideoMode(
@@ -5159,8 +5181,8 @@ static int16_t SizeUpdate(		// Returns 0 on success.
 		&sDisplayW,
 		&sDisplayH);
 
-	int16_t	sViewW	= sDisplayW - DISPLAY_RIGHT_BORDER - SCROLL_BAR_THICKNESS;
-	int16_t	sViewH	= sDisplayH - DISPLAY_BOTTOM_BORDER - SCROLL_BAR_THICKNESS;
+	short	sViewW	= sDisplayW - DISPLAY_RIGHT_BORDER - SCROLL_BAR_THICKNESS;
+	short	sViewH	= sDisplayH - DISPLAY_BOTTOM_BORDER - SCROLL_BAR_THICKNESS;
 
 	// Get the hood . . .
 	CHood*	phood = NULL;
@@ -5228,7 +5250,7 @@ static int16_t SizeUpdate(		// Returns 0 on success.
 		ms_pguiInfo->Move(INFO_X, INFO_Y);
 		}
 
-	int32_t	lEdgeOvershoot;
+	long	lEdgeOvershoot;
 	// If not clipping to realm . . .
 	if (pcamera->m_bClip == false)
 		{
@@ -5467,7 +5489,7 @@ static void ThingHotCall(	// Returns nothing.
 				{
 				SetSel(pthing, phot);
 				// If EDIT_KEY_SENDTOBACK held down . . .
-				uint8_t	aucKeys[128];
+				UCHAR	aucKeys[128];
 				rspScanKeys(aucKeys);
 				if (aucKeys[EDIT_KEY_SENDTOBACK] != 0)
 					{
@@ -5625,9 +5647,9 @@ static void DrawBouyLink(	// Returns nothing.
 	CRealm*	prealm,			// In:  Realm.
 	CCamera*	pcamera)			// In:  View of prealm.
 {
-	int16_t sMouseX;
-	int16_t sMouseY;
-	int16_t sButtons;
+	short sMouseX;
+	short sMouseY;
+	short sButtons;
 
 	if (ms_bDrawNetwork && m_pBouyLink0 != NULL && m_pBouyLink1 != NULL &&
 	    m_pBouyLink0->Visible() && m_pBouyLink1->Visible())
@@ -5635,7 +5657,7 @@ static void DrawBouyLink(	// Returns nothing.
 		// These lines show the paths the characters would take so
 		// they should be only on the X/Z plane and, therefore, Y
 		// is ignored.
-		int16_t	sBouyLink0X, sBouyLink0Y;
+		short	sBouyLink0X, sBouyLink0Y;
 		Maprealm2Screen(
 			prealm,
 			pcamera,
@@ -5645,7 +5667,7 @@ static void DrawBouyLink(	// Returns nothing.
 			&sBouyLink0X,
 			&sBouyLink0Y);
 
-		int16_t	sBouyLink1X, sBouyLink1Y;
+		short	sBouyLink1X, sBouyLink1Y;
 		Maprealm2Screen(
 			prealm,
 			pcamera,
@@ -5667,7 +5689,7 @@ static void DrawBouyLink(	// Returns nothing.
 		// These lines show the paths the characters would take so
 		// they should be only on the X/Z plane and, therefore, Y
 		// is ignored.
-		int16_t	sBouyLink0X, sBouyLink0Y;
+		short	sBouyLink0X, sBouyLink0Y;
 		Maprealm2Screen(
 			prealm,
 			pcamera,
@@ -5716,7 +5738,7 @@ static void ResetHotPriorities(void)	// Returns nothing.
 // AddNewLine
 ////////////////////////////////////////////////////////////////////////////////
 
-static void AddNewLine(int16_t sX0, int16_t sY0, int16_t sX1, int16_t sY1)
+static void AddNewLine(short sX0, short sY0, short sX1, short sY1)
 {
 	LINKLINE newLine;
 
@@ -5775,8 +5797,8 @@ static void NetLog(CNavigationNet* pNavNet)
 	ofstream routeout;
 	CNavigationNet::nodeMap::iterator ibouy;
 	CBouy::linkset::iterator ilink;
-	uint8_t i;
-	uint8_t ucHops;
+	UCHAR i;
+	UCHAR ucHops;
 
 
 	txtout.open("c:\\temp\\navnet.txt");
@@ -5797,21 +5819,21 @@ static void NetLog(CNavigationNet* pNavNet)
 			for (ibouy = pNavNet->m_NodeMap.begin(); 
 				  ibouy != pNavNet->m_NodeMap.end(); ibouy++)
 			{
-				txtout << (uint16_t) ((*ibouy).second->m_ucID) << " : "; 
+				txtout << (USHORT) ((*ibouy).second->m_ucID) << " : "; 
 				for (ilink = (*ibouy).second->m_apsDirectLinks.begin(); 
 					  ilink != (*ibouy).second->m_apsDirectLinks.end(); ilink++)
 				{
-					txtout << (uint16_t) (*ilink)->m_ucID << ", ";
+					txtout << (USHORT) (*ilink)->m_ucID << ", ";
 				}
 				txtout << endl;
 				// Show routing table for reachable links
-				routeout << "bouy " << (uint16_t) ((*ibouy).second->m_ucID) << endl;
+				routeout << "bouy " << (USHORT) ((*ibouy).second->m_ucID) << endl;
 				for (i = 1; i < pNavNet->GetNumNodes(); i++)
 				{
 					ucHops = (*ibouy).second->NextRouteNode(i);
 					if (ucHops < 255)
 					{
-						routeout << " vialink[" << (uint16_t) i << "] = " << (uint16_t) ucHops << endl;
+						routeout << " vialink[" << (USHORT) i << "] = " << (USHORT) ucHops << endl;
 					}
 				}
 
@@ -5907,7 +5929,7 @@ static void DrawNetwork(	// Returns nothing.
 			// These lines show the paths the characters would take so
 			// they should be only on the X/Z plane and, therefore, Y
 			// is ignored.
-			int16_t	sBouyLink0X, sBouyLink0Y;
+			short	sBouyLink0X, sBouyLink0Y;
 			Maprealm2Screen(
 				prealm,
 				pcamera,
@@ -5917,7 +5939,7 @@ static void DrawNetwork(	// Returns nothing.
 				&sBouyLink0X,
 				&sBouyLink0Y);
 
-			int16_t	sBouyLink1X, sBouyLink1Y;
+			short	sBouyLink1X, sBouyLink1Y;
 			Maprealm2Screen(
 				prealm,
 				pcamera,
@@ -5939,11 +5961,11 @@ static void DrawNetwork(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Creates a view and adds it to the list of views.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t AddView(		// Returns 0 on success.
+static short AddView(		// Returns 0 on success.
 	CRealm*	prealm)			// In:  Realm in which to setup camera.
 	{
-	static int16_t	sNum	= 0;
-	int16_t	sRes	= 0;	// Assume success.
+	static short	sNum	= 0;
+	short	sRes	= 0;	// Assume success.
 	RListBox*	plb	= (RListBox*)ms_pguiCameras->GetItemFromId(GUI_ID_CAMERA_LIST);
 	if (plb != NULL)
 		{
@@ -5953,7 +5975,7 @@ static int16_t AddView(		// Returns 0 on success.
 			char	szTitle[256];
 			sprintf(szTitle, "Camera %d", ++sNum);
 			RGuiItem*	pgui			= plb->AddString(szTitle);
-			pgui->m_lId					= (S64)pview;
+			pgui->m_lId					= (long)pview;
 			plb->AdjustContents();
 
 			pview->pgui->SetText("%s", szTitle);
@@ -5985,7 +6007,7 @@ static void RemoveView(		// Returns nothing.
 		RGuiItem*	pguiRemove;
 		if (pview != NULL)
 			{
-			pguiRemove	= plb->GetItemFromId((S64)pview);
+			pguiRemove	= plb->GetItemFromId((long)pview);
 			}
 		else
 			{
@@ -6017,11 +6039,11 @@ static void RemoveViews(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Creates a new View and adds it to the list of Views.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t CreateView(					// Returns 0 on success.
+static short CreateView(					// Returns 0 on success.
 	View**	ppview,							// Out: New view, if not NULL.
 	CRealm*	prealm)							// In:  Realm in which to setup camera.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (ppview != NULL)
 		{
@@ -6126,7 +6148,7 @@ static void DrawView(						// Returns nothing.
 	CRealm*	prealm)							// Realm to draw.
 	{
 	// Get client.
-	int16_t	sClientPosX, sClientPosY;
+	short	sClientPosX, sClientPosY;
 	pview->pgui->GetClient(&sClientPosX, &sClientPosY, NULL, NULL);
 	
 	// Add in GUI's position.
@@ -6134,8 +6156,8 @@ static void DrawView(						// Returns nothing.
 	sClientPosY	+= pview->pgui->m_sY;
 	
 	// Use scrollbars for position.
-	int16_t	sViewX	= 0;	// Safety.
-	int16_t	sViewY	= 0;	// Safety.
+	short	sViewX	= 0;	// Safety.
+	short	sViewY	= 0;	// Safety.
 	if (pview->psbVert != NULL)
 		{
 		sViewY	= pview->psbVert->GetPos();
@@ -6249,14 +6271,14 @@ static void RefreshMap(						// Returns nothing.
 		// Clear.
 		ms_pguiMapZone->Compose();
 
-		int16_t	sClientX, sClientY, sClientW, sClientH;
+		short	sClientX, sClientY, sClientW, sClientH;
 		ms_pguiMapZone->GetClient(&sClientX, &sClientY, &sClientW, &sClientH);
 		
 		// Allocate temp camera and film . . .
 		CCamera	camera;
 		RImage	imFilm;
-		int16_t	sViewW	= prealm->m_phood->m_pimBackground->m_sWidth;
-		int16_t	sViewH	= prealm->m_phood->m_pimBackground->m_sHeight;
+		short	sViewW	= prealm->m_phood->m_pimBackground->m_sWidth;
+		short	sViewH	= prealm->m_phood->m_pimBackground->m_sHeight;
 		if (imFilm.CreateImage(
 			sViewW,
 			sViewH,
@@ -6314,9 +6336,9 @@ static void CancelDrag(CRealm* prealm)		// Returns nothing.
 // Place any thing being dragged.
 ////////////////////////////////////////////////////////////////////////////////
 static void DragDrop(	// Returns nothing.
-	int16_t sDropX,			// In:  Drop x position.
-	int16_t sDropY,			// In:  Drop y position.
-	int16_t sDropZ)			// In:  Drop z position.
+	short sDropX,			// In:  Drop x position.
+	short sDropY,			// In:  Drop y position.
+	short sDropZ)			// In:  Drop z position.
 	{
 	// If there is an item being moved . . .
 	if (ms_sMoving != FALSE)
@@ -6372,7 +6394,7 @@ static void RlmNameToRgnName(	// Returns nothing.
 	char*	pszRealmName,	// In:  .RLM name.
 	char* pszRgnName)		// Out: .RGN name.
 	{
-	int16_t	sIndex	= strlen(pszRealmName);
+	short	sIndex	= strlen(pszRealmName);
 	while (sIndex-- >= 0)
 		{
 		if (pszRealmName[sIndex] == '\\')
@@ -6436,11 +6458,11 @@ static void PrevItem(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Load the trigger regions for the specified realm.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t LoadTriggerRegions(	// Returns 0 on success.
+static short LoadTriggerRegions(	// Returns 0 on success.
 	char*	pszRealmName)				// In:  Name of the REALM (*.RLM) file.
 											// The .ext is stripped and .rgn is appended.
 	{
-	int16_t sRes	= 0;	// Assume success.
+	short sRes	= 0;	// Assume success.
 
 	// Change filename to .RGN name.
 	char	szRgnName[RSP_MAX_PATH];
@@ -6449,7 +6471,7 @@ static int16_t LoadTriggerRegions(	// Returns 0 on success.
 	RFile	file;
 	if (file.Open(szRgnName, "rb", RFile::LittleEndian) == 0)
 		{
-		int16_t	i;
+		short	i;
 		for (i = 0; i < NUM_ELEMENTS(ms_argns) && sRes == 0; i++)
 			{
 			sRes	= ms_argns[i].Load(&file);
@@ -6469,12 +6491,12 @@ static int16_t LoadTriggerRegions(	// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 // Save the trigger regions for the specified realm.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SaveTriggerRegions(	// Returns 0 on success.
+static short SaveTriggerRegions(	// Returns 0 on success.
 	char*	pszRealmName,				// In:  Name of the REALM (*.RLM) file.
 	CRealm*	prealm					// In:  Access of Realm Info
 	)										// The .ext is stripped and .rgn is appended.
 	{
-	int16_t sRes	= 0;	// Assume success.
+	short sRes	= 0;	// Assume success.
 
 	// Change filename to .RGN name.
 	char	szRgnName[RSP_MAX_PATH];
@@ -6483,7 +6505,7 @@ static int16_t SaveTriggerRegions(	// Returns 0 on success.
 	RFile	file;
 	if (file.Open(szRgnName, "wb", RFile::LittleEndian) == 0)
 		{
-		int16_t	i;
+		short	i;
 		for (i = 0; i < NUM_ELEMENTS(ms_argns) && sRes == 0; i++)
 			{
 			sRes	= ms_argns[i].Save(&file);
@@ -6506,14 +6528,14 @@ static int16_t SaveTriggerRegions(	// Returns 0 on success.
 // The current technique is that the CREALM must ALWAYS have a cTrigger in it,
 // which in itself contains the pointer m_pmgi.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t CreateTriggerRegions(	// Returns 0 on success.
+static short CreateTriggerRegions(	// Returns 0 on success.
 	CRealm*	prealm					// In:  Access of Realm Info
 	)										
 	{
-	int16_t sRes	= 0;	// Assume success.
+	short sRes	= 0;	// Assume success.
 	if (prealm->m_pTriggerMapHolder == NULL)
 		{
-		int16_t sResult;
+		short sResult;
 
 		TRACE("CreateTriggerRegions(): No default CThing to hold triggers!\n");
 		TRACE("CreateTriggerRegions(): Adding one for your convenience!\n");
@@ -6562,7 +6584,7 @@ static int16_t CreateTriggerRegions(	// Returns 0 on success.
 		else
 			{
 			// Create a seondary palette table index
-			for (int16_t i = 0;i < 256; i++)
+			for (short i = 0;i < 256; i++)
 				{
 				prealm->m_asPylonUIDs[i] = 0;
 				prealm->m_pTriggerMapHolder->m_ausPylonUIDs[i] = 0;
@@ -6958,10 +6980,10 @@ static void DelMost(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Copy a thing to the paste buffer.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t CopyItem(	// Returns 0 on success.
+static short CopyItem(	// Returns 0 on success.
 	CThing* pthingCopy)	// In:  CThing to copy.
 	{
-	int16_t		sRes	= 0;	// Assume success.
+	short		sRes	= 0;	// Assume success.
 
 	// If anything to copy . . .
 	if (pthingCopy != NULL)
@@ -7030,13 +7052,13 @@ static int16_t CopyItem(	// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 // Copy a thing to the paste buffer.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t PasteItem(	// Returns 0 on success.
+static short PasteItem(	// Returns 0 on success.
 	CRealm*	prealm,		// In:  The realm to paste into.
-	int16_t		sX,			// In:  Location for new thing.
-	int16_t		sY,			// In:  Location for new thing.
-	int16_t		sZ)			// In:  Location for new thing.
+	short		sX,			// In:  Location for new thing.
+	short		sY,			// In:  Location for new thing.
+	short		sZ)			// In:  Location for new thing.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Drop anything we currently are holding onto.
 	DragDrop(
@@ -7094,18 +7116,18 @@ static int16_t PasteItem(	// Returns 0 on success.
 // the height specified by the realm's attribute map
 // at the resulting *psRealmX, *psRealmZ.
 ////////////////////////////////////////////////////////////////////////////////
-extern void MapScreen2Realm(	// Returns nothing.
+static void MapScreen2Realm(	// Returns nothing.
 	CRealm*	prealm,				// In:  Realm.
 	CCamera*	pcamera,				// In:  View of prealm.
-	int16_t sScreenX,				// In:  Screen x coord.
-	int16_t sScreenY,				// In:  Screen y coord.
-	int16_t* psRealmX,				// Out: Realm x coord.
-	int16_t* psRealmY,				// Out: Realm y coord (always via realm's height map).
-	int16_t* psRealmZ)				// Out: Realm z coord.
+	short sScreenX,				// In:  Screen x coord.
+	short sScreenY,				// In:  Screen y coord.
+	short* psRealmX,				// Out: Realm x coord.
+	short* psRealmY,				// Out: Realm y coord (always via realm's height map).
+	short* psRealmZ)				// Out: Realm z coord.
 	{
 	// Get coordinate on 2D viewing plane.
-	int16_t	sRealmX2	= sScreenX + pcamera->m_sScene2FilmX;
-	int16_t	sRealmY2	= sScreenY + pcamera->m_sScene2FilmY;
+	short	sRealmX2	= sScreenX + pcamera->m_sScene2FilmX;
+	short	sRealmY2	= sScreenY + pcamera->m_sScene2FilmY;
 
 	// If there's a hood . . .
 	if (prealm->m_phood != NULL)
@@ -7140,74 +7162,21 @@ extern void MapScreen2Realm(	// Returns nothing.
 		}
 	}
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Map a screen coordinate to a realm coordinate.
-// Note that this function's *psRealmY output is always
-// the height specified by the realm's attribute map
-// at the resulting *psRealmX, *psRealmZ.
-////////////////////////////////////////////////////////////////////////////////
-extern void MapScreen2Realm(	// Returns nothing.
-	CRealm*	prealm,				// In:  Realm.
-	CCamera*	pcamera,				// In:  View of prealm.
-	double sScreenX,				// In:  Screen x coord.
-	double sScreenY,				// In:  Screen y coord.
-	double* psRealmX,				// Out: Realm x coord.
-	double* psRealmY,				// Out: Realm y coord (always via realm's height map).
-	double* psRealmZ)				// Out: Realm z coord.
-{
-	// Get coordinate on 2D viewing plane.
-	double	sRealmX2 = sScreenX + (double)pcamera->m_sScene2FilmX;
-	double	sRealmY2 = sScreenY + (double)pcamera->m_sScene2FilmY;
-
-	// If there's a hood . . .
-	if (prealm->m_phood != NULL)
-	{
-		// Map to realm's X/Z plane:
-		// Z is stretched.
-		prealm->MapY2DtoZ3D(sRealmY2, psRealmZ);
-		// X is trivial.
-		*psRealmX = sRealmX2;
-
-		// If there is an attribute map . . .
-		if (prealm->m_pTerrainMap != NULL)
-		{
-			// The realm y is the height indicated by the attribute map
-			// in the given location on the X/Z plane.
-			*psRealmY = prealm->GetHeight(
-				*psRealmX,
-				*psRealmZ);
-		}
-		else
-		{
-			// Safety.
-			*psRealmY = 0;
-		}
-	}
-	else
-	{
-		// Safety.
-		*psRealmX = sRealmX2;
-		*psRealmY = 0;
-		*psRealmZ = sRealmY2;
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Map a realm coordinate to a screen coordinate.
 ////////////////////////////////////////////////////////////////////////////////
-extern void Maprealm2Screen(	// Returns nothing.
+static void Maprealm2Screen(	// Returns nothing.
 	CRealm*	prealm,				// In:  Realm.
 	CCamera*	pcamera,				// In:  View of prealm.
-	int16_t		sRealmX,				// In:  Realm x coord.
-	int16_t		sRealmY,				// In:  Realm y coord.
-	int16_t		sRealmZ,				// In:  Realm z coord.
-	int16_t*	psScreenX,			// Out: Screen x coord.
-	int16_t*	psScreenY)			// Out: Screen y coord.
+	short		sRealmX,				// In:  Realm x coord.
+	short		sRealmY,				// In:  Realm y coord.
+	short		sRealmZ,				// In:  Realm z coord.
+	short*	psScreenX,			// Out: Screen x coord.
+	short*	psScreenY)			// Out: Screen y coord.
 	{
 	// Map coordinate onto 2D viewing plane.
-	int16_t	sViewX2;
-	int16_t	sViewY2;
+	short	sViewX2;
+	short	sViewY2;
 	prealm->Map3Dto2D(
 		sRealmX,
 		sRealmY,
@@ -7220,34 +7189,6 @@ extern void Maprealm2Screen(	// Returns nothing.
 	*psScreenY	= sViewY2 - pcamera->m_sScene2FilmY;
 	}
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Map a realm coordinate to a screen coordinate.
-////////////////////////////////////////////////////////////////////////////////
-extern void Maprealm2Screen(	// Returns nothing.
-	CRealm*	prealm,				// In:  Realm.
-	CCamera*	pcamera,				// In:  View of prealm.
-	double		sRealmX,				// In:  Realm x coord.
-	double		sRealmY,				// In:  Realm y coord.
-	double		sRealmZ,				// In:  Realm z coord.
-	double*	psScreenX,			// Out: Screen x coord.
-	double*	psScreenY)			// Out: Screen y coord.
-{
-	// Map coordinate onto 2D viewing plane.
-	double	sViewX2;
-	double	sViewY2;
-	prealm->Map3Dto2D(
-		sRealmX,
-		sRealmY,
-		sRealmZ,
-		&sViewX2,
-		&sViewY2);
-
-	// Offset to screen.
-	*psScreenX = sViewX2 - (double)pcamera->m_sScene2FilmX;
-	*psScreenY = sViewY2 - (double)pcamera->m_sScene2FilmY;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Blit attribute areas lit by the specified mask into the specified image.
 ////////////////////////////////////////////////////////////////////////////////
@@ -7255,10 +7196,10 @@ static void AttribBlit(			// Returns nothing.
 	RMultiGrid*	pmg,				// In:  Multigrid of attributes.
 	U16			u16Mask,			// In:  Mask of important attributes.
 	RImage*		pimDst,			// In:  Destination image.
-	int16_t			sSrcX,			// In:  Where in Multigrid to start.
-	int16_t			sSrcY,			// In:  Where in Multigrid to start.
-	int16_t			sW,				// In:  How much of multigrid to use.
-	int16_t			sH)				// In:  How much of multigrid to use.
+	short			sSrcX,			// In:  Where in Multigrid to start.
+	short			sSrcY,			// In:  Where in Multigrid to start.
+	short			sW,				// In:  How much of multigrid to use.
+	short			sH)				// In:  How much of multigrid to use.
 	{
 	// Keep it at the edge of the film.
 	ms_spriteAttributes.m_sX2				= sSrcX;
@@ -7271,12 +7212,12 @@ static void AttribBlit(			// Returns nothing.
 	// Get dst start.
 	U8*	pu8RowDst	= pimDst->m_pData;
 	U8*	pu8Dst;
-	int32_t	lPitch;
+	long	lPitch;
 
-	int16_t	sGridW, sGridH;
+	short	sGridW, sGridH;
 	pmg->GetGridDimensions(&sGridW, &sGridH);
 
-	int16_t	sIterX;
+	short	sIterX;
 
 	while (sH--)
 		{
@@ -7330,7 +7271,7 @@ static void AttribMaskBtnPressed(	// Returns nothing.
 		// If there's no image . . .
 		if (ms_spriteAttributes.m_pImage == NULL)
 			{
-			int16_t	sErr	= 0;
+			short	sErr	= 0;
 
 			// Create it . . .
 			ms_spriteAttributes.m_pImage	= new RImage;
@@ -7374,9 +7315,9 @@ static void AttribMaskBtnPressed(	// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Resizes the attribute sprite, if allocated.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t SizeShowAttribsSprite(void)	// Returns 0 on success.
+static short SizeShowAttribsSprite(void)	// Returns 0 on success.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (ms_spriteAttributes.m_pImage)
 		{
@@ -7413,11 +7354,11 @@ static int16_t SizeShowAttribsSprite(void)	// Returns 0 on success.
 // Our RFile callback
 //
 ////////////////////////////////////////////////////////////////////////////////
-static void MyRFileCallback(int32_t lBytes)
+static void MyRFileCallback(long lBytes)
 	{
 	ms_lFileBytesSoFar	+= lBytes;
 
-	int32_t lNow = rspGetMilliseconds();
+	long lNow = rspGetMilliseconds();
 	if ((lNow - ms_lRFileCallbackTime) > MY_RFILE_CALLBACK_INTERVAL)
 		{
 		// Do an update
@@ -7599,16 +7540,16 @@ static void UpdateSelectionInfo(	// Returns nothing.
 // Get a temporary file name
 //
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t TmpFileName(								// Returns 0 if successfull, non-zero otherwise
+static short TmpFileName(								// Returns 0 if successfull, non-zero otherwise
 	char* pszFileName,									// Out: Temp file name returned here
-	int16_t sMaxSize)										// In:  Maximum size of file name
+	short sMaxSize)										// In:  Maximum size of file name
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	#if defined(WIN32)
 
 		char	szPath[RSP_MAX_PATH];
-		uint32_t	ulLen	= GetTempPath(sizeof(szPath), szPath);
+		ULONG	ulLen	= GetTempPath(sizeof(szPath), szPath);
 		if (ulLen >= sizeof(szPath) )
 			{
 			TRACE("TmpFileName(): GetTempPath() could not fit the path and filename into our string.\n");
@@ -7658,14 +7599,14 @@ void Pos2Str(		// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Show statistics for the specified realm.
 ////////////////////////////////////////////////////////////////////////////////
-static int16_t ShowRealmStatistics(	// Returns 0 on success.
+static short ShowRealmStatistics(	// Returns 0 on success.
 	CRealm*	prealm,						// In:  Realm to get stats on.
 	CThing** ppthing)						// Out: Selected thing, if not NULL.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Store cursor show level so we can restore it when done.
-	int16_t sOrigCursorShowLevel	= rspGetMouseCursorShowLevel();
+	short sOrigCursorShowLevel	= rspGetMouseCursorShowLevel();
 	// Set the mouse so we can see it.
 	rspSetMouseCursorShowLevel(1);
 
@@ -7685,7 +7626,7 @@ static int16_t ShowRealmStatistics(	// Returns 0 on success.
 			char	szY[256];
 			char	szZ[256];
 			double	dX, dY, dZ;
-			int32_t	lNum	= 0;
+			long	lNum	= 0;
 			CListNode<CThing>*	pthingnode	= prealm->m_everythingHead.m_pnNext;
 			CThing*	pthing;
 			while (pthingnode != &(prealm->m_everythingTail))
@@ -7715,7 +7656,7 @@ static int16_t ShowRealmStatistics(	// Returns 0 on success.
 				if (pguiThing)
 					{
 					// Success.
-					pguiThing->m_lId	= (S64)pthing;
+					pguiThing->m_lId	= (long)pthing;
 					}
 				else
 					{
@@ -7777,12 +7718,12 @@ static int16_t ShowRealmStatistics(	// Returns 0 on success.
 ////////////////////////////////////////////////////////////////////////////////
 static bool RealmOpProgress(			// Returns true to continue; false to
 												// abort operation.
-	int16_t	sLastItemProcessed,			// In:  Number of items processed so far.
-	int16_t	sTotalItemsToProcess)		// In:  Total items to process.
+	short	sLastItemProcessed,			// In:  Number of items processed so far.
+	short	sTotalItemsToProcess)		// In:  Total items to process.
 	{
-	static int32_t	lLastProgressPos;
-	static int32_t	lProgressX, lProgressY, lProgressW, lProgressH;
-	static int32_t	lLastCallTime;
+	static long	lLastProgressPos;
+	static long	lProgressX, lProgressY, lProgressW, lProgressH;
+	static long	lLastCallTime;
 
 	// Just need to get the key status array once.
 	U8*	pau8KeyStatus	= rspGetKeyStatusArray();
@@ -7825,17 +7766,17 @@ static bool RealmOpProgress(			// Returns true to continue; false to
 			lProgressH + 2);
 		}
 
-	int32_t lNow = rspGetMilliseconds();
+	long lNow = rspGetMilliseconds();
 	if ((lNow - lLastCallTime) > PROGRESS_CALLBACK_INTERVAL)
 		{
 		// Do an update
 		UpdateSystem();
 
 		// Compute new position.
-		int32_t	lNewProgressPos;
+		long	lNewProgressPos;
 		if (sTotalItemsToProcess > 0)
 			{
-			lNewProgressPos	= (int32_t)sLastItemProcessed * lProgressW / (int32_t)sTotalItemsToProcess;
+			lNewProgressPos	= (long)sLastItemProcessed * lProgressW / (long)sTotalItemsToProcess;
 			}
 		else
 			{

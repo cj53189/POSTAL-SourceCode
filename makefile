@@ -2,64 +2,44 @@
 # !!! FIXME: Make this more robust. MUCH more robust.
 # !!! FIXME: ...or at least comment the rest of these options...
 
-BINDIR := ./bin
-SRCDIR := .
-
-ifeq ($(WITH_STEAMWORKS),1)
-  steamworks := true
-endif
-
 ifeq ($(PANDORA),1)
   macosx := false
   CPUARCH := arm
-  CC := gcc
-  CXX := g++
+  CC := g++
   LINKER := g++
   steamworks := false
   CFLAGS += -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -ffast-math -DPANDORA
-  CLIENTEXE := $(BINDIR)/postal1-arm
 else ifeq ($(ODROID),1)
   macosx := false
   CPUARCH := arm
-  CC := gcc
-  CXX := g++
+  CC := g++
   LINKER := g++
   steamworks := false
   CFLAGS += -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard -ftree-vectorize -ffast-math -DODROID
-  CLIENTEXE := $(BINDIR)/postal1-arm
 else ifeq ($(linux_x86),1)
   target := linux_x86
-  CFLAGS += -m32
-  CLIENTEXE := $(BINDIR)/postal1-x86
-else ifeq ($(macosx_x86),1)
-  target := macosx_x86
-  CLIENTEXE := $(BINDIR)/postal1-x86
 else
-  target := linux_x86_64
-  CLIENTEXE := $(BINDIR)/postal1-x86_64
+  target := macosx_x86
+  steamworks := true
 endif
+
+BINDIR := ./bin
+SRCDIR := .
+#debug := true
+debug := false
 
 # ----------------------------------------------------- ... bleh.
 
 ifeq ($(strip $(target)),linux_x86)
   macosx := false
   CPUARCH := x86
-  CC := gcc
-  CXX := g++
-  LINKER := g++ -m32
-endif
-ifeq ($(strip $(target)),linux_x86_64)
-  macosx := false
-  CPUARCH := x86_64
-  CC ?= gcc
-  CXX ?= g++
-  LINKER ?= g++
+  CC := g++
+  LINKER := g++
 endif
 ifeq ($(strip $(target)),macosx_x86)
   macosx := true
   CPUARCH := x86
-  CC := gcc
-  CXX := g++
+  CC := g++
   LINKER := g++
 endif
 
@@ -157,9 +137,7 @@ SRCS := \
 	menus.cpp \
 	play.cpp \
 	SampleMaster.cpp \
-	title.cpp
-
-RSSRCS := \
+	title.cpp \
 	RSPiX/Src/BLUE/unix/Bdebug.cpp \
 	RSPiX/Src/BLUE/unix/Bjoy.cpp \
 	RSPiX/Src/BLUE/unix/Bkey.cpp \
@@ -233,9 +211,7 @@ RSSRCS := \
 	RSPiX/Src/ORANGE/GUI/txt.cpp \
 	RSPiX/Src/CYAN/Unix/uDialog.cpp \
 	RSPiX/Src/CYAN/Unix/uColors.cpp \
-	RSPiX/Src/CYAN/Unix/uPath.cpp
-
-WSRCS :=  \
+	RSPiX/Src/CYAN/Unix/uPath.cpp \
 	WishPiX/Menu/menu.cpp \
 	WishPiX/Prefs/prefline.cpp \
 	WishPiX/Prefs/prefs.cpp \
@@ -245,12 +221,7 @@ WSRCS :=  \
     # wtf is THIS?!
 	#RSPiX/Src/ORANGE/MTask/mtask.cpp \
 
-SRCS += $(RSSRCS)
-SRCS += $(WSRCS)
-
-RSOBJS := $(RSSRCS:.cpp=.o)
-RSOBJS := $(foreach f,$(RSOBJS),$(BINDIR)/$(f))
-
+CLIENTEXE := $(BINDIR)/postal1-bin
 OBJS0 := $(SRCS:.s=.o)
 OBJS1 := $(OBJS0:.c=.o)
 OBJS2 := $(OBJS1:.cpp=.o)
@@ -259,16 +230,8 @@ OBJS4 := $(OBJS3:.s=.o)
 OBJS := $(foreach f,$(OBJS4),$(BINDIR)/$(f))
 SRCS := $(foreach f,$(SRCS),$(SRCDIR)/$(f))
 
-EBINDIR := ./extra
-ESRCS := \
-		saktool.c
-
-EOBJS := $(ESRCS:.c=.o)
-EOBJS := $(foreach f,$(EOBJS),$(EBINDIR)/$(f))
-ESRCS := $(foreach f,$(ESRCS),$(SRCDIR)/$(f))
-
 # !!! FIXME: Get -Wall in here, some day.
-CFLAGS += -fsigned-char -DPLATFORM_UNIX -w
+CFLAGS += -fsigned-char -g -DPLATFORM_UNIX -w
 
 ifeq ($(strip $(macosx)),true)
   CFLAGS += -DPLATFORM_MACOSX
@@ -300,9 +263,16 @@ ifeq ($(strip $(expiring_beta)),true)
   CFLAGS += -DBETAEXPIRE=$(shell date +%s)
 endif
 
+ifeq ($(strip $(debug)),true)
+  CFLAGS += -DDEBUG -D_DEBUG -O0
+else
+  OPTFLAG := -O3
+  CFLAGS += -DNDEBUG -D_NDEBUG $(OPTFLAG)
+endif
+
 ifeq ($(strip $(macosx)),true)
-  CFLAGS += -arch i386 -mmacosx-version-min=10.6
-  LDFLAGS += -arch i386 -mmacosx-version-min=10.6
+  CFLAGS += -arch i386 -mmacosx-version-min=10.5
+  LDFLAGS += -arch i386 -mmacosx-version-min=10.5
   LDFLAGS += -framework CoreFoundation -framework Cocoa
   LIBS += SDL2/libs/macosx/libSDL2-2.0.0.dylib
   STEAMLDFLAGS += steamworks/sdk/redistributable_bin/osx32/libsteam_api.dylib
@@ -310,13 +280,9 @@ else
   ifeq ($(CPUARCH),arm)
     LIBS += -lSDL2
   else
-	ifeq ($(CPUARCH),x86_64)
-	  LIBS += -lSDL2
-	else
-	  LIBS += SDL2/libs/linux-x86/libSDL2-2.0.so.0
-	  LDFLAGS += -Wl,-rpath,\$$ORIGIN
-	  STEAMLDFLAGS += steamworks/sdk/redistributable_bin/linux32/libsteam_api.so
-	endif
+    LIBS += SDL2/libs/linux-x86/libSDL2-2.0.so.0
+    LDFLAGS += -Wl,-rpath,\$$ORIGIN
+    STEAMLDFLAGS += steamworks/sdk/redistributable_bin/linux32/libsteam_api.so
  endif
 endif
 
@@ -329,24 +295,14 @@ CFLAGS += -DALLOW_TWINSTICK
 
 .PHONY: all bindir
 
+all: $(CLIENTEXE)
 
-all: debugoff $(CLIENTEXE)
-
-
-debug: debugon $(CLIENTEXE)
-
-debugon:
-	$(eval CFLAGS += -DDEBUG -D_DEBUG -O0 -g)
-
-debugoff:
-	$(eval OPTFLAG := -O0)
-	$(eval CFLAGS += -DNDEBUG -D_NDEBUG -O0)
 
 $(BINDIR)/%.o: $(SRCDIR)/%.s
 	$(CC) $(CFLAGS) -DELF -x assembler-with-cpp -o $@ -c $<
 
 $(BINDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BINDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -400,36 +356,6 @@ bindir :
 	mkdir -p $(BINDIR)/WishPiX/Spry
 	mkdir -p $(BINDIR)/libs
 
-$(EBINDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -c -g -o $@ $< $(CFLAGS)
-
-saktool: $(EBINDIR) $(EOBJS) $(ELIBS)
-	$(LINKER) -o saktool $(EOBJS) $(ELDFLAGS) $(ELIBS)
-
-picon:
-	$(eval CFLAGS += -fPIC -shared)
-
-RSPiX_wrap.cxx: RSPiX.i
-	swig -c++ -python -IRSPiX/Src RSPiX.i 
-	# Idk if there's a way to fix this "properly"
-	sed -i "s/ Node \\*/ RFList< RSprite \\* >::Pointer /g" RSPiX_wrap.cxx
-	sed -i "s/(Node \\*/(RFList< RSprite \\* >::Pointer/g" RSPiX_wrap.cxx
-
-RSPiX_wrap.o: RSPiX.i RSPiX_wrap.cxx
-	$(CXX) -c RSPiX_wrap.cxx $(CFLAGS) $(shell python2-config --cflags)
-
-_RSPiX.so: $(BINDIR) picon $(RSOBJS) RSPiX.i RSPiX_wrap.cxx RSPiX_wrap.o $(BINDIR)/WishPiX/Spry/spry.o $(BINDIR)/malphagen.o
-	$(CXX) RSPiX_wrap.o $(RSOBJS) $(BINDIR)/WishPiX/Spry/spry.o $(BINDIR)/malphagen.o -o _RSPiX.so $(LDFLAGS) $(LIBS) $(shell python2-config --libs) $(CFLAGS)
-
-swig:
-	BINDIR=binpic $(MAKE) -e _RSPiX.so
-
-$(EBINDIR) :
-	$(MAKE) ebindir
-
-ebindir :
-	mkdir -p $(EBINDIR)
-
 distclean: clean
 
 clean:
@@ -437,8 +363,5 @@ clean:
 	rm -rf $(BINDIR)
 	#rm -f $(SRCDIR)/parser/y.tab.c
 	#rm -f $(SRCDIR)/parser/lex.yy.c
-	rm -rf $(EBINDIR)
-	rm -f saktool
-	rm -f RSPiX_wrap.c RSPiX_wrap.cxx RSPiX_wrap.o _RSPiX.so RSPiX.py
 
 # end of Makefile ...

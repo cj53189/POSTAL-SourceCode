@@ -35,28 +35,28 @@
 // Encapsulate our buffer and info.
 typedef struct
 	{
-	uint8_t*	puc;			// Beginning of chunk.
-	int32_t		lSize;		// Total size of chunk (puc).
-	uint16_t	usType;		// Type of buffer.
-	uint8_t		ucFlags;		// Flags for buffer.
-	int32_t		lId;			// Id of buffer.
-	int32_t		lTime;		// Time buffer is supposed to arrive.
-	int32_t		lPos;			// Position for next piece.
+	UCHAR*	puc;			// Beginning of chunk.
+	long		lSize;		// Total size of chunk (puc).
+	USHORT	usType;		// Type of buffer.
+	UCHAR		ucFlags;		// Flags for buffer.
+	long		lId;			// Id of buffer.
+	long		lTime;		// Time buffer is supposed to arrive.
+	long		lPos;			// Position for next piece.
 	} RTCHUNK, *PRTCHUNK;
 
 // This type is used to call the user to allow them to allocate space for the
 // data and pass it back to be filled.
-typedef uint8_t* (*ALLOC_FILTERFUNC)(	int32_t lSize, uint16_t usType, uint8_t ucFlags,
-												int32_t lUser);
+typedef UCHAR* (*ALLOC_FILTERFUNC)(	long lSize, USHORT usType, UCHAR ucFlags,
+												long lUser);
 
 // This type is used to call the user to allow them to DEallocate space al-
 // located by a previous call to their ALLOC_FILTERFUNC.
-typedef void (*FREE_FILTERFUNC)(	uint8_t* puc, uint16_t usType, uint8_t ucFlags, 
-											int32_t lUser);
+typedef void (*FREE_FILTERFUNC)(	UCHAR* puc, USHORT usType, UCHAR ucFlags, 
+											long lUser);
 
 // This type is used to pass the copied chunk to the user ready to be used.
-typedef void (*USE_FILTERFUNC)(	uint8_t* puc, int32_t lSize, uint16_t usType,
-											uint8_t ucFlags, int32_t lTime, int32_t lUser);
+typedef void (*USE_FILTERFUNC)(	UCHAR* puc, long lSize, USHORT usType,
+											UCHAR ucFlags, long lTime, long lUser);
 
 class CFilter
 	{
@@ -67,7 +67,7 @@ class CFilter
 		~CFilter();
 
 	public:		// Methods.
-		void SetFilter(uint32_t ulFilterMask)
+		void SetFilter(ULONG ulFilterMask)
 			{ m_ulFilter = ulFilterMask; }
 
 		void SetFileWin(CFileWin* pfw)
@@ -78,7 +78,7 @@ class CFilter
 				// Point callback at our CFileWin callback dispatcher (calls 
 				// implied this version (WinCall)).
 				m_pfw->m_call			= (FWFUNC)WinCallStatic;
-				m_pfw->m_lUser			= (int32_t)this;
+				m_pfw->m_lUser			= (long)this;
 				}
 			}
 
@@ -87,7 +87,7 @@ class CFilter
 
 	public:		// Querries.
 		// Returns the current filter mask.
-		uint32_t GetFilter(void)
+		ULONG GetFilter(void)
 			{ return m_ulFilter; }
 
 	protected:	// Internal methods.
@@ -102,41 +102,41 @@ class CFilter
 
 
 		// Returns ptr to chunk via lId, returns NULL if not found.
-		PRTCHUNK GetChunk(int32_t lId);
+		PRTCHUNK GetChunk(long lId);
 
 		// Add a chunk header.
 		// Returns chunk on success, NULL otherwise.
-		PRTCHUNK AddChunk(int32_t lSize, uint16_t usType, uint8_t ucFlags, int32_t Id, 
-								int32_t lTime);
+		PRTCHUNK AddChunk(long lSize, USHORT usType, UCHAR ucFlags, long Id, 
+								long lTime);
 
 		// Removes a chunk header.
 		// Returns 0 on success.
-		int16_t RemoveChunk(PRTCHUNK pChunk);
+		short RemoveChunk(PRTCHUNK pChunk);
 
 		// Adds a buffer to a chunk.
 		// Returns amount added.
-		int32_t AddToChunk(CNFile* pfile, int32_t lBufSize);
+		long AddToChunk(CNFile* pfile, long lBufSize);
 
 		// Allocates data via user callback if defined or malloc, otherwise.
 		// Returns 0 on success.  See comment of this function in filter.cpp
 		// for greater details.
-		int16_t AllocChunk(uint8_t** ppuc, int32_t lSize, uint16_t usType, uint8_t ucFlags);
+		short AllocChunk(UCHAR** ppuc, long lSize, USHORT usType, UCHAR ucFlags);
 		// Deallocates data via user callback if defined or free if both 
 		// m_fnAlloc AND m_fnFree are NOT defined.
-		void FreeChunk(uint8_t* puc, uint16_t usType, uint8_t ucFlags);
+		void FreeChunk(UCHAR* puc, USHORT usType, UCHAR ucFlags);
 
 
 	public:		// Members.
 		ALLOC_FILTERFUNC	m_fnAlloc;		// Where to ask for data allocation.
 		FREE_FILTERFUNC	m_fnFree;		// Where to ask for data DEallocation.
 		USE_FILTERFUNC		m_fnUse;			// Where to pass completed chunks.
-		int32_t					m_lUser;			// User defined value.
+		long					m_lUser;			// User defined value.
 
 
 	protected:	// Members.
-		uint32_t			m_ulFilter;				// Channels allowed to pass.
-		int32_t			m_lPadSize;				// Size of current padding.
-		int32_t			m_lBufRemaining;		// Amount of current buffer remaining.
+		ULONG			m_ulFilter;				// Channels allowed to pass.
+		long			m_lPadSize;				// Size of current padding.
+		long			m_lBufRemaining;		// Amount of current buffer remaining.
 		PRTCHUNK		m_pChunk;				// Current chunk.
 		CFileWin*	m_pfw;					// File window.
 		CList	<RTCHUNK>	m_listPartial;	// List of partial buffers.

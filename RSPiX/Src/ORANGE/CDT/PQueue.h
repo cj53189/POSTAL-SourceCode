@@ -73,7 +73,7 @@ template <class T, class K> class RPQueue : public RSList<RPQueueNode<T, K>, K>
 
 	public:
 		// Default constructor.
-		RPQueue(int16_t sInitialize	= TRUE) :
+		RPQueue(short sInitialize	= TRUE) :
 			RSList<Node, K>(sInitialize)
 			{ 
 			if (sInitialize != FALSE)
@@ -89,7 +89,7 @@ template <class T, class K> class RPQueue : public RSList<RPQueueNode<T, K>, K>
 			}
 
 		// Enqueue the indicated item.
-		int16_t EnQ(	// Returns 0 on success.
+		short EnQ(	// Returns 0 on success.
 			T* pT,	// In:  Pointer to item to add.
 			K* pK)	// In:  Pointer to key to sort by (i.e., priority level).
 			{
@@ -156,7 +156,7 @@ template <class T, class K> class RPQueue : public RSList<RPQueueNode<T, K>, K>
 			}
 		
 		// Get number of items currently in the queue
-		int16_t NumItems(void)
+		short NumItems(void)
 			{ 
 			return m_sNumItems; 
 			}
@@ -201,10 +201,10 @@ template <class T, class K> class RPQueue : public RSList<RPQueueNode<T, K>, K>
 					// unless extending this class's functionality.
 
 		// Hook Insert() to update count of items.
-		int16_t Insert(		// Returns 0 on success.
+		short Insert(		// Returns 0 on success.
 			Node* pnode)	// Pointer to add.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 			// If able to insert into RSList . . .
 			if (RSList<Node, K>::Insert(pnode, &(pnode->k)) == 0)
 				{
@@ -221,10 +221,10 @@ template <class T, class K> class RPQueue : public RSList<RPQueueNode<T, K>, K>
 			}
 
 		// Hook Remove() to update count of items.
-		int16_t Remove(				// Returns 0 on success.
+		short Remove(				// Returns 0 on success.
 			Node* pnode = NULL)	// Item to remove or NULL to remove current.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 			// If able to remove from RSList . . .
 			if (RSList<Node, K>::Remove(pnode) == 0)
 				{
@@ -241,7 +241,7 @@ template <class T, class K> class RPQueue : public RSList<RPQueueNode<T, K>, K>
 			}
 		
 	protected:
-		int16_t	m_sNumItems;
+		short	m_sNumItems;
 	};
 	
 #endif // PQUEUE_H

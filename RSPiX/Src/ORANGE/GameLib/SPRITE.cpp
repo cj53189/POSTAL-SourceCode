@@ -74,7 +74,7 @@
 
 ////////////////// Instantiate Static members ////////////////////////////////
 
-RSList<RSprite, int16_t>	RSprite::SpriteList(FALSE);	// Master list of active sprites
+RSList<RSprite, short>	RSprite::SpriteList(FALSE);	// Master list of active sprites
 
 
 //*****************************************************************************
@@ -115,7 +115,7 @@ RSprite::RSprite()
 //
 //*****************************************************************************
 
-RSprite::RSprite(RImage* pImage, uint32_t ulFlags)
+RSprite::RSprite(RImage* pImage, ULONG ulFlags)
 {
 	Init();
 
@@ -147,8 +147,8 @@ RSprite::RSprite(RImage* pImage, uint32_t ulFlags)
 //
 //*****************************************************************************
 
-RSprite::RSprite(int16_t sX, int16_t sY, int16_t sZ, int16_t sAngle, 
-                 int32_t lWidth, int32_t lHeight, uint32_t ulFlags, RImage* pImage)
+RSprite::RSprite(short sX, short sY, short sZ, short sAngle, 
+                 long lWidth, long lHeight, ULONG ulFlags, RImage* pImage)
 {
 	// This basic init, among other things, adds this RSprite to the
 	// list with the key pointing at m_sZ.
@@ -254,9 +254,9 @@ RSprite::~RSprite()
 //
 //*****************************************************************************
 
-int16_t RSprite::CreateImage(void)	// Returns 0 on success.
+short RSprite::CreateImage(void)	// Returns 0 on success.
 {
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	m_pImage	= new RImage;
 	if (m_pImage != NULL)
@@ -323,10 +323,10 @@ void RSprite::DestroyImage(void)	// Returns nothing.
 //
 //*****************************************************************************
 
-int16_t RSprite::Save(char* pszFilename)
+short RSprite::Save(char* pszFilename)
 {
 	RFile cf;
-	int16_t sReturn = SUCCESS;
+	short sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "wb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -365,12 +365,12 @@ int16_t RSprite::Save(char* pszFilename)
 //
 //*****************************************************************************
 
-int16_t RSprite::Save(RFile* pcf)
+short RSprite::Save(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	uint32_t ulFileType = SPRITE_COOKIE;
-	uint32_t ulCurrentVersion = SPRITE_CURRENT_VERSION;
-	uint32_t ulImageFlag = 0;
+	short sReturn = SUCCESS;
+	ULONG ulFileType = SPRITE_COOKIE;
+	ULONG ulCurrentVersion = SPRITE_CURRENT_VERSION;
+	ULONG ulImageFlag = 0;
 
 	if (pcf && pcf->IsOpen())
 	{
@@ -598,10 +598,10 @@ int16_t RSprite::Save(RFile* pcf)
 //
 //*****************************************************************************
 
-int16_t RSprite::Load(char* pszFilename)
+short RSprite::Load(char* pszFilename)
 {
 	RFile cf;
-	int16_t sReturn = SUCCESS;
+	short sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "rb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -637,12 +637,12 @@ int16_t RSprite::Load(char* pszFilename)
 //
 //*****************************************************************************
 
-int16_t RSprite::Load(RFile* pcf)
+short RSprite::Load(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	uint32_t ulFileType = 0;
-	uint32_t ulVersion = 0;
-	uint32_t ulImageFlag = 0;
+	short sReturn = SUCCESS;
+	ULONG ulFileType = 0;
+	ULONG ulVersion = 0;
+	ULONG ulImageFlag = 0;
 
 	if (pcf && pcf->IsOpen())
 	{
@@ -887,10 +887,10 @@ int16_t RSprite::Load(RFile* pcf)
 //		0 otherwise
 //
 //*****************************************************************************
-int16_t RSprite::DoRegionsCollide(int16_t /*sThisRegionType*/, int16_t /*sOtherRegionType*/,
+short RSprite::DoRegionsCollide(short /*sThisRegionType*/, short /*sOtherRegionType*/,
 											RSprite* /*pSprite*/)	
 {
-	int16_t bCollision = 0;
+	short bCollision = 0;
 
 	// Call the region's collision detection routines here
 
@@ -913,7 +913,7 @@ int16_t RSprite::DoRegionsCollide(int16_t /*sThisRegionType*/, int16_t /*sOtherR
 //
 //*****************************************************************************
 
-int16_t RSprite::AddRegion(RRegion* pRegion)
+short RSprite::AddRegion(RRegion* pRegion)
 {
 	return m_clRegions.Add(pRegion);
 }
@@ -934,7 +934,7 @@ int16_t RSprite::AddRegion(RRegion* pRegion)
 //
 //*****************************************************************************
 
-int16_t RSprite::RemoveRegion(RRegion* pRegion)
+short RSprite::RemoveRegion(RRegion* pRegion)
 {
 	return m_clRegions.Remove(pRegion);
 }

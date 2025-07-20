@@ -28,8 +28,8 @@
 #include "portable.h"
 #include "flx.h"
 
-int16_t ReadFlic(char* pszIn);
-int16_t CopyFlic(char* pszIn, char* pszOut);
+short ReadFlic(char* pszIn);
+short CopyFlic(char* pszIn, char* pszOut);
 void DumpHeader(FLX_FILE_HDR* pfilehdr);
 
 
@@ -50,11 +50,11 @@ void main(void)
 // Copy a flic frame by frame to test the reading and writing functions.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t ReadFlic(char* pszIn)
+short ReadFlic(char* pszIn)
 	{
 	static FLX_BUF buf1;
 
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Open existing FLI file for reading
 	CFlx flxRead;
@@ -64,7 +64,7 @@ int16_t ReadFlic(char* pszIn)
 		DumpHeader(&filehdrRead);
 
 		// Read each frame
-		for (int16_t sFrame = 1; (sFrame <= filehdrRead.sNumFrames) && (sError == 0); sFrame++)
+		for (short sFrame = 1; (sFrame <= filehdrRead.sNumFrames) && (sError == 0); sFrame++)
 			{
 			if (flxRead.ReadNextFrame(&buf1) == 0)
 				{
@@ -94,11 +94,11 @@ int16_t ReadFlic(char* pszIn)
 // Copy a flic frame by frame to test the reading and writing functions.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CopyFlic(char* pszIn, char* pszOut)
+short CopyFlic(char* pszIn, char* pszOut)
 	{
 	static FLX_BUF buf1;
 
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Open existing FLI file for reading
 	CFlx flxRead;
@@ -118,7 +118,7 @@ int16_t CopyFlic(char* pszIn, char* pszOut)
 			DumpHeader(&filehdrWrite);
 							
 			// Read each frame and write it out
-			for (int16_t sFrame = 1; (sFrame <= filehdrRead.sNumFrames) && (sError == 0); sFrame++)
+			for (short sFrame = 1; (sFrame <= filehdrRead.sNumFrames) && (sError == 0); sFrame++)
 				{
 				if (flxRead.ReadNextFrame(&buf1) == 0)
 					{

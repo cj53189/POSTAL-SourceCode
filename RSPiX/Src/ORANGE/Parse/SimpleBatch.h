@@ -40,18 +40,18 @@ class RBatch
 //---------------- USER MEMBERS -------------
 public:
 	FILE* m_fp;
-	int32_t	m_lCurrentLine;
-	int16_t m_sNumTokens;
+	long	m_lCurrentLine;
+	short m_sNumTokens;
 	char	m_pszTokenList[SB_MAX_TOKENS][SB_MAX_TOKEN_SIZE];
-	int16_t m_sLinePos[SB_MAX_TOKENS];
-	int16_t	m_sCurToken; // THIS IS ONLY FOR USER TO USE => Has no meaning!
+	short m_sLinePos[SB_MAX_TOKENS];
+	short	m_sCurToken; // THIS IS ONLY FOR USER TO USE => Has no meaning!
 	char  m_pszFileName[128]; // For user convenience
 //----------- CONFIGURATION MEMBERS -------------
 	char 	m_pszSeparators[SB_MAX_CHAR_LIST];
 	char  m_pszSpecialCharacters[SB_MAX_CHAR_LIST];
-	int16_t	m_sCharEOL; // 2 for \n\r, else 1
-	int16_t m_sLowFilter;
-	int16_t m_sHighFilter;
+	short	m_sCharEOL; // 2 for \n\r, else 1
+	short m_sLowFilter;
+	short m_sHighFilter;
 	char	m_cStringContext;
 	char	m_cComment;
 //--------------- CONSTRUCTION -------------
@@ -64,7 +64,7 @@ public:
 		m_pszSpecialCharacters[0] = '\0';
 		m_lCurrentLine = 0;
 
-		for (int16_t i=0; i < SB_MAX_TOKENS; i++)
+		for (short i=0; i < SB_MAX_TOKENS; i++)
 			{
 			m_pszTokenList[i][0] = '\0';
 			m_sLinePos[i] = 0;
@@ -74,7 +74,7 @@ public:
 		}
 
 	void init(char* pszFileName,char* pszSeparators = " \t,",char* pszSpecialCharacters=NULL,
-		char	cString = '"',char cComment = '*',int16_t sCharEOL=1,int16_t sLowFilter=32,int16_t sHighFilter=128)
+		char	cString = '"',char cComment = '*',short sCharEOL=1,short sLowFilter=32,short sHighFilter=128)
 		{
 		clear();
 		if ((m_fp = fopen(pszFileName,"r")) == NULL)
@@ -94,7 +94,7 @@ public:
 		}
 
 	void configure(char* pszSeparators = " \t,",char* pszSpecialCharacters=NULL,
-		char	cString = '"',char cComment = '*',int16_t sCharEOL=1,int16_t sLowFilter=32,int16_t sHighFilter=128)
+		char	cString = '"',char cComment = '*',short sCharEOL=1,short sLowFilter=32,short sHighFilter=128)
 		{
 		m_sCharEOL = sCharEOL;
 		m_sLowFilter = sLowFilter;
@@ -113,12 +113,12 @@ public:
 		}
 
 	RBatch(char* pszFileName,char* pszSeparators = " \t,",char* pszSpecialCharacters = NULL,
-		char	cString = '"',char cComment = '*',int16_t sCharEOL=1,int16_t sLowFilter=32,int16_t sHighFilter=128)
+		char	cString = '"',char cComment = '*',short sCharEOL=1,short sLowFilter=32,short sHighFilter=128)
 		{
 		init(pszFileName,pszSeparators,pszSpecialCharacters,cString,cComment,sCharEOL,sLowFilter,sHighFilter);
 		}
 
-	int16_t open(char* pszFileName)
+	short open(char* pszFileName)
 		{
 		if (m_fp == NULL)
 			{
@@ -141,7 +141,7 @@ public:
 			}
 		}
 
-	int16_t close()
+	short close()
 		{
 		if (m_fp != NULL)
 			{
@@ -173,14 +173,14 @@ public:
 	static	char	ms_Error[256];
 //--------------- MEMBER FUNCTIONS -------------
 	// returns the number of tokens found, or -1 for EOF
-	int16_t GetLine();
+	short GetLine();
 
 	// If you care nothing of the concept of file lines except for
 	// reporting errors, you may take advantage of this function:
 	char* NextToken();
 
 	// creates an error message
-	char* CreateError(int16_t sToken = -1);
+	char* CreateError(short sToken = -1);
 	};
 
 //=====================

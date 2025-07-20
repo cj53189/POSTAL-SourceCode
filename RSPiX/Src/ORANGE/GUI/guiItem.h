@@ -45,7 +45,7 @@
 //							just the client by default.  
 //
 //		01/26/97	JMI	Altered static HotCall to accept an RHot* instead of a
-//							uint32_t 'as per' new RHot callbacks.
+//							ULONG 'as per' new RHot callbacks.
 //
 //		02/05/97	JMI	Added enum for new PushBtn (RPushBtn).
 //
@@ -273,7 +273,7 @@ class RGuiItem : public RProps <U32, U32>
 		// Set font utilized for text.  For now, you must set this, but 
 		// eventually I hope to have a built in default font embedded into the
 		// library so we can display text even when we can't find our assets.
-		void SetFont(RFont* pfnt, int16_t sHeight)
+		void SetFont(RFont* pfnt, short sHeight)
 			{ m_pprint->SetFont(sHeight, pfnt); }
 
 		// Set the text that represents this item.
@@ -282,8 +282,8 @@ class RGuiItem : public RProps <U32, U32>
 			...);				// Corresponding good stuff.
 
 		// Set the text that represents the specified child item.
-		int16_t SetText(		// Returns 0 if item found, non-zero otherwise.
-			int32_t	lId,		// Child item ID (can identify this item).
+		short SetText(		// Returns 0 if item found, non-zero otherwise.
+			long	lId,		// Child item ID (can identify this item).
 			char* pszFrmt,	// sprintf formatted format string.
 			...);				// Corresponding good stuff.
 
@@ -315,12 +315,12 @@ class RGuiItem : public RProps <U32, U32>
 		// Creates a displayable Gui.  Call SetFont and SetText before calling
 		// this as it calls Compose.
 		virtual					// If you override this, call this base if possible.
-		int16_t Create(			// Returns 0 on success.
-			int16_t sX,			// X position relative to "parent" item.
-			int16_t sY,			// Y position relative to "parent" item.
-			int16_t sW,			// Width.
-			int16_t sH,			// Height.
-			int16_t sDepth);		// Color depth.
+		short Create(			// Returns 0 on success.
+			short sX,			// X position relative to "parent" item.
+			short sY,			// Y position relative to "parent" item.
+			short sW,			// Width.
+			short sH,			// Height.
+			short sDepth);		// Color depth.
 
 		// Destroys dynamic display data.
 		virtual					// If you override this, call this base if possible.
@@ -328,60 +328,60 @@ class RGuiItem : public RProps <U32, U32>
 
 		// Draw this item and all its subitems into the provided RImage.
 		virtual						// If you override this, call this base if possible.
-		int16_t Draw(					// Returns 0 on success.
+		short Draw(					// Returns 0 on success.
 			RImage* pimDst,		// Destination image.
-			int16_t sDstX	= 0,		// X position in destination.
-			int16_t sDstY	= 0,		// Y position in destination.
-			int16_t sSrcX = 0,		// X position in source.
-			int16_t sSrcY = 0,		// Y position in source.
-			int16_t sW = 0,			// Amount to draw.
-			int16_t sH = 0,			// Amount to draw.
+			short sDstX	= 0,		// X position in destination.
+			short sDstY	= 0,		// Y position in destination.
+			short sSrcX = 0,		// X position in source.
+			short sSrcY = 0,		// Y position in source.
+			short sW = 0,			// Amount to draw.
+			short sH = 0,			// Amount to draw.
 			RRect* prc = NULL);	// Clip to.
 
 		// Pass up a message to redraw the specified region.
 		virtual					// If you override this, call this base if possible.
-		int16_t Redraw(			// Returns 0 on success.
-			int16_t	sSrcX = 0,	// X position to start drawing from.
-			int16_t	sSrcY = 0,	// Y position to start drawing from.
-			int16_t sW = 0,		// Amount to draw.
-			int16_t sH = 0);		// Amount to draw.
+		short Redraw(			// Returns 0 on success.
+			short	sSrcX = 0,	// X position to start drawing from.
+			short	sSrcY = 0,	// Y position to start drawing from.
+			short sW = 0,		// Amount to draw.
+			short sH = 0);		// Amount to draw.
 
 		// Blit this item only into provided RImage.  Used by Draw().
 		virtual						// If you override this, call this base if possible.
-		int16_t Blit(					// Returns 0 on success.
+		short Blit(					// Returns 0 on success.
 			RImage* pimDst,		// Destination image.
-			int16_t sDstX,			// X position in destination.
-			int16_t sDstY,			// Y position in destination.
-			int16_t sSrcX = 0,		// X position in source.
-			int16_t sSrcY = 0,		// Y position in source.
-			int16_t sW = 0,			// Amount to draw.
-			int16_t sH = 0,			// Amount to draw.
+			short sDstX,			// X position in destination.
+			short sDstY,			// Y position in destination.
+			short sSrcX = 0,		// X position in source.
+			short sSrcY = 0,		// Y position in source.
+			short sW = 0,			// Amount to draw.
+			short sH = 0,			// Amount to draw.
 			RRect* prc = NULL);	// Clip to.
 
 		// Draw text in m_szText in m_u32TextColor with transparent
 		// background at sX, sY with sW and m_sJustification.
 		// Does nothing if m_szText is empty.
 		virtual						// If you override this, call this base if possible.
-		int16_t DrawText(			// Returns 0 on success.
-			int16_t sX,				// X position in image.
-			int16_t sY,				// Y position in image.
-			int16_t sW = 0,			// Width of text area.
-			int16_t	sH = 0,			// Height of test area.
+		short DrawText(			// Returns 0 on success.
+			short sX,				// X position in image.
+			short sY,				// Y position in image.
+			short sW = 0,			// Width of text area.
+			short	sH = 0,			// Height of test area.
 			RImage* pim = NULL);	// Destination image.  NULL == use m_im.
 
 		// Ask user to erase area specified.
 		virtual					// If you override this, call this base if possible.
 		void Erase(				// Returns nothing.
-			int16_t sX = 0,		// X position to erase.
-			int16_t sY = 0,		// Y position to erase.
-			int16_t sW = 0,		// Width to erase.
-			int16_t sH = 0);		// Height to erase.
+			short sX = 0,		// X position to erase.
+			short sY = 0,		// Y position to erase.
+			short sW = 0,		// Width to erase.
+			short sH = 0);		// Height to erase.
 
 		// Move this item to sX, sY.
 		virtual					// If you override this, call this base if possible.
 		void Move(				// Returns nothing.
-			int16_t sX,			// New x position.
-			int16_t sY);			// New y position.
+			short sX,			// New x position.
+			short sY);			// New y position.
 
 		// Cursor event notification.
 		// Events in event area.
@@ -401,14 +401,14 @@ class RGuiItem : public RProps <U32, U32>
 		// If the item has m_sActive set to TRUE, it will be activated.
 		virtual					// If you override this, call this base if possible.
 		void SetActive(		// Returns nothing.
-			int16_t sActive);	// TRUE to make active, FALSE otherwise.
+			short sActive);	// TRUE to make active, FALSE otherwise.
 
 		// Hide or show GUI item and child items.  Causes RHots to be
 		// deactivated for both this and child items.
 		// DOES NOT CHANGE THE VISIBLE STATUS OF CHILD ITEMS.
 		virtual					// If you override this, call this base if possible.
 		void SetVisible(		// Returns nothing.
-			int16_t sVisible);	// TRUE to make visible, FALSE otherwise.
+			short sVisible);	// TRUE to make visible, FALSE otherwise.
 
 		// Change parent.  Removes from old parent's list and adds to new.
 		// New can be NULL (so can old).
@@ -419,7 +419,7 @@ class RGuiItem : public RProps <U32, U32>
 		virtual					// If you override this, call this base if possible.
 		void DrawBorder(		// Returns nothing.
 			RImage* pim	= NULL,			// Dest image, uses m_im if NULL.
-			int16_t sInvert	= FALSE);	// Inverts border if TRUE.
+			short sInvert	= FALSE);	// Inverts border if TRUE.
 
 		// Draw background.  Calls user callback m_backcall if provided.
 		virtual					// If you override this, call this base if possible.
@@ -477,7 +477,7 @@ class RGuiItem : public RProps <U32, U32>
 		// the type of the root item from the file and allocate an item of
 		// that type before loading.  Useful for loading generic *.GUI files.
 		// See LoadInstance(char*).
-		int16_t Load(					// Returns 0 on success.
+		short Load(					// Returns 0 on success.
 			char* pszFileName);	// Name of file to load from.
 
 		// This will load the GUI tree (i.e., 'this' item and its children).
@@ -488,31 +488,31 @@ class RGuiItem : public RProps <U32, U32>
 		// that type before loading.  Useful for loading generic *.GUI files.
 		// See LoadInstance(RFile*).
 		virtual						// If you override this, call this base if possible.
-		int16_t Load(					// Returns 0 on success.
+		short Load(					// Returns 0 on success.
 			RFile*	pfile);		// RFile open with read access to load from.
 
 		// This will open the specified file with write access in an RFile and
 		// pass it to Save(RFile*).
-		int16_t Save(					// Returns 0 on success.
+		short Save(					// Returns 0 on success.
 			char* pszFileName);	// Name of file to save to.
 
 		// This will save the GUI tree (i.e., 'this' item and its children).
 		// If you override this function, you should call this base version
 		// to have it save the base class members.
 		virtual						// If you override this, call this base if possible.
-		int16_t Save(					// Returns 0 on success.
+		short Save(					// Returns 0 on success.
 			RFile*	pfile);		// RFile open with write access to save to.
 
 		// Sets the 'clicked' status.
 		void SetClicked(			// Returns nothing.
-			int16_t sClicked);		// New 'clicked' status.
+			short sClicked);		// New 'clicked' status.
 
 		// Draws focus for item if m_sShowFocus is TRUE.
 		virtual						// If you override this, call this base if possible.
 		void DrawFocus(			// Returns nothing.
 			RImage* pimDst,		// Destination image.
-			int16_t sDstX	= 0,		// X offset in destination.
-			int16_t sDstY	= 0,		// Y offset in destination.
+			short sDstX	= 0,		// X offset in destination.
+			short sDstY	= 0,		// Y offset in destination.
 			RRect* prc = NULL);	// Clip to.
 
 		// Called by the static implementation of SetFocus() on the item gaining
@@ -536,7 +536,7 @@ class RGuiItem : public RProps <U32, U32>
 		// ReleaseRes().
 		// This function can result in a callback.
 		virtual				// If you override this, call this base if possible.
-		int16_t GetRes(void);
+		short GetRes(void);
 
 		// Releases the optional resource image previously gotten by a call to
 		// GetRes().
@@ -605,13 +605,13 @@ class RGuiItem : public RProps <U32, U32>
 
 		// Read item's members from file.
 		virtual				// If you override this, call this base if possible.
-		int16_t ReadMembers(			// Returns 0 on success.
+		short ReadMembers(			// Returns 0 on success.
 			RFile*	pfile,			// File to read from.
 			U32		u32Version);	// File format version to use.
 
 		// Write item's members to file.
 		virtual				// If you override this, call this base if possible.
-		int16_t WriteMembers(			// Returns 0 on success.
+		short WriteMembers(			// Returns 0 on success.
 			RFile*	pfile);			// File to write to.
 
 	public:	
@@ -620,22 +620,22 @@ class RGuiItem : public RProps <U32, U32>
 		////////////////////////////////////////////////////////////////////////
 
 		// Get the text that represents this item.
-		int16_t GetText(		// Returns 0 on success.
+		short GetText(		// Returns 0 on success.
 			char* pszText,	// Location to copy text to.
-			int16_t sMax);	// Total memory pointed to by pszText.
+			short sMax);	// Total memory pointed to by pszText.
 
 		// Get the text that represents the specified item.
-		int16_t GetText(		// Returns 0 on success.
-			int32_t	lId,		// In:  Child item ID (can identify this item). 
+		short GetText(		// Returns 0 on success.
+			long	lId,		// In:  Child item ID (can identify this item). 
 			char* pszText,	// Out: Location to copy text to.
-			int16_t sMax);	// In:  Total memory pointed to by pszText.
+			short sMax);	// In:  Total memory pointed to by pszText.
 
 		// Get the number represented by the text in this item.
-		int32_t GetVal(void);		// Returns value.
+		long GetVal(void);		// Returns value.
 
 		// Get the number represented by the text in the specified item.
-		int32_t GetVal(		// Returns value.
-			int32_t	lId);		// In:  Child item ID (can identify this item). 
+		long GetVal(		// Returns value.
+			long	lId);		// In:  Child item ID (can identify this item). 
 
 		// Get the RImage that contains the item.  Feel free to Convert() this
 		// to even a transparent type.  Blah ha ha.
@@ -648,48 +648,48 @@ class RGuiItem : public RProps <U32, U32>
 
 		// Gets the thickness of the top/left border (including border edge effect).
 		virtual
-		int16_t GetTopLeftBorderThickness(void);	// Returns border thickness 
+		short GetTopLeftBorderThickness(void);	// Returns border thickness 
 															// including edge effect.                      
 
 		// Gets the thickness of the bottom/right border (including border edge effect).
 		virtual
-		int16_t GetBottomRightBorderThickness(void);	// Returns border thickness 
+		short GetBottomRightBorderThickness(void);	// Returns border thickness 
 																	// including edge effect.                      
 
 		// Get the "client" area (i.e., non-border/title area) relative to this
 		// item.
 		virtual					// If you override this, call this base if possible.
 		void GetClient(		// Returns nothing.
-			int16_t* psX,			// Out: X position unless NULL.
-			int16_t* psY,			// Out: Y position unless NULL.
-			int16_t* psW,			// Out: Width unless NULL.
-			int16_t* psH);		// Out: Height unless NULL.
+			short* psX,			// Out: X position unless NULL.
+			short* psY,			// Out: Y position unless NULL.
+			short* psW,			// Out: Width unless NULL.
+			short* psH);		// Out: Height unless NULL.
 
 		// Get the "hot" area (i.e., clickable area) relative to this item.
 		virtual					// If you override this, call this base if possible.
 		void GetHotArea(		// Returns nothing.
-			int16_t* psX,			// Out: X position unless NULL.
-			int16_t* psY,			// Out: Y position unless NULL.
-			int16_t* psW,			// Out: Width unless NULL.
-			int16_t* psH);		// Out: Height unless NULL.
+			short* psX,			// Out: X position unless NULL.
+			short* psY,			// Out: Y position unless NULL.
+			short* psW,			// Out: Width unless NULL.
+			short* psH);		// Out: Height unless NULL.
 
 		// Change the position specified to a top-level coord.
 		void ChildPosToTop(	// Returns nothing.
-			int16_t* psX,			// In: Child pos, Out: Top level pos.
-			int16_t* psY);		// In: Child pos, Out: Top level pos.
+			short* psX,			// In: Child pos, Out: Top level pos.
+			short* psY);		// In: Child pos, Out: Top level pos.
 
 		// Change the position specified to a child coord.
 		void TopPosToChild(	// Returns nothing.
-			int16_t* psX,			// In: Top level pos, Out: Child pos.
-			int16_t* psY);		// In: Top level pos, Out: Child pos.
+			short* psX,			// In: Top level pos, Out: Child pos.
+			short* psY);		// In: Top level pos, Out: Child pos.
 
 		// Change the position specified to a top-level coord.
 		void ClientPosToTop(	// Returns nothing.
-			int16_t* psX,			// In: Client pos, Out: Top level pos.
-			int16_t* psY)			// In: Client pos, Out: Top level pos.
+			short* psX,			// In: Client pos, Out: Top level pos.
+			short* psY)			// In: Client pos, Out: Top level pos.
 			{
 			// Get client position.
-			int16_t	sClientX, sClientY;
+			short	sClientX, sClientY;
 			GetClient(&sClientX, &sClientY, NULL, NULL);
 			// Offset.
 			*psX	+= sClientX;
@@ -700,13 +700,13 @@ class RGuiItem : public RProps <U32, U32>
 
 		// Change the position specified to a client coord.
 		void TopPosToClient(	// Returns nothing.
-			int16_t* psX,			// In: Top level pos, Out: Client pos.
-			int16_t* psY)			// In: Top level pos, Out: Client pos.
+			short* psX,			// In: Top level pos, Out: Client pos.
+			short* psY)			// In: Top level pos, Out: Client pos.
 			{
 			// Convert to child.
 			TopPosToChild(psX, psY);
 			// Get client position.
-			int16_t	sClientX, sClientY;
+			short	sClientX, sClientY;
 			GetClient(&sClientX, &sClientY, NULL, NULL);
 			// Offset.
 			*psX	-= sClientX;
@@ -717,7 +717,7 @@ class RGuiItem : public RProps <U32, U32>
 		// its children.
 		RGuiItem* GetItemFromId(	// Returns pointer to RGuiItem, if found;
 											// otherwise, returns NULL.
-			int32_t lId)					// ID of RGuiItem to find.
+			long lId)					// ID of RGuiItem to find.
 			{
 			RGuiItem*	pguiRes	= NULL;	// Assume not found.
 
@@ -747,17 +747,17 @@ class RGuiItem : public RProps <U32, U32>
 		// specified parameters.
 		RGuiItem* GetItemFromPoint(	// Returns item ptr, if item found;
 												// NULL on failure.
-			int16_t	sPosX,					// X position.
-			int16_t	sPosY,					// Y position.
-			int16_t	sActive = TRUE,		// If TRUE, only searches active items.
+			short	sPosX,					// X position.
+			short	sPosY,					// Y position.
+			short	sActive = TRUE,		// If TRUE, only searches active items.
 												// If FALSE, searches all items.
-			int16_t sEventArea = TRUE);	// If TRUE, only checks items' event areas.
+			short sEventArea = TRUE);	// If TRUE, only checks items' event areas.
 												// If FALSE, checks items' entire hot regions.
 
 		// Gets the child depth (i.e., how many ancestors until top-level).
-		int16_t GetChildDepth(void)	// Returns child depth.
+		short GetChildDepth(void)	// Returns child depth.
 			{
-			int16_t	sDepth	= 0;
+			short	sDepth	= 0;
 
 			RGuiItem*	pguiParent	= GetParent();
 			while (pguiParent != NULL)
@@ -773,11 +773,11 @@ class RGuiItem : public RProps <U32, U32>
 			}
 
 		// Determine if the specified item is an ancestor of this item.
-		int16_t IsAncestor(		// Returns TRUE if pgui is an ancestor of this item.
+		short IsAncestor(		// Returns TRUE if pgui is an ancestor of this item.
 									// Returns FALSE otherwise.
 			RGuiItem* pgui)	// GUI that may be an ancestor.
 			{
-			int16_t	sRes	= FALSE;
+			short	sRes	= FALSE;
 
 			RGuiItem*	pguiParent =	GetParent();
 			while (pguiParent != NULL && sRes == FALSE)
@@ -795,7 +795,7 @@ class RGuiItem : public RProps <U32, U32>
 			}
 
 		// See if item is currently activated.
-		int16_t IsActivated(void)	// Returns TRUE if this item is activated (which
+		short IsActivated(void)	// Returns TRUE if this item is activated (which
 										// is different from active (active items become
 										// activated when visible)).
 			{
@@ -803,13 +803,13 @@ class RGuiItem : public RProps <U32, U32>
 			}
 
 		// Returns TRUE if this item was allocated with CreateGuiItem().
-		int16_t IsDynamic(void);	// Returns TRUE if this item was allocated with
+		short IsDynamic(void);	// Returns TRUE if this item was allocated with
 										// CreateGuiItem().
 
 		// Returns TRUE if this item is considered 'Clicked'.  For example, the
 		// default implementation makes this TRUE if the cursor was pressed AND
 		// released within this item's hot area.
-		int16_t IsClicked(void)	// Returns TRUE, if this item was 'Clicked';
+		short IsClicked(void)	// Returns TRUE, if this item was 'Clicked';
 										// FALSE, otherwise.
 			{
 			return m_sClicked;
@@ -818,7 +818,7 @@ class RGuiItem : public RProps <U32, U32>
 		// Returns TRUE if the specified item is a direct descendant of
 		// this item; FALSE, otherwise.
 		// NOTE:  Must be direct descendant; children of children don't count.
-		int16_t IsChild(
+		short IsChild(
 			RGuiItem* pguiChild)	// In:  Item to check.
 			{
 			if (pguiChild->GetParent() == this)
@@ -849,19 +849,19 @@ class RGuiItem : public RProps <U32, U32>
 			{ ((RGuiItem*)(phot->m_ulUser))->HotCall(pie); }
 
 		// Read header for this GUI item.
-		static int16_t ReadHeader(	// Returns 0 on success.
+		static short ReadHeader(	// Returns 0 on success.
 			RFile*	pfile,			// In:  File to read from.
 			U32*	pu32Version,		// Out: File format version.
 			Type*	ptype);				// Out: Type of GUI item stored.
 
 		// Save item's children to the specified file.
 		virtual
-		int16_t SaveChildren(	// Returns 0 on success.
+		short SaveChildren(	// Returns 0 on success.
 			RFile*	pfile);	// File to save to.
 
 		// Load item's children from the specified file.
 		virtual
-		int16_t LoadChildren(	// Returns 0 on success.
+		short LoadChildren(	// Returns 0 on success.
 			RFile*	pfile);	// File to load from.
 
 //////////////////////////////////////////////////////////////////////////////
@@ -870,29 +870,29 @@ class RGuiItem : public RProps <U32, U32>
 		RImage				m_im;			// RImage representing this item 
 												// visually.
 		RList<RGuiItem>	m_listguiChildren;	// List of items "inside" this item.
-		int16_t					m_sX;			// X position.  0 on construction.
-		int16_t					m_sY;			// Y position.  0 on construction.
+		short					m_sX;			// X position.  0 on construction.
+		short					m_sY;			// Y position.  0 on construction.
 
 		RPrint*				m_pprint;	// Used to display text.  Also, 
 												// stores font settings.  By default,
 												// this points to &ms_print, but it
 												// can be changed to point to a dif-
 												// ferent one.
-		int16_t					m_sFontCellHeight;	// Cell height for text.
+		short					m_sFontCellHeight;	// Cell height for text.
 		char					m_szText[GUI_MAX_STR];	// Text for this item.
 
-		int16_t					m_sEventAreaX;	// X coord of area in which we care
+		short					m_sEventAreaX;	// X coord of area in which we care
 													// about cursor events.
-		int16_t					m_sEventAreaY;	// Y coord of area in which we care
+		short					m_sEventAreaY;	// Y coord of area in which we care
 													// about cursor events.
-		int16_t					m_sEventAreaW;	// Width of area in which we care
+		short					m_sEventAreaW;	// Width of area in which we care
 													// about cursor events.
-		int16_t					m_sEventAreaH;	// Height of area in which we care
+		short					m_sEventAreaH;	// Height of area in which we care
 													// about cursor events.
 
 		RHot					m_hot;			// Area in which we get clickage.
 		
-		int16_t					m_sPressed;	// TRUE if our hot area is currently
+		short					m_sPressed;	// TRUE if our hot area is currently
 												// pressed.
 
 		DrawCall				m_drawcall;	// User callback to draw/erase a region.
@@ -916,29 +916,29 @@ class RGuiItem : public RProps <U32, U32>
 		U32					m_u32BackColor;
 		U32					m_u32TextShadowColor;
 
-		int16_t					m_sTextEffects;			// Flags for text effects.
+		short					m_sTextEffects;			// Flags for text effects.
 
-		int16_t					m_sTextShadowOffsetX;	// Offset along X axis for text shadow.
-		int16_t					m_sTextShadowOffsetY;	// Offset along Y axis for text shadow.
+		short					m_sTextShadowOffsetX;	// Offset along X axis for text shadow.
+		short					m_sTextShadowOffsetY;	// Offset along Y axis for text shadow.
 
-		int16_t					m_sBorderThickness;
+		short					m_sBorderThickness;
 
 		Justification		m_justification;	// { RGuiItem::Right, RGuiItem::Center, RGuiItem::Left }
 
-		U64					m_ulUserInstance;	// Space that can be used in any way by 
+		ULONG					m_ulUserInstance;	// Space that can be used in any way by 
 														// the user but is intended to represent 
 														// a user instance structure such as a 
 														// struct or class.
-		uint32_t					m_ulUserData;		// Space that can be used in any way by
+		ULONG					m_ulUserData;		// Space that can be used in any way by
 														// the user and has no particular intended
 														// use.
 
-		int16_t					m_sInvertedBorder;	// TRUE if border is inverted; FALSE 
+		short					m_sInvertedBorder;	// TRUE if border is inverted; FALSE 
 															// otherwise.
 
 		Type					m_type;				// Indicates type of GUI item.
 
-		int16_t					m_sTransparent;	// TRUE, if this should be blt'ed via
+		short					m_sTransparent;	// TRUE, if this should be blt'ed via
 														// a transparent blit call; FALSE,
 														// otherwise.  Note that this cannot
 														// override transparent Image formats
@@ -949,16 +949,16 @@ class RGuiItem : public RProps <U32, U32>
 																// when using transparent blit
 																// call.
 
-		int32_t					m_lId;				// ID.  Used to identify this RGuiItem
+		long					m_lId;				// ID.  Used to identify this RGuiItem
 														// from others.  See GetItemFromId().
 
 		Target				m_targetFocus;		// Target when focus received.
 
-		int16_t					m_sShowFocus;		// TRUE if this item shows feedback,
+		short					m_sShowFocus;		// TRUE if this item shows feedback,
 														// usually via DrawFocus(), when it
 														// has the focus.
 		
-		int16_t					m_sFocusPos;		// Position at which DrawFocus() will
+		short					m_sFocusPos;		// Position at which DrawFocus() will
 														// draw the focus rectangle relative
 														// to the client area.  For example,
 														// -1 would but it just outside the
@@ -966,7 +966,7 @@ class RGuiItem : public RProps <U32, U32>
 
 		U32					m_u32FocusColor;	// Color to draw focus with.
 
-		int16_t					m_sClicked;			// TRUE if this item is considered
+		short					m_sClicked;			// TRUE if this item is considered
 														// 'Clicked'.  For example, the default
 														// implementation makes this TRUE if
 														// the cursor was pressed AND released
@@ -975,13 +975,13 @@ class RGuiItem : public RProps <U32, U32>
 		char					m_szBkdResName[RSP_MAX_PATH];	// Name of background res
 																		// file to get into 
 																		// m_pimBkdRes.
-		int16_t					m_sBkdResTransparent;	// TRUE, if m_pimBkdRes is to be
+		short					m_sBkdResTransparent;	// TRUE, if m_pimBkdRes is to be
 																// BLiT'ed transparently; FALSE,
 																// otherwise.
 		U32					m_u32BkdResTransparentColor;	// Transparency color for
 																		// m_pimBkdRes when 
 																		// BLiT'ed transparently.
-		int16_t					m_sBkdResPlacement;	// Combination of |'ed
+		short					m_sBkdResPlacement;	// Combination of |'ed
 															// Placement enum values.
 		RImage*				m_pimBkdRes;			// Background resource image.
 
@@ -992,9 +992,9 @@ class RGuiItem : public RProps <U32, U32>
 														// res (m_pimBkdRes).
 
 		// These members should be changed only via SetVisible() and SetActive().
-		int16_t					m_sVisible;			// TRUE if Draw() is to draw this item
+		short					m_sVisible;			// TRUE if Draw() is to draw this item
 														// and its children; FALSE, otherwise.
-		int16_t					m_sActive;			// TRUE if the RHot is to be activated
+		short					m_sActive;			// TRUE if the RHot is to be activated
 														// when visible.
 
 	protected:	// Internal typedefs.

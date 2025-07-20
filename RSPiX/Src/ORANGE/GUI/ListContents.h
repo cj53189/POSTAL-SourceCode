@@ -123,12 +123,12 @@ class RListContents : public RFrame
 
 		// Save item's children to the specified file.
 		virtual					// Overridden here.
-		int16_t SaveChildren(	// Returns 0 on success.
+		short SaveChildren(	// Returns 0 on success.
 			RFile*	pfile);	// File to save to.
 
 		// Load item's children from the specified file.
 		virtual					// Overridden here.
-		int16_t LoadChildren(	// Returns 0 on success.
+		short LoadChildren(	// Returns 0 on success.
 			RFile*	pfile);	// File to load from.
 
 //////////////////////////////////////////////////////////////////////////////

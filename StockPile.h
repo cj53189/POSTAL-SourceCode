@@ -149,18 +149,18 @@ class CStockPile
 	public:
 
 		// Allow user to edit the stockpile.
-		int16_t UserEdit(					// Returns 0 on success.
+		short UserEdit(					// Returns 0 on success.
 			RGuiItem*	pgui = NULL);	// In: Optional child GUI to be placed at 
 												// botom of Stockpile GUI.
 
 		// Save stockpile to the specified file.
-		int16_t Save(						// Returns 0 on success.
+		short Save(						// Returns 0 on success.
 			RFile*	pfile);			// In:  File to save to.
 
 		// Load stockpile from the specified file.
-		int16_t Load(						// Returns 0 on success.
+		short Load(						// Returns 0 on success.
 			RFile*	pfile,			// In:  File to load from.
-			uint32_t		ulVersion);		// In:  File version to load. 
+			ULONG		ulVersion);		// In:  File version to load. 
 
 		// Add another stockpile to this one.
 		void Add(									// Returns nothing.
@@ -192,12 +192,12 @@ class CStockPile
 		void Truncate(void);				// Returns nothing.
 
 		// Index by the StockPileItem you are interested in.
-		int16_t& GetItem(	// Returns a reference to the indexed item.
-			int16_t sIndex);	// In:  The item index.
+		short& GetItem(	// Returns a reference to the indexed item.
+			short sIndex);	// In:  The item index.
 
 		// Index by the CDude::WeaponType you are interested in.
-		int16_t& GetWeapon(		// Returns a reference to the indexed item.
-			int16_t	sIndex);		// In:  The item index.
+		short& GetWeapon(		// Returns a reference to the indexed item.
+			short	sIndex);		// In:  The item index.
 
 		// Determine if this stockpile is empty.
 		bool	IsEmpty(void);				// Returns true, if the stockpile is
@@ -221,30 +221,30 @@ class CStockPile
 		// class!!!!  Otherwise, GetItem() won't work for that item.
 		// *********************************************************************
 		// *********************************************************************
-		int16_t	m_sHitPoints;					// Health status.
+		short	m_sHitPoints;					// Health status.
 
-		int16_t	m_sNumGrenades;				// How many grenades dude has.
-		int16_t	m_sNumFireBombs;				// How many firebombs dude has.
-		int16_t	m_sNumMissiles;				// How many missiles dude has.
-		int16_t	m_sNumNapalms;					// How many napalms dude has.
-		int16_t	m_sNumBullets;					// How many bullets dude has.
-		int16_t	m_sNumShells;					// How many shotgun shells dude has.
-		int16_t	m_sNumFuel;						// How much fuel dude has.
-		int16_t	m_sNumMines;					// How many mines dude has.
-		int16_t	m_sNumHeatseekers;			// How many heatseekers dude has.
+		short	m_sNumGrenades;				// How many grenades dude has.
+		short	m_sNumFireBombs;				// How many firebombs dude has.
+		short	m_sNumMissiles;				// How many missiles dude has.
+		short	m_sNumNapalms;					// How many napalms dude has.
+		short	m_sNumBullets;					// How many bullets dude has.
+		short	m_sNumShells;					// How many shotgun shells dude has.
+		short	m_sNumFuel;						// How much fuel dude has.
+		short	m_sNumMines;					// How many mines dude has.
+		short	m_sNumHeatseekers;			// How many heatseekers dude has.
 
-		int16_t	m_sMachineGun;					// 0 if no machine gun, nonzero otherwise.
-		int16_t	m_sMissileLauncher;			// 0 if no missile launcher, nonzero otherwise.
-		int16_t	m_sShotGun;						// 0 if no shotgun, nonzero otherwise.
-		int16_t	m_sSprayCannon;				// 0 if no spray cannon, nonzero otherwise.
-		int16_t	m_sFlameThrower;				// 0 if no flame thrower, nonzero otherwise.
-		int16_t	m_sNapalmLauncher;			// 0 if no napalm launcher, nonzero otherwise.
-		int16_t	m_sDeathWadLauncher;			// 0 if no deathwad launcher, nonzero otherwise.
-		int16_t	m_sDoubleBarrel;				// 0 if no double barrel, nonzero otherwise.
+		short	m_sMachineGun;					// 0 if no machine gun, nonzero otherwise.
+		short	m_sMissileLauncher;			// 0 if no missile launcher, nonzero otherwise.
+		short	m_sShotGun;						// 0 if no shotgun, nonzero otherwise.
+		short	m_sSprayCannon;				// 0 if no spray cannon, nonzero otherwise.
+		short	m_sFlameThrower;				// 0 if no flame thrower, nonzero otherwise.
+		short	m_sNapalmLauncher;			// 0 if no napalm launcher, nonzero otherwise.
+		short	m_sDeathWadLauncher;			// 0 if no deathwad launcher, nonzero otherwise.
+		short	m_sDoubleBarrel;				// 0 if no double barrel, nonzero otherwise.
 
-		int16_t	m_sKevlarLayers;				// 0 .. n layers of 'armor'.
+		short	m_sKevlarLayers;				// 0 .. n layers of 'armor'.
 
-		int16_t	m_sBackpack;					// 0 if no backpack, nonzero otherwise.
+		short	m_sBackpack;					// 0 if no backpack, nonzero otherwise.
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -256,9 +256,9 @@ class CStockPile
 																	// w/o a backpack.
 		static CStockPile	ms_stockpileBackPackMax;	// Maximum one can carry
 																	// with a backpack.
-		static int16_t		ms_sEnableDeathWad;			// Enable the death wad
+		static short		ms_sEnableDeathWad;			// Enable the death wad
 																	// check box.
-		static int16_t		ms_sEnableDoubleBarrel;		// Enable the double barrel
+		static short		ms_sEnableDoubleBarrel;		// Enable the double barrel
 																	// check box.
 	};
 

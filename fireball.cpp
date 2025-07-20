@@ -148,20 +148,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Let this auto-init to 0
-int16_t CFirestream::ms_sFileCount;
-int16_t CFirestream::ms_sOffset1 = 12;		// pixels from 1st to 2nd fireball
-int16_t CFirestream::ms_sOffset2 = 24;	// pixels from 1st to 3rd fireball
+short CFirestream::ms_sFileCount;
+short CFirestream::ms_sOffset1 = 12;		// pixels from 1st to 2nd fireball
+short CFirestream::ms_sOffset2 = 24;	// pixels from 1st to 3rd fireball
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::Load(										// Returns 0 if successfull, non-zero otherwise
+short CFirestream::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	int16_t sFileCount,										// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)									// In:  Version of file format to load.
+	short sFileCount,										// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)									// In:  Version of file format to load.
 	{
-	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == 0)
 	{
@@ -209,11 +209,11 @@ int16_t CFirestream::Load(										// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::Save(										// Returns 0 if successfull, non-zero otherwise
+short CFirestream::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	int16_t sFileCount)										// In:  File count (unique per file, never 0)
+	short sFileCount)										// In:  File count (unique per file, never 0)
 {
-	int16_t	sResult	= CThing::Save(pFile, sFileCount);
+	short	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 	{
 		// Save common data just once per file (not with each object)
@@ -237,7 +237,7 @@ int16_t CFirestream::Save(										// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CFirestream::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 	return Init();
 }
@@ -245,7 +245,7 @@ int16_t CFirestream::Startup(void)								// Returns 0 if successfull, non-zero 
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CFirestream::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -278,7 +278,7 @@ void CFirestream::Resume(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CFirestream::Update(void)
 {
-	int32_t lThisTime;
+	long lThisTime;
 
 	if (!m_sSuspend)
 	{
@@ -310,9 +310,9 @@ void CFirestream::Update(void)
 
 		if (m_pRealm->m_idbank.GetThingByID((CThing**)&pfireball2, m_idFireball2) == 0)
 			{
-			pfireball2->m_dX		= m_dX + COSQ[(int16_t) m_dRot] * ms_sOffset1;
+			pfireball2->m_dX		= m_dX + COSQ[(short) m_dRot] * ms_sOffset1;
 			pfireball2->m_dY		= m_dY;
-			pfireball2->m_dZ		= m_dZ - SINQ[(int16_t) m_dRot] * ms_sOffset1;
+			pfireball2->m_dZ		= m_dZ - SINQ[(short) m_dRot] * ms_sOffset1;
 			pfireball2->m_dRot	= rspMod360(m_dRot + RAND_SWAY(FIREBALL_SWAY) );
 			}
 		else
@@ -322,9 +322,9 @@ void CFirestream::Update(void)
 
 		if (m_pRealm->m_idbank.GetThingByID((CThing**)&pfireball3, m_idFireball3) == 0)
 			{
-			pfireball3->m_dX		= m_dX + COSQ[(int16_t) m_dRot] * ms_sOffset2;
+			pfireball3->m_dX		= m_dX + COSQ[(short) m_dRot] * ms_sOffset2;
 			pfireball3->m_dY		= m_dY;
-			pfireball3->m_dZ		= m_dZ - SINQ[(int16_t) m_dRot] * ms_sOffset2;
+			pfireball3->m_dZ		= m_dZ - SINQ[(short) m_dRot] * ms_sOffset2;
 			pfireball3->m_dRot	= rspMod360(m_dRot + RAND_SWAY(FIREBALL_SWAY) );
 			}
 		else
@@ -368,15 +368,15 @@ void CFirestream::Render(void)
 // Setup
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFirestream::Setup(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ,												// In:  New z coord
-	int16_t sDir,												// In:  Direction of travel
-	int32_t lTimeToLive,										// In:  Number of milliseconds to burn, default 1sec
+short CFirestream::Setup(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ,												// In:  New z coord
+	short sDir,												// In:  Direction of travel
+	long lTimeToLive,										// In:  Number of milliseconds to burn, default 1sec
 	U16 u16ShooterID)										// In:  Shooter's ID so you don't hit him
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	double dX;
 	double dZ;
 	
@@ -390,14 +390,14 @@ int16_t CFirestream::Setup(									// Returns 0 if successfull, non-zero otherw
 
 	// Make sure that the starting positions are valid before creating
 	// fireballs here, otherwise they will shoot through walls.
-	dX = m_dX + COSQ[(int16_t) m_dRot] * ms_sOffset2;	// Second interval 
-	dZ = m_dZ - SINQ[(int16_t) m_dRot] * ms_sOffset2;	
+	dX = m_dX + COSQ[(short) m_dRot] * ms_sOffset2;	// Second interval 
+	dZ = m_dZ - SINQ[(short) m_dRot] * ms_sOffset2;	
 	if (m_pRealm->IsPathClear(		// Returns true, if the entire path is clear.                 
 											// Returns false, if only a portion of the path is clear.     
 											// (see *psX, *psY, *psZ).                                    
-			(int16_t) m_dX, 				// In:  Starting X.                                           
-			(int16_t) m_dY, 				// In:  Starting Y.                                           
-			(int16_t) m_dZ, 				// In:  Starting Z.                                           
+			(short) m_dX, 				// In:  Starting X.                                           
+			(short) m_dY, 				// In:  Starting Y.                                           
+			(short) m_dZ, 				// In:  Starting Z.                                           
 			3.0, 							// In:  Rate at which to scan ('crawl') path in pixels per    
 											// iteration.                                                 
 											// NOTE: Values less than 1.0 are inefficient.                
@@ -405,8 +405,8 @@ int16_t CFirestream::Setup(									// Returns 0 if successfull, non-zero otherw
 											// at only one pixel.                                         
 											// NOTE: We could change this to a speed in pixels per second 
 											// where we'd assume a certain frame rate.                    
-			(int16_t) dX,		 			// In:  Destination X.                                        
-			(int16_t) dZ,					// In:  Destination Z.                                        
+			(short) dX,		 			// In:  Destination X.                                        
+			(short) dZ,					// In:  Destination Z.                                        
 			0,								// In:  Max traverser can step up.                      
 			NULL,							// Out: If not NULL, last clear point on path.                
 			NULL,							// Out: If not NULL, last clear point on path.                
@@ -424,16 +424,16 @@ int16_t CFirestream::Setup(									// Returns 0 if successfull, non-zero otherw
 			m_idFireball1	= pfireball->GetInstanceID();
 		}
 
-		dX = m_dX + COSQ[(int16_t) m_dRot] * ms_sOffset1;	// First interval
-		dZ = m_dZ - SINQ[(int16_t) m_dRot] * ms_sOffset1;	
+		dX = m_dX + COSQ[(short) m_dRot] * ms_sOffset1;	// First interval
+		dZ = m_dZ - SINQ[(short) m_dRot] * ms_sOffset1;	
 		if (CThing::ConstructWithID(CThing::CFireballID, m_pRealm, (CThing**) &pfireball) == 0)
 		{
 			pfireball->Setup(dX, m_dY, dZ, sDir, lTimeToLive, u16ShooterID);
 			m_idFireball2	= pfireball->GetInstanceID();
 		}
 
-		dX = m_dX + COSQ[(int16_t) m_dRot] * ms_sOffset2;	// Second interval 
-		dZ = m_dZ - SINQ[(int16_t) m_dRot] * ms_sOffset2;	
+		dX = m_dX + COSQ[(short) m_dRot] * ms_sOffset2;	// Second interval 
+		dZ = m_dZ - SINQ[(short) m_dRot] * ms_sOffset2;	
 		if (CThing::ConstructWithID(CThing::CFireballID, m_pRealm, (CThing**) &pfireball) == 0)
 		{
 			pfireball->Setup(dX, m_dY, dZ, sDir, lTimeToLive, u16ShooterID);
@@ -452,9 +452,9 @@ int16_t CFirestream::Setup(									// Returns 0 if successfull, non-zero otherw
 // Init
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFirestream::Init(void)
+short CFirestream::Init(void)
 {
-	int16_t sResult = SUCCESS;
+	short sResult = SUCCESS;
 	
 	return sResult;
 }
@@ -462,12 +462,12 @@ int16_t CFirestream::Init(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CFirestream::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -483,7 +483,7 @@ int16_t CFirestream::EditNew(									// Returns 0 if successfull, non-zero othe
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::EditModify(void)
+short CFirestream::EditModify(void)
 {
 	return 0;
 }
@@ -492,10 +492,10 @@ int16_t CFirestream::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFirestream::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CFirestream::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -532,7 +532,7 @@ void CFirestream::EditRender(void)
 //				 the first time, there won't be a delay while it loads.
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFirestream::Preload(
+short CFirestream::Preload(
 	CRealm* /*prealm*/)			// In:  Calling realm.
 {
 return 0;
@@ -588,21 +588,21 @@ CFirestream::CFirestreamState CFirestream::ProcessFireballMessages(void)
 ////////////////////////////////////////////////////////////////////////////////
 
 // Let this auto-init to 0
-int16_t CFireball::ms_sFileCount;
-int16_t CFireball::ms_sSmallRadius = 8;
-int32_t  CFireball::ms_lCollisionTime = 250;			// Check for collisions this often
+short CFireball::ms_sFileCount;
+short CFireball::ms_sSmallRadius = 8;
+long  CFireball::ms_lCollisionTime = 250;			// Check for collisions this often
 double CFireball::ms_dFireVelocity = 300;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::Load(										// Returns 0 if successfull, non-zero otherwise
+short CFireball::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	int16_t sFileCount,										// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)									// In:  Version of file format to load.
+	short sFileCount,										// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)									// In:  Version of file format to load.
 	{
-	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
 	if (sResult == 0)
 	{
@@ -652,11 +652,11 @@ int16_t CFireball::Load(										// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::Save(										// Returns 0 if successfull, non-zero otherwise
+short CFireball::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	int16_t sFileCount)										// In:  File count (unique per file, never 0)
+	short sFileCount)										// In:  File count (unique per file, never 0)
 {
-	int16_t	sResult	= CThing::Save(pFile, sFileCount);
+	short	sResult	= CThing::Save(pFile, sFileCount);
 	if (sResult == 0)
 	{
 		// Save common data just once per file (not with each object)
@@ -680,7 +680,7 @@ int16_t CFireball::Save(										// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CFireball::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
 	return Init();
 }
@@ -688,7 +688,7 @@ int16_t CFireball::Startup(void)								// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CFireball::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -721,7 +721,7 @@ void CFireball::Resume(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CFireball::Update(void)
 {
-	int32_t lThisTime;
+	long lThisTime;
 	double dSeconds;
 	double dDistance;
 	double dNewX;
@@ -750,21 +750,21 @@ void CFireball::Update(void)
 						dSeconds = ((double) lThisTime - (double) m_lPrevTime) / 1000.0;
 						// Apply internal velocity.
 						dDistance	= m_dHorizVel * dSeconds;
-						dNewX	= m_dX + COSQ[(int16_t) m_dRot] * dDistance;
-						dNewZ	= m_dZ - SINQ[(int16_t) m_dRot] * dDistance;
+						dNewX	= m_dX + COSQ[(short) m_dRot] * dDistance;
+						dNewZ	= m_dZ - SINQ[(short) m_dRot] * dDistance;
 
 						// Check attribute map for walls, and if you hit a wall, 
 						// set the timer so you will die off next time around.
-						int16_t sHeight = m_pRealm->GetHeight((int16_t) dNewX, (int16_t) dNewZ);
+						short sHeight = m_pRealm->GetHeight((short) dNewX, (short) dNewZ);
 						// If it hits a wall taller than itself, then it will rotate in the
 						// predetermined direction until it is free to move.
-						if ((int16_t) m_dY < sHeight ||
+						if ((short) m_dY < sHeight ||
 							!m_pRealm->IsPathClear(	// Returns true, if the entire path is clear.                 
 															// Returns false, if only a portion of the path is clear.     
 															// (see *psX, *psY, *psZ).                                    
-							(int16_t) m_dX, 				// In:  Starting X.                                           
-							(int16_t) m_dY, 				// In:  Starting Y.                                           
-							(int16_t) m_dZ, 				// In:  Starting Z.                                           
+							(short) m_dX, 				// In:  Starting X.                                           
+							(short) m_dY, 				// In:  Starting Y.                                           
+							(short) m_dZ, 				// In:  Starting Z.                                           
 							3.0, 							// In:  Rate at which to scan ('crawl') path in pixels per    
 															// iteration.                                                 
 															// NOTE: Values less than 1.0 are inefficient.                
@@ -772,8 +772,8 @@ void CFireball::Update(void)
 															// at only one pixel.                                         
 															// NOTE: We could change this to a speed in pixels per second 
 															// where we'd assume a certain frame rate.                    
-							(int16_t) dNewX, 			// In:  Destination X.                                        
-							(int16_t) dNewZ,				// In:  Destination Z.                                        
+							(short) dNewX, 			// In:  Destination X.                                        
+							(short) dNewZ,				// In:  Destination Z.                                        
 							0,								// In:  Max traverser can step up.                      
 							NULL,							// Out: If not NULL, last clear point on path.                
 							NULL,							// Out: If not NULL, last clear point on path.                
@@ -861,7 +861,7 @@ void CFireball::Render(void)
 		m_sprite.m_sPriority = m_dZ;
 
 		// Layer should be based on info we get from attribute map.
-		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
+		m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
 
 //		m_sprite.m_sAlphaLevel = 200;
 		if (m_lTotalFlameTime == 0)
@@ -896,15 +896,15 @@ void CFireball::Render(void)
 // Setup
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFireball::Setup(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ,												// In:  New z coord
-	int16_t sDir,												// In:  Direction of travel
-	int32_t lTimeToLive,										// In:  Number of milliseconds to burn, default 1sec
+short CFireball::Setup(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ,												// In:  New z coord
+	short sDir,												// In:  Direction of travel
+	long lTimeToLive,										// In:  Number of milliseconds to burn, default 1sec
 	U16 u16ShooterID)										// In:  Shooter's ID so you don't hit him
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -935,9 +935,9 @@ int16_t CFireball::Setup(									// Returns 0 if successfull, non-zero otherwis
 // Init
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFireball::Init(void)
+short CFireball::Init(void)
 {
-	int16_t sResult = SUCCESS;
+	short sResult = SUCCESS;
 	CAlphaAnim* pAnim = NULL;
 
 
@@ -963,12 +963,12 @@ int16_t CFireball::Init(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CFireball::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -987,7 +987,7 @@ int16_t CFireball::EditNew(									// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::EditModify(void)
+short CFireball::EditModify(void)
 {
 	return 0;
 }
@@ -996,10 +996,10 @@ int16_t CFireball::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CFireball::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -1032,9 +1032,9 @@ void CFireball::EditRender(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::GetResources(void)			// Returns 0 if successfull, non-zero otherwise
+short CFireball::GetResources(void)			// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = SUCCESS;
+	short sResult = SUCCESS;
 
 	sResult = rspGetResource(&g_resmgrGame, m_pRealm->Make2dResPath(SMALL_FILE), &m_pAnimChannel, RFile::LittleEndian);
 
@@ -1048,9 +1048,9 @@ int16_t CFireball::GetResources(void)			// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFireball::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CFireball::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	rspReleaseResource(&g_resmgrGame, &m_pAnimChannel);
 
@@ -1063,10 +1063,10 @@ int16_t CFireball::FreeResources(void)						// Returns 0 if successfull, non-zer
 //				 the first time, there won't be a delay while it loads.
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFireball::Preload(
+short CFireball::Preload(
 	CRealm* prealm)				// In:  Calling realm.
 {
-	int16_t sResult;
+	short sResult;
 	ChannelAA* pRes;
 	sResult = rspGetResource(&g_resmgrGame, prealm->Make2dResPath(SMALL_FILE), &pRes, RFile::LittleEndian);
 	rspReleaseResource(&g_resmgrGame, &pRes);

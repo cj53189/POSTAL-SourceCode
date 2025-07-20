@@ -3346,7 +3346,7 @@ extern Personatorium g_apersons[Personatorium::NumPersons]	=
 		},
 
 
-#if (TARGET == SUPER_POSTAL) || (TARGET == JAPAN_ADDON) || (TARGET == POSTAL_2015)
+#if (TARGET == SUPER_POSTAL) || (TARGET == JAPAN_ADDON)
 	/////////////////////////////// JPMaleKensaku //////////////////////////////////
 
 		{

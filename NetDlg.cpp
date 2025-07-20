@@ -504,18 +504,18 @@ typedef struct
 		Gui
 		} Type;
 
-	int32_t	lId;	// ID of GUI to link to.
+	long	lId;	// ID of GUI to link to.
 	Type	type;
 #if 1
 	union
 		{
 		void*			pvLink;
-		int32_t*			pl;
-		uint32_t*		pul;
-		int16_t*		ps;
-		uint16_t*		pus;
+		long*			pl;
+		ULONG*		pul;
+		short*		ps;
+		USHORT*		pus;
 		char*			pc;
-		uint8_t*		puc;
+		UCHAR*		puc;
 		char*			psz;
 		bool*			pb;
 		RGuiItem**	ppgui;
@@ -556,17 +556,17 @@ static RListBox*	ms_plbHostBrowse	= NULL;		// Browse for host listbox.
 
 // Other static vars.
 
-static int32_t			ms_lWatchdogTime = 0;			// Watchdog timer
+static long			ms_lWatchdogTime = 0;			// Watchdog timer
 static bool			ms_bNetBlockingAbort = false;	// Net blocking abort flag
 
-static int32_t			ms_lNumConsoleEntries		= 0;			// Track number of chat items.
+static long			ms_lNumConsoleEntries		= 0;			// Track number of chat items.
 
 static bool			ms_bGotSetupMsg = false;
-static int16_t		ms_sSetupRealmNum = 0;
+static short		ms_sSetupRealmNum = 0;
 static char			ms_szSetupRealmFile[Net::MaxRealmNameSize];
-static int32_t			ms_lSetupLastChatComplaint = 0;
+static long			ms_lSetupLastChatComplaint = 0;
 
-static int32_t			ms_lNextOptionsUpdateTime;		// Next time to send an options update.
+static long			ms_lNextOptionsUpdateTime;		// Next time to send an options update.
 
 static RTxt*		ms_ptxtNetProb	= NULL;			// Net problem GUI.
 static bool			m_bNetWatchdogExpired	= false;	// Whether net blocking expired
@@ -593,7 +593,7 @@ static GuiLink			ms_aglServerLinkage[]	=
 		{ GUI_ID_ENABLE_COOP_MODE,		GuiLink::Gui,		&ms_pmbCoopMode,							},
 		{ GUI_ID_ENABLE_COOP_MODE,		GuiLink::Bool,		&ms_bCoopMode,								},
 
-		{ static_cast<int32_t>(TERMINATING_GUI_ID), },	// Terminator.
+		{ static_cast<long>(TERMINATING_GUI_ID), },	// Terminator.
 	};
 
 static GuiLink			ms_aglClientLinkage[]	=
@@ -601,7 +601,7 @@ static GuiLink			ms_aglClientLinkage[]	=
 		{ GUI_ID_OPTIONS_STATIC,		GuiLink::Gui,		&ms_pguiOptions,							},   
 		{ GUI_ID_RETRY,					GuiLink::Gui,		&ms_pguiRetry,								},
 													 
-		{ static_cast<int32_t>(TERMINATING_GUI_ID), },	// Terminator.
+		{ static_cast<long>(TERMINATING_GUI_ID), },	// Terminator.
 	};
 
 static GuiLink			ms_aglClientServerLinkage[]	=
@@ -613,7 +613,7 @@ static GuiLink			ms_aglClientServerLinkage[]	=
 		{ GUI_ID_OK,						GuiLink::Gui,		&ms_pguiOk,									},
 		{ GUI_ID_CANCEL,					GuiLink::Gui,		&ms_pguiCancel,							},
 													 
-		{ static_cast<int32_t>(TERMINATING_GUI_ID), },	// Terminator.
+		{ static_cast<long>(TERMINATING_GUI_ID), },	// Terminator.
 	};
 
 static GuiLink			ms_aglBrowserLinkage[]	=
@@ -622,7 +622,7 @@ static GuiLink			ms_aglBrowserLinkage[]	=
 		{ GUI_ID_OK,						GuiLink::Gui,		&ms_pguiOk,									},
 		{ GUI_ID_CANCEL,					GuiLink::Gui,		&ms_pguiCancel,							},
 													 
-		{ static_cast<int32_t>(TERMINATING_GUI_ID), },	// Terminator.
+		{ static_cast<long>(TERMINATING_GUI_ID), },	// Terminator.
 	};
 
 
@@ -636,7 +636,7 @@ static void AddConsoleMsg(	// Returns nothing.
 	...);							// In:  Optional arguments based on context of pszFrmt.
 
 // Get dialog resource
-int16_t DlgGetRes(											// Returns 0 if successfull, non-zero otherwise
+short DlgGetRes(											// Returns 0 if successfull, non-zero otherwise
 	RGuiItem* pgui);										// I/O: Pointer to gui item
 
 // Release dialog resource
@@ -644,16 +644,16 @@ void DlgReleaseRes(										// Returns 0 if successfull, non-zero otherwise
 	RGuiItem* pgui);										// I/O: Pointer to gui item
 
 // Net blocking callback
-static int16_t NetBlockingCallback(void);			// Returns 0 to continue normally, 1 to abort
+static short NetBlockingCallback(void);			// Returns 0 to continue normally, 1 to abort
 
-static int16_t BrowseForHost(
+static short BrowseForHost(
 	CNetServer*	pserver,									// I/O: Server interface or NULL if none
 	RSocket::Address* paddress);						// Out: Address returned here (if successfull)
 
-static int16_t FindSpecificSystem(
+static short FindSpecificSystem(
 	RSocket::Address* paddress);						// Out: Address returned here (if successfull)
 
-static int16_t BrowseForSelf(
+static short BrowseForSelf(
 	CNetServer*	pserver,									// I/O: Server interface
 	RSocket::Address* paddress);						// Out: Address returned here (if successfull)
 
@@ -707,13 +707,13 @@ void UploadLinkInteger(			// Returns nothing.
 			else
 				{
 				// Unsigned.
-				pgui->SetText("%lu", (uint32_t)i);
+				pgui->SetText("%lu", (ULONG)i);
 				}
 #else
 			// Hardwire to signed b/c bool was displaying a warning regarding the
 			// above comparison to determine the [un]signed nature of the templated
 			// type.
-			pgui->SetText("%ld", (int32_t)i);
+			pgui->SetText("%ld", (long)i);
 #endif
 			break;
 		}
@@ -943,7 +943,7 @@ inline void ComposeOptions(void)
 	if (ms_pguiOptions)
 		{
 		// Store old word wrap status so we can restore it when done.
-		int16_t sWordWrapWas	= (ms_pguiOptions->m_pprint->m_eModes & RPrint::WORD_WRAP) ? TRUE : FALSE;
+		short sWordWrapWas	= (ms_pguiOptions->m_pprint->m_eModes & RPrint::WORD_WRAP) ? TRUE : FALSE;
 
 		// Enable word wrap (not accessible from GUI editor currently).
 		ms_pguiOptions->m_pprint->SetWordWrap(TRUE);
@@ -1002,9 +1002,9 @@ static void CleanClientDlg(
 // Show the selectable network levels in the hood to play listbox.
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t ShowLevels(void)						// Returns 0 on success.
+static short ShowLevels(void)						// Returns 0 on success.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (ms_plbLevelBrowse != NULL)
 		{
@@ -1017,7 +1017,7 @@ static int16_t ShowLevels(void)						// Returns 0 on success.
 			// Add all the available realms.
 			char	szRealm[RSP_MAX_PATH+1];
 			char	szTitle[512];
-			int16_t	i	= 0;
+			short	i	= 0;
 			while (sRes == 0)
 				{
 				// Get realm name from realm prefs file
@@ -1115,11 +1115,11 @@ static void DlgBeGone(void)
 // Setup the specified dialog and related settings.
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t SetupDlg(		// Returns 0 on success.
+static short SetupDlg(		// Returns 0 on success.
 	char*	pszGuiFile,			// In:  Full path to GUI file.
 	DLG_TYPE	type)				// In:  Type of dialog.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Make sure everything is clean.
 	DlgBeGone();
@@ -1317,10 +1317,10 @@ static int16_t SetupDlg(		// Returns 0 on success.
 // Get dialog resource
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t DlgGetRes(											// Returns 0 if successfull, non-zero otherwise
+short DlgGetRes(											// Returns 0 if successfull, non-zero otherwise
 	RGuiItem* pgui)										// I/O: Pointer to gui item
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Release resources first (just in case)
 	DlgReleaseRes(pgui);
@@ -1405,7 +1405,7 @@ static DLG_ACTION UpdateDialog(						// Returns dialog action
 	rspNameBuffers(&g_pimScreenBuf);
 
 	// Process GUI through an iteration.
-	int32_t	lPressedId	= ms_pgDoGui.DoModeless(pguiRoot, &ie, g_pimScreenBuf);
+	long	lPressedId	= ms_pgDoGui.DoModeless(pguiRoot, &ie, g_pimScreenBuf);
 
 	// If OK chosen or enter pressed . . .
 	if (lPressedId == GUI_ID_OK || (ie.type == RInputEvent::Key && (ie.lKey & 0x0000FFFF) == '\r') )
@@ -1502,7 +1502,7 @@ static DLG_ACTION UpdateDialog(						// Returns dialog action
 	if (action == DLG_NOTHING)
 		{
 		// Temporarily timed based. ***
-		int32_t	lCurTime	= rspGetMilliseconds();
+		long	lCurTime	= rspGetMilliseconds();
 		if (lCurTime > ms_lNextOptionsUpdateTime)
 			{
 			if (bReset)
@@ -1551,13 +1551,13 @@ static DLG_ACTION UpdateDialog(						// Returns dialog action
 // Update hosts listbox for browser.
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t UpdateListBox(					// Returns 0 on success.
+static short UpdateListBox(					// Returns 0 on success.
 	RListBox*	plb,								// In:  Browser listbox.
 	CNetBrowse::Hosts* phostslistPersist,	// In:  Hosts.
 	CNetBrowse::Hosts* phostslistAdded,		// In:  Hosts to add to listbox.
 	CNetBrowse::Hosts* phostslistDropped)	// In:  Hosts to drop from listbox.
 	{
-	int16_t	sResult	= 0;	// Assume success.
+	short	sResult	= 0;	// Assume success.
 
 	if (plb)
 		{
@@ -1578,9 +1578,9 @@ static int16_t UpdateListBox(					// Returns 0 on success.
 					MakeMoreReadable(pgui);
 					pgui->Compose();
 					// Point GUI at entry.
-					pgui->m_ulUserData	= (U64)phost;
+					pgui->m_ulUserData	= (ULONG)phost;
 					// Successfully added entry.
-					phost->m_u32User	= (U64)pgui;
+					phost->m_u32User	= (U32)pgui;
 					// Note that we updated the dialog and will need to re-adjust
 					// fields and recompose.
 					bRepaginate	= true;
@@ -1708,7 +1708,7 @@ static void AddConsoleMsg(	// Returns nothing.
 			ms_lNumConsoleEntries++;
 			// Store the old border thickness so we know how much we can reduce
 			// these.
-			int16_t	sOrigTotalBorderThickness	= pguiConsoleMsg->GetTopLeftBorderThickness() + pguiConsoleMsg->GetBottomRightBorderThickness();
+			short	sOrigTotalBorderThickness	= pguiConsoleMsg->GetTopLeftBorderThickness() + pguiConsoleMsg->GetBottomRightBorderThickness();
 			// No lines.
 			pguiConsoleMsg->m_sBorderThickness	= 0;
 			// Adjust color.
@@ -1839,15 +1839,15 @@ extern const char* NetErrorText(						// Returns pointer to text
 // Get the realm filename from the realm title, using the INI.
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t GetRealmFileFromRealmTitle(	// Returns 0, if found; non-zero
+static short GetRealmFileFromRealmTitle(	// Returns 0, if found; non-zero
 														// otherwise.
 	bool	bCoopLevel,								// In:  true, if a coop level; false, if deathmatch level.
 	char*	pszRealmTitle,							// In:  Realm title.
 	char* pszRealmFileName,						// Out: Realm filename.
-	int16_t sMaxLen)									// In:  Max space available at 
+	short sMaxLen)									// In:  Max space available at 
 														// pszRealmFileName.
 	{
-	int16_t	sResult	= 0;	// Assume success.
+	short	sResult	= 0;	// Assume success.
 
 	RPrefs prefsRealm;
 	// Try opening the realms.ini file on the HD path first, if that fails go to the CD
@@ -1861,7 +1861,7 @@ static int16_t GetRealmFileFromRealmTitle(	// Returns 0, if found; non-zero
 		// Multiplayer sections are named "RealmNet1, "RealmNet2", etc.
 		// Multiplayer realm entry is always "Realm".
 		// The title is always "Title".
-		int16_t	sRealmNum	= 1;
+		short	sRealmNum	= 1;
 		char	szRealmTitle[512];
 		char	szSection[512];
 		bool	bFound	= false;
@@ -1930,7 +1930,7 @@ static void OnDroppedMsg(
 	RSP_SAFE_GUI_REF_VOID(pguiConnected, Compose());
 
 	// Get client's GUI . . .
-	RGuiItem* pguiClient = ms_plbPlayers->GetItemFromId( int32_t(pmsg->msg.dropped.id));
+	RGuiItem* pguiClient = ms_plbPlayers->GetItemFromId( long(pmsg->msg.dropped.id));
 	if (pguiClient != NULL)
 		{
 		// Remove the item.
@@ -1949,16 +1949,16 @@ static void OnDroppedMsg(
 // Player has joined
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t OnJoinedMsg(	// Returns 0 on success.
+static short OnJoinedMsg(	// Returns 0 on success.
 	CNetClient*	pnet,			// In:  Network interface.
 	NetMsg*		pmsg,			// In:  Joined msg from client to add.
 	bool			bServer)		// In:  true if in server mode; false if client.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	ASSERT(pmsg->msg.nothing.ucType == NetMsg::JOINED);
 	
-	uint8_t	ucColorIndex	= pmsg->msg.joined.ucColor;
+	UCHAR	ucColorIndex	= pmsg->msg.joined.ucColor;
 	if (ucColorIndex >= CGameSettings::ms_sNumPlayerColorDescriptions)
 		ucColorIndex	= 0;
 
@@ -1978,7 +1978,7 @@ static int16_t OnJoinedMsg(	// Returns 0 on success.
 	if (pguiClient != NULL)
 		{
 		// Let's be able to identify this client by its net ID.
-		pguiClient->m_lId	= (int32_t)pmsg->msg.joined.id;
+		pguiClient->m_lId	= (long)pmsg->msg.joined.id;
 
 		// Don't allow the user to select these in client mode . . .
 		if (bServer == false)
@@ -2009,11 +2009,11 @@ static int16_t OnJoinedMsg(	// Returns 0 on success.
 // Player has changed info
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t OnChangedMsg(	// Returns 0 on success.
+static short OnChangedMsg(	// Returns 0 on success.
 	CNetClient*	pnet,			// In:  Network interface.
 	NetMsg*		pmsg)			// In:  Changed msg
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	ASSERT(pmsg->msg.nothing.ucType == NetMsg::CHANGED);
 
@@ -2258,7 +2258,7 @@ void ProtoNotSupported(void)
 // Do network game dialog
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero otherwise.
+extern short DoNetGameDialog(							// Returns 0 if successfull, non-zero otherwise.
 	CNetClient*	pclient,									// I/O: Client interface
 	bool bBrowse,											// In:  Whether to browse (true) or connect (false)
 	CNetServer*	pserver,									// I/O: Server interface or NULL if not server
@@ -2266,7 +2266,7 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 	{
 	ASSERT(pclient != NULL);
 
-	int16_t	sResult = 0;									// Assume success.
+	short	sResult = 0;									// Assume success.
 
 	// Under Win95 with DirectX, certain problems have come up due to a
 	// combination of our hogging the CPU and DirectX adding to that hogging,
@@ -2322,7 +2322,7 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 		}
 
 	// Save current mouse cursor level and then force it to be visible
-	int16_t sCursorLevel = rspGetMouseCursorShowLevel();
+	short sCursorLevel = rspGetMouseCursorShowLevel();
 	rspSetMouseCursorShowLevel(1);
 
 	// Clear any events that might be in the queue
@@ -2446,17 +2446,17 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 								bool bServerDone = pserver ? false : true;
 								bool bClientDone = false;
 								bool bUserAbortNow = false;
-								int32_t lCancelDelay;
+								long lCancelDelay;
 								DLG_ACTION action;
 								NetMsg msg;
 								while (!(bClientDone && bServerDone && (bAbort || bStart || bRetry)) && !bUserAbortNow)
  									{
-									// //It overrdies the rendering of the menu (sdl2) :(
-									//UpdateSystem();
+									// Always and forever
+									UpdateSystem();
 
 									// Call this periodically to let it know we're not locked up
 									NetBlockingWatchdog();
-									
+
 									//------------------------------------------------------------------------------
 									// Do dialog and any other user-input stuff
 									//------------------------------------------------------------------------------
@@ -2604,7 +2604,7 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 												RGuiItem*	pguiPlayerSel	= ms_plbPlayers->GetSel();
 												if (pguiPlayerSel)
 													{
-													Net::ID id = (uint8_t)pguiPlayerSel->m_lId;
+													Net::ID id = (UCHAR)pguiPlayerSel->m_lId;
 													// Don't be a moron -- don't drop yourself
 													if (id == pclient->GetID())
 														{
@@ -2781,7 +2781,7 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 										else
 											{
 											// Assume no problems
-											int16_t sProblem = 0;
+											short sProblem = 0;
 
 											// Process messages from server
 											pclient->GetMsg(&msg);
@@ -2822,7 +2822,7 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 															// it will abort the whole game.
 															if (pserver)
 																pserver->SetLocalClientID(pclient->GetID());
-															AddConsoleMsg(false, g_pszClientStat_LoginAccepted_hd, (int16_t)pclient->GetID());
+															AddConsoleMsg(false, g_pszClientStat_LoginAccepted_hd, (short)pclient->GetID());
 															break;
 
 														case NetMsg::JoinAccepted:
@@ -2992,11 +2992,11 @@ extern int16_t DoNetGameDialog(							// Returns 0 if successfull, non-zero othe
 // takes a pserver pointer.
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t BrowseForHost(
+static short BrowseForHost(
 	CNetServer*	pserver,									// I/O: Server interface or NULL if none
 	RSocket::Address* paddress)						// Out: Address returned here (if successfull)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Start with empty list of hosts
 	CNetBrowse::Hosts hostsAll;
@@ -3020,8 +3020,8 @@ static int16_t BrowseForHost(
 			// Loop until error, user abort, or user choice . . .
 			while ((sResult == 0) && action != DLG_OK && action != DLG_CANCEL)
 				{
-				//It overrdies the rendering of the menu (sdl2) :(
-				//UpdateSystem();
+				// Do default processing.
+				UpdateSystem();
 				// Update watchdog timer for net blocking.
 				NetBlockingWatchdog();
 				// Update server interface, if available.
@@ -3124,10 +3124,10 @@ static int16_t BrowseForHost(
 // Try to connect to specified host
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t FindSpecificSystem(
+static short FindSpecificSystem(
 	RSocket::Address* paddress)						// Out: Address returned here (if successfull)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Lookup the specified host (by name or dotted address) and port
 	sResult = CNetBrowse::LookupHost(
@@ -3158,13 +3158,13 @@ static int16_t FindSpecificSystem(
 // Instead, we browse for ourselves, just like any other client would.
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t BrowseForSelf(
+static short BrowseForSelf(
 	CNetServer*	pserver,									// I/O: Server interface
 	RSocket::Address* paddress)						// Out: Address returned here (if successfull)
 	{
 	ASSERT(pserver);
 
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Start with empty list of hosts
 	CNetBrowse::Hosts hostsAll;
@@ -3180,7 +3180,7 @@ static int16_t BrowseForSelf(
 	if (sResult == 0)
 		{
 		// Wait for our own broadcast  
-		int32_t lTime = rspGetMilliseconds() + Net::BroadcastDropTime;
+		long lTime = rspGetMilliseconds() + Net::BroadcastDropTime;
 		while (!bFoundSelf && (rspGetMilliseconds() < lTime))
 			{
 			UpdateSystem();
@@ -3276,7 +3276,7 @@ extern bool NetBlockingWasAborted(void)
 // Net blocking callback
 //
 //////////////////////////////////////////////////////////////////////////////
-static int16_t NetBlockingCallback(void)				// Returns 0 to continue normally, 1 to abort
+static short NetBlockingCallback(void)				// Returns 0 to continue normally, 1 to abort
 	{
 	// We only need to grab this ptr once (it is guaranteed not to move).
 	// Once we have this pointer to the Key status array, we can use it to
@@ -3286,7 +3286,7 @@ static int16_t NetBlockingCallback(void)				// Returns 0 to continue normally, 1
 	static U8*	pau8KeyStatus	= rspGetKeyStatusArray();
 
 	// Assume we won't abort
-	int16_t	sAbort = 0;
+	short	sAbort = 0;
 
 	// It's always a good idea to do this
 	UpdateSystem();
@@ -3376,9 +3376,9 @@ static int16_t NetBlockingCallback(void)				// Returns 0 to continue normally, 1
 // essential).
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t InitNetProbGUI(void)
+extern short InitNetProbGUI(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	KillNetProbGUI();
 

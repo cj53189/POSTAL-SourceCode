@@ -39,7 +39,7 @@
 //							was written.
 //
 //	 03/06/96	JMI	Converted references from PORTABLE.H (e.g., DWORD) to
-//							references from SYSTEM.H (e.g., uint32_t).
+//							references from SYSTEM.H (e.g., ULONG).
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,13 +121,13 @@ CFlx::~CFlx()
 //						so that the next time this function is called, it doesn't fail
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::Open(
+short CFlx::Open(
 	char* pszFileName,			// Full path and filename of flic file
-	int16_t bSimple,					// TRUE for simple mode, FALSE for advanced stuff
+	short bSimple,					// TRUE for simple mode, FALSE for advanced stuff
 	FLX_FILE_HDR* pfilehdr,		// Copy of header returned here if not NULL
 	FLX_BUF* pbuf)					// Memory allocated within struct if not NULL
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Close in case it was left open
 	Close();
@@ -206,27 +206,27 @@ int16_t CFlx::Open(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::Create(
+short CFlx::Create(
 	char* pszFileName,			// Full path and filename of flic file
-	int16_t bReplaceExisting,		// TRUE if okay to replace existing file
-	int16_t sWidth,					// Width of flic
-	int16_t sHeight,					// Height of flic
-	int32_t lMilliPerFrame,			// Milliseconds between frames
-	int16_t sAspectX,				// X aspect ratio
-	int16_t sAspectY,				// Y aspect ratio
-	int16_t bOldFLI,					// TRUE for old FLI format, FALSE for new FLC
-	int16_t bSimple,					// TRUE for simple mode, FALSE for advanced stuff
+	short bReplaceExisting,		// TRUE if okay to replace existing file
+	short sWidth,					// Width of flic
+	short sHeight,					// Height of flic
+	long lMilliPerFrame,			// Milliseconds between frames
+	short sAspectX,				// X aspect ratio
+	short sAspectY,				// Y aspect ratio
+	short bOldFLI,					// TRUE for old FLI format, FALSE for new FLC
+	short bSimple,					// TRUE for simple mode, FALSE for advanced stuff
 	FLX_FILE_HDR* pfilehdr,		// Copy of header returned here if not NULL
 	FLX_BUF* pbuf)					// Memory allocated within struct if not NULL
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Close in case it was left open
 	Close();
 			
 	// Create file.  Depending on what user selected, either allow for the
 	// replacement of existing files or don't.
-	int16_t	sSux;
+	short	sSux;
 	if (bReplaceExisting)
 		sSux	= m_file.Open(pszFileName, "wb", ENDIAN_LITTLE);
 	else
@@ -321,9 +321,9 @@ int16_t CFlx::Create(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::Close(FLX_BUF* pbuf)
+short CFlx::Close(FLX_BUF* pbuf)
 	{
-	int16_t sError = 1;
+	short sError = 1;
 	
 	// Before we close the file, let's write the ring frame!
 	if (m_bOpenForWrite)
@@ -365,9 +365,9 @@ int16_t CFlx::Close(FLX_BUF* pbuf)
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::GetHeader(FLX_FILE_HDR* pFileHdr)
+short CFlx::GetHeader(FLX_FILE_HDR* pFileHdr)
 	{
-	int16_t sError = 1;
+	short sError = 1;
 	
 	if (m_bOpenForRead || m_bOpenForWrite)
 		{
@@ -388,7 +388,7 @@ int16_t CFlx::GetHeader(FLX_FILE_HDR* pFileHdr)
 // Otherwise, the number will be from 1 to n.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::GetFrameNum(void)
+short CFlx::GetFrameNum(void)
 	{
 	return m_sFrameNum;
 	}
@@ -405,11 +405,11 @@ int16_t CFlx::GetFrameNum(void)
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::ReadFrame(
-	int16_t sFrameNum,			// Frame number to be read
+short CFlx::ReadFrame(
+	short sFrameNum,			// Frame number to be read
 	FLX_BUF* pbufRead)		// Buffer for frame being read
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	if (m_bOpenForRead)
 		{
@@ -455,10 +455,10 @@ int16_t CFlx::ReadFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::ReadNextFrame(
+short CFlx::ReadNextFrame(
 	FLX_BUF* pbufRead)		// Buffer for frame being read
 	{
-	int16_t sError = 0;
+	short sError = 0;
 
 	if (m_bOpenForRead)
 		{
@@ -496,10 +496,10 @@ int16_t CFlx::ReadNextFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::WriteNextFrame(
+short CFlx::WriteNextFrame(
 	FLX_BUF* pbufWrite)		// Buffer of frame to be written
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Verify open for writing and simple mode and header not written yet
 	if (m_bOpenForWrite && m_bSimple && (m_filehdr.sFlags != 3))
@@ -531,7 +531,7 @@ int16_t CFlx::WriteNextFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::WriteFirstFrame(
+short CFlx::WriteFirstFrame(
 	FLX_BUF* pbufWrite)		// Buffer of frame to be written
 	{
 	if (m_bOpenForWrite && (m_sFrameNum == 0))
@@ -549,7 +549,7 @@ int16_t CFlx::WriteFirstFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::WriteNextFrame(
+short CFlx::WriteNextFrame(
 	FLX_BUF* pbufWrite,		// Buffer of next frame to be written
 	FLX_BUF* pbufPrev)		// Buffer of previously written frame
 	{
@@ -571,11 +571,11 @@ int16_t CFlx::WriteNextFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::WriteFinish(
+short CFlx::WriteFinish(
 	FLX_BUF* pbufFirst,		// Buffer of first frame that was written or NULL
 	FLX_BUF* pbufLast)		// Buffer of last frame that was written or NULL
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Verify open for writing, min 1 frame written and header not written yet
 	if (m_bOpenForWrite && (m_sFrameNum >= 1) && (m_filehdr.sFlags != 3))
@@ -609,7 +609,7 @@ int16_t CFlx::WriteFinish(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CFlx::CreateBuf(FLX_BUF* pbuf, int16_t sWidth, int16_t sHeight, int16_t sColors)
+short CFlx::CreateBuf(FLX_BUF* pbuf, short sWidth, short sHeight, short sColors)
 	{
 	InitBuf(pbuf);
 	return AllocBuf(pbuf, sWidth, sHeight, sColors);

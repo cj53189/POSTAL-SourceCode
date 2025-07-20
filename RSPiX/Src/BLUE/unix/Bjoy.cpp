@@ -233,7 +233,7 @@ extern bool GetDudeFireAngle(double* d_Angle)
 // previous.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern void rspUpdateJoy(int16_t sJoy)
+extern void rspUpdateJoy(short sJoy)
 	{
         if ((sJoy > NUM_JOYSTICKS) || (ms_Controllers[sJoy] == NULL))
             return;
@@ -301,7 +301,7 @@ extern void rspUpdateJoy(int16_t sJoy)
 //
 //////////////////////////////////////////////////////////////////////////////
 extern void rspGetJoyState(
-	int16_t sJoy,						// In:  Joystick to query.
+	short sJoy,						// In:  Joystick to query.
 	U32*	pu32Buttons,			// Out: Buttons that are down, if not NULL.
 										// An RSP_JOY_BUT_## bit field that is set indicates
 										// that button is down.
@@ -321,7 +321,7 @@ extern void rspGetJoyState(
 //
 //////////////////////////////////////////////////////////////////////////////
 extern void rspGetJoyPrevState(
-	int16_t sJoy,						// In:  Joystick to query.
+	short sJoy,						// In:  Joystick to query.
 	U32*	pu32Buttons,			// Out: Buttons that are down, if not NULL.
 										// An RSP_JOY_BUT_## bit field that is set indicates
 										// that button is down.
@@ -337,10 +337,10 @@ extern void rspGetJoyPrevState(
 //////////////////////////////////////////////////////////////////////////////
 // Functions to convert bitfields to joybutton numbers and back again.
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t MouseBitfieldToIndex(U32 bitfield)
+extern short MouseBitfieldToIndex(U32 bitfield)
 {
 	// Also clunky
-	int16_t result;
+	short result;
 	if (bitfield & 0x0001)
 		result = 1;
 	else if (bitfield & 0x0002)
@@ -363,10 +363,10 @@ extern int16_t MouseBitfieldToIndex(U32 bitfield)
 
 	return result;
 }
-extern int16_t JoyBitfieldToIndex(U32 bitfield)
+extern short JoyBitfieldToIndex(U32 bitfield)
 {
 	// Clunky.
-	int16_t result;
+	short result;
 	if (bitfield & RSP_JOY_BUT_1)
 		result = 1;
 	else if (bitfield & RSP_JOY_BUT_2)
@@ -413,7 +413,7 @@ extern int16_t JoyBitfieldToIndex(U32 bitfield)
 	return result;
 }
 
-extern U32 MouseIndexToBitfield(int16_t index)
+extern U32 MouseIndexToBitfield(short index)
 {
 	// Still clunky
 	U32 result;
@@ -440,7 +440,7 @@ extern U32 MouseIndexToBitfield(int16_t index)
 	return result;
 }
 
-extern U32 JoyIndexToBitfield(int16_t index)
+extern U32 JoyIndexToBitfield(short index)
 {
 	// Also clunky.
 	U32 result;
@@ -514,3 +514,4 @@ extern U32 JoyIndexToBitfield(int16_t index)
 //////////////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////////////
+

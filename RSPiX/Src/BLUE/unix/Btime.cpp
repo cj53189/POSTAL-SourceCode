@@ -54,9 +54,9 @@ extern void Time_Init(void)
 // Returns the time in a long.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int32_t rspGetMilliseconds(void)
+extern long rspGetMilliseconds(void)
 	{
-        return (int32_t) (SDL_GetTicks());
+        return (long) (SDL_GetTicks());
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,14 +68,14 @@ extern int32_t rspGetMilliseconds(void)
 // Returns the time in a long.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int32_t rspGetMicroseconds(	// Returns microseconds between now and
+extern long rspGetMicroseconds(	// Returns microseconds between now and
 											// last
-	int16_t sReset /*= FALSE*/)		// Set to TRUE to reset timer.  If you never
+	short sReset /*= FALSE*/)		// Set to TRUE to reset timer.  If you never
 											// reset the timer, it will wrap within
 											// just over 35 minutes.
 	{
     Uint32 microsecs = SDL_GetTicks();
-    int32_t lTime = (int32_t) (microsecs - MicrosecondsBase);
+    long lTime = (long) (microsecs - MicrosecondsBase);
 
 		// If reset requested . . .
 	if (sReset != FALSE)

@@ -88,7 +88,7 @@ DLL2EXE char*	CPlugIn::GetDllMagicTime(void)
 #endif // _WINDLL
 
 #ifdef _WINDLL
-DLL2EXE int32_t	CPlugIn::GetDllMagicSize(void)
+DLL2EXE long	CPlugIn::GetDllMagicSize(void)
 	{
 	return m_lMagicSize; 
 	}

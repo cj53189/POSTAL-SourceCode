@@ -83,7 +83,7 @@ static void* event_handlers[] =
 //*****************************************************************************
 
 EVENT* CEvent::m_pEventList;
-int16_t  CEvent::m_aIndexList[EVENT_MAX_COORD/EVENT_SPACING];
+short  CEvent::m_aIndexList[EVENT_MAX_COORD/EVENT_SPACING];
 CList  CEvent::m_IgnoreList;
 
 //*****************************************************************************
@@ -162,7 +162,7 @@ void CEvent::Reset()
 //
 //*****************************************************************************
 
-int16_t CEvent::SelectSet(int16_t sEventSet)
+short CEvent::SelectSet(short sEventSet)
 {
 		// from the univ data - somewhere, get the event data
 		// and create memory for the event data then point to it.
@@ -194,7 +194,7 @@ int16_t CEvent::SelectSet(int16_t sEventSet)
 //
 //*****************************************************************************
 
-void CEvent::TriggerInit(int16_t sDispX, int16_t sDispY)
+void CEvent::TriggerInit(short sDispX, short sDispY)
 {
 	// Save the display position
 	m_sDispOldX = sDispX;
@@ -255,7 +255,7 @@ void CEvent::TriggerInit(int16_t sDispX, int16_t sDispY)
 //
 //*****************************************************************************
 
-int16_t CEvent::Trigger(int16_t sDispX, int16_t sDispY)
+short CEvent::Trigger(short sDispX, short sDispY)
 {
  	// Decrement timers no matter what happens
 	DecrementTimers();
@@ -507,9 +507,9 @@ void CEvent::Unignore(EVENT* pEvent)
 //
 //*****************************************************************************
  
-EVENT* CEvent::Search(int16_t sEventNum)
+EVENT* CEvent::Search(short sEventNum)
 {
-	int16_t s = 0;
+	short s = 0;
 
 	while (m_pEventData[s].sType != sEventNum && m_pEventData[s].sType >= 0)
 		s++;
@@ -548,7 +548,7 @@ EVENT* CEvent::Search(int16_t sEventNum)
 
 EVENT* CEvent::SearchNext(EVENT* pEvent)
 {
-	int16_t s = 0;
+	short s = 0;
 	
 	while (m_pEventData[s].sType != pEvent->sType && 
 	       m_pEventData[s].sType >= 0             &&
@@ -609,11 +609,11 @@ EVENT* CEvent::SearchNext(EVENT* pEvent)
 //
 //*****************************************************************************
 
-void CEvent::CreateIndexes(int16_t sOrientation)
+void CEvent::CreateIndexes(short sOrientation)
 {
-	int16_t sCoord = 0;
-	int16_t sEvent = 0;
-	int16_t sIndex = 0;
+	short sCoord = 0;
+	short sEvent = 0;
+	short sIndex = 0;
 
 	if (sOrientation == HORIZONTAL)
 	{
@@ -685,10 +685,10 @@ void CEvent::CreateIndexes(int16_t sOrientation)
 //
 //*****************************************************************************
 
-int16_t CEvent::Scan()
+short CEvent::Scan()
 {
-	int16_t s;
-	int16_t sEventIndex;
+	short s;
+	short sEventIndex;
 
 	if (m_sOrientation == VERTICAL)
 	{	// Vertical - aIndexList is sorted on Y
@@ -759,7 +759,7 @@ int16_t CEvent::Scan()
 //
 //*****************************************************************************
 
-int16_t CEvent::CallHandler(int16_t sEventIndex)
+short CEvent::CallHandler(short sEventIndex)
 {
 //-----------------------------------------------------------------------------
 // Get event's data
@@ -877,3 +877,4 @@ void event_undefined()
 //*****************************************************************************
 // EOF
 //*****************************************************************************
+

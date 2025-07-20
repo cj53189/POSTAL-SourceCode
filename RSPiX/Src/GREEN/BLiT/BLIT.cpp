@@ -28,7 +28,7 @@
 #endif
 
 	template <class PIXSIZE>
-	void	rspClipPlot(PIXSIZE color, RImage* pimDst,int16_t sX,int16_t sY,const RRect* prClip)
+	void	rspClipPlot(PIXSIZE color, RImage* pimDst,short sX,short sY,const RRect* prClip)
 	{
 
 #ifdef _DEBUG
@@ -57,13 +57,13 @@
 		return;
 		}
 
-	int16_t sNeedToUnlock = 0;
+	short sNeedToUnlock = 0;
 
 	//if (gsScreenLocked || gsBufferLocked) goto PLOT_DONTLOCK;
 
 	// removed locking and unlocking except where needed for special cases:
 
-	switch ((int16_t)(((S64)pimDst->m_pSpecial))) // 0 = normal image
+	switch ((short)(((long)pimDst->m_pSpecial))) // 0 = normal image
 		{
 		case 0: // normal image, buffer in image
 		break;
@@ -154,9 +154,9 @@
 	}
 
 // force instantiation
-template void rspClipPlot<uint8_t>(uint8_t color, RImage* pimDst,int16_t sX,int16_t sY,const RRect* prClip);
-template void rspClipPlot<uint16_t>(uint16_t color, RImage* pimDst,int16_t sX,int16_t sY,const RRect* prClip);
-template void rspClipPlot<uint32_t>(uint32_t color, RImage* pimDst,int16_t sX,int16_t sY,const RRect* prClip);
+template void rspClipPlot<UCHAR>(UCHAR color, RImage* pimDst,short sX,short sY,const RRect* prClip);
+template void rspClipPlot<USHORT>(USHORT color, RImage* pimDst,short sX,short sY,const RRect* prClip);
+template void rspClipPlot<ULONG>(ULONG color, RImage* pimDst,short sX,short sY,const RRect* prClip);
 
 
 void instantiatePlot(void);
@@ -164,9 +164,9 @@ void instantiatePlot()
 	{
 	RImage* pim = NULL;
 
-	rspPlot((uint8_t)0,pim,(int16_t)0,(int16_t)0);
-	rspPlot((uint16_t)0,pim,(int16_t)0,(int16_t)0);
-	rspPlot((uint32_t)0,pim,(int16_t)0,(int16_t)0);
+	rspPlot((UCHAR)0,pim,(short)0,(short)0);
+	rspPlot((USHORT)0,pim,(short)0,(short)0);
+	rspPlot((ULONG)0,pim,(short)0,(short)0);
 
 	}
 
@@ -176,10 +176,10 @@ void instantiatePlot()
 // the side shrinking.
 //
 template <class PIXSIZE>
-int16_t	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_t &w,int16_t &h,
+short	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,short &x,short &y,short &w,short &h,
 						int lFlag,int rFlag,int tFlag,int bFlag)
 	{
-	int16_t sWordLen = sizeof(PIXSIZE);
+	short sWordLen = sizeof(PIXSIZE);
 
 #ifdef _DEBUG
 
@@ -210,11 +210,11 @@ int16_t	rspLasso(PIXSIZE ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_
 
 #endif
 
-	int16_t btos[] = {-1,0,1,-1,2};
+	short btos[] = {-1,0,1,-1,2};
 	PIXSIZE* pCursor = NULL;
 	PIXSIZE* pCursorLine = NULL;
-	int32_t	lSkipV;
-	int16_t i,j;
+	long	lSkipV;
+	short i,j;
 
 	if (pimSrc->m_lPitch > 0)
 		lSkipV = pimSrc->m_lPitch << btos[sWordLen];
@@ -309,11 +309,11 @@ DoneB:
 
 
 // force instantiation
-template int16_t rspLasso<uint8_t>(uint8_t ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_t &w,int16_t &h,
+template short rspLasso<UCHAR>(UCHAR ignoreColor,RImage* pimSrc,short &x,short &y,short &w,short &h,
 						int lFlag,int rFlag,int tFlag,int bFlag);
-template int16_t rspLasso<uint16_t>(uint16_t ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_t &w,int16_t &h,
+template short rspLasso<USHORT>(USHORT ignoreColor,RImage* pimSrc,short &x,short &y,short &w,short &h,
 						int lFlag,int rFlag,int tFlag,int bFlag);
-template int16_t rspLasso<uint32_t>(uint32_t ignoreColor,RImage* pimSrc,int16_t &x,int16_t &y,int16_t &w,int16_t &h,
+template short rspLasso<ULONG>(ULONG ignoreColor,RImage* pimSrc,short &x,short &y,short &w,short &h,
 						int lFlag,int rFlag,int tFlag,int bFlag);
 
 
@@ -322,11 +322,11 @@ void instantiateLasso(void);
 void instantiateLasso()
 	{
 	RImage* pim = NULL;
-	int16_t i = 0;
+	short i = 0;
 
-	rspLasso( (uint8_t)i, pim, i,i,i,i, 1,1,1,1);
-	rspLasso( (uint16_t)i, pim, i,i,i,i, 1,1,1,1);
-	rspLasso( (uint32_t)i, pim, i,i,i,i, 1,1,1,1);
+	rspLasso( (UCHAR)i, pim, i,i,i,i, 1,1,1,1);
+	rspLasso( (USHORT)i, pim, i,i,i,i, 1,1,1,1);
+	rspLasso( (ULONG)i, pim, i,i,i,i, 1,1,1,1);
 
 	}
 
@@ -335,19 +335,19 @@ void instantiateLasso()
 // pre-validated rect copy: (Pitch will be sign based!)
 //
 template <class PIXSIZE>
-inline void _BLiT(PIXSIZE* pSrc,PIXSIZE* pDst,int32_t lSrcPitch, int32_t lDstPitch,
-						int16_t sHeight,int16_t	sByteWidth)
+inline void _BLiT(PIXSIZE* pSrc,PIXSIZE* pDst,long lSrcPitch, long lDstPitch,
+						short sHeight,short	sByteWidth)
 	{
 	union	{
 		PIXSIZE *w;
-		uint8_t	*b;
+		UCHAR	*b;
 		} pSrcLine,pDstLine;
 
 	int i;
 
-	const static int16_t SizeToShift[] = {0,0,1,0,2,0,0,0,3,0,0,0,0,0,0,0,4};
+	const static short SizeToShift[] = {0,0,1,0,2,0,0,0,3,0,0,0,0,0,0,0,4};
 	//                                  0 1 2 3 4 5 6 7 8 9 a b c d e f *
-	int16_t sWordWidth = int16_t(sByteWidth >> SizeToShift[sizeof(PIXSIZE)]);
+	short sWordWidth = short(sByteWidth >> SizeToShift[sizeof(PIXSIZE)]);
 
 	pSrcLine.w = pSrc;
 	pDstLine.w = pDst;
@@ -369,8 +369,8 @@ inline void _BLiT(PIXSIZE* pSrc,PIXSIZE* pDst,int32_t lSrcPitch, int32_t lDstPit
 // This uses misaligned 32-bit copies to be "faster" than byte copying:
 //
 // But this is a garatied SegBus on ARM with NEON vectorisation, as misaligned are not possible
-inline void _BLiT_MA(uint8_t* pSrc,uint8_t* pDst,int32_t lSrcPitch, int32_t lDstPitch,
-						int16_t sHeight,int16_t	sWidth)
+inline void _BLiT_MA(UCHAR* pSrc,UCHAR* pDst,long lSrcPitch, long lDstPitch,
+						short sHeight,short	sWidth)
 	{
 #ifdef __ARM_NEON__
 	while (sHeight--)
@@ -382,12 +382,12 @@ inline void _BLiT_MA(uint8_t* pSrc,uint8_t* pDst,int32_t lSrcPitch, int32_t lDst
 #else
 	union	{
 		U32 *w;
-		uint8_t	*b;
+		UCHAR	*b;
 		} pSrcLine,pDstLine,pS,pD;
 
-	int16_t i;
-	int16_t sWordWidth = int16_t (sWidth >> 2); //32 bit words....
-	int16_t sExtraWidth = sWidth - int16_t(sWordWidth << 2);
+	short i;
+	short sWordWidth = short (sWidth >> 2); //32 bit words....
+	short sExtraWidth = sWidth - short(sWordWidth << 2);
 
 	pS.b = pSrcLine.b = pSrc;
 	pD.b = pDstLine.b = pDst;
@@ -414,8 +414,8 @@ inline void _BLiT_MA(uint8_t* pSrc,uint8_t* pDst,int32_t lSrcPitch, int32_t lDst
 // Source and Destination (X,Y) must be the same.
 // Will widen your rectangle to take advantage of your bus!
 // 
-int16_t	rspBlitA(RImage* pimSrc,RImage* pimDst,int16_t sX,int16_t sY,
-				int16_t sW,int16_t sH,const RRect* prDst,const RRect* prSrc)
+short	rspBlitA(RImage* pimSrc,RImage* pimDst,short sX,short sY,
+				short sW,short sH,const RRect* prDst,const RRect* prSrc)
 	{
 
 #ifdef _DEBUG
@@ -436,17 +436,17 @@ int16_t	rspBlitA(RImage* pimSrc,RImage* pimDst,int16_t sX,int16_t sY,
 #endif
 
 	// adjust for color depth based on source:
-	int16_t sDepth = pimSrc->m_sDepth >> 3; // depth in bytes (1,2,4)
-	int16_t sDepthToShift[] = {-1, 0, 1, -1, 2};
-	int16_t sDepthS = sDepthToShift[sDepth]; // convert to a shift value
+	short sDepth = pimSrc->m_sDepth >> 3; // depth in bytes (1,2,4)
+	short sDepthToShift[] = {-1, 0, 1, -1, 2};
+	short sDepthS = sDepthToShift[sDepth]; // convert to a shift value
 
-	const int32_t clChosenAlignment = 4; // in bytes
+	const long clChosenAlignment = 4; // in bytes
 	// govern the best possible alignment based on pitch
-	int16_t sBestAlign = (int16_t)(clChosenAlignment | pimSrc->m_lPitch | pimDst->m_lPitch);
+	short sBestAlign = (short)(clChosenAlignment | pimSrc->m_lPitch | pimDst->m_lPitch);
 	
 	// in bytes!
-	int16_t sx1 = sX << sDepthS;
-	int16_t	sx2 = (sX + sW) << sDepthS;
+	short sx1 = sX << sDepthS;
+	short	sx2 = (sX + sW) << sDepthS;
 
 	// Optimize the 8-bit case:
 	//***********************************************************************
@@ -608,10 +608,10 @@ int16_t	rspBlitA(RImage* pimSrc,RImage* pimDst,int16_t sX,int16_t sY,
 //*****************************************************************************
 // This is the main controller... It clips in pixels, then thinks in bytes:
 //
-int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_t sDstX,
-			  int16_t sDstY,int16_t sW,int16_t sH,const RRect* prDst,const RRect* prSrc)
+short	rspBlit(RImage* pimSrc,RImage* pimDst,short sSrcX,short sSrcY,short sDstX,
+			  short sDstY,short sW,short sH,const RRect* prDst,const RRect* prSrc)
 	{
-	int16_t sClip;
+	short sClip;
 
 	// 1) preliminary parameter validation:
 #ifdef _DEBUG
@@ -717,16 +717,16 @@ int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_
 	// do OS based copying!
 	//short sNeedToUnlock = 0; // will be the name of a buffer to unlock.
 
-	int16_t sBlitTypeSrc = 0;
-	int16_t sBlitTypeDst = 0;
+	short sBlitTypeSrc = 0;
+	short sBlitTypeDst = 0;
 
 	//	if (gsScreenLocked || gsBufferLocked) goto BLIT_PRELOCKED;
 
 	// IN THIS IMPLEMENTATION, we must do LOCK, BLiT, UNLOCK, so I
 	// must record which UNLOCK (if any) needs to be done AFTER the BLiT
 	// has completed. (Lord help me if a blit gets interrupted)
-	if (pimSrc->m_type == RImage::IMAGE_STUB) sBlitTypeSrc = (int16_t)((S64)pimSrc->m_pSpecial);
-	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (int16_t)((S64)pimDst->m_pSpecial);
+	if (pimSrc->m_type == RImage::IMAGE_STUB) sBlitTypeSrc = (short)((long)pimSrc->m_pSpecial);
+	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (short)((long)pimDst->m_pSpecial);
 
 	switch ( (sBlitTypeSrc<<3) + sBlitTypeDst) // 0 = normal image
 		{
@@ -846,8 +846,8 @@ int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_
 	U8* pDst = pimDst->m_pData + sDstX + pimDst->m_lPitch * sDstY;
 	
 	// Determine Byte Alignment:
-	int16_t sAlign = sSrcX | sDstX | sW | 
-		(int16_t)( ABS(pimSrc->m_lPitch) | ABS(pimDst->m_lPitch) );
+	short sAlign = sSrcX | sDstX | sW | 
+		(short)( ABS(pimSrc->m_lPitch) | ABS(pimDst->m_lPitch) );
 
 	// Do the rect copy as fast as possible!
 	// we are passing the width in BYTES!
@@ -935,18 +935,18 @@ int16_t	rspBlit(RImage* pimSrc,RImage* pimDst,int16_t sSrcX,int16_t sSrcY,int16_
 // pre-validated rect copy: (Pitch will be sign based!)
 //
 template <class WORDSIZE>
-inline void _ClearRect(WORDSIZE color,WORDSIZE* pDst,int32_t lDstPitch,
-						int16_t sHeight,int16_t	sByteWidth)
+inline void _ClearRect(WORDSIZE color,WORDSIZE* pDst,long lDstPitch,
+						short sHeight,short	sByteWidth)
 	{
 	union	{
 		WORDSIZE *w;
-		uint8_t	*b;
+		UCHAR	*b;
 		} pDstLine;
 
-	int16_t i,sWordWidth = sByteWidth;
-	const static int16_t SizeToShift[] = {0,0,1,0,2,0,0,0,3,0,0,0,0,0,0,0,4};
+	short i,sWordWidth = sByteWidth;
+	const static short SizeToShift[] = {0,0,1,0,2,0,0,0,3,0,0,0,0,0,0,0,4};
 	//                                  0 1 2 3 4 5 6 7 8 9 a b c d e f *
-	sWordWidth = int16_t(sByteWidth >> SizeToShift[sizeof(WORDSIZE)]);
+	sWordWidth = short(sByteWidth >> SizeToShift[sizeof(WORDSIZE)]);
 	pDstLine.w = pDst;
 
 	while (sHeight--)
@@ -962,7 +962,7 @@ inline void _ClearRect(WORDSIZE color,WORDSIZE* pDst,int32_t lDstPitch,
 
 // Must make TC possible!  
 //
-int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,RRect* prClip)
+short rspRect(U32 color,RImage* pimDst,short sX,short sY,short sW,short sH,RRect* prClip)
 	{
 	// A cheap hook for mono:
 	if (pimDst->m_type == RImage::BMP1) // monochrome hook
@@ -1001,7 +1001,7 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 	if (sW < 0) { sX += (sW+1); sW = -sW; }
 	if (sH < 0) { sY += (sH+1); sH = -sH; }
 
-	int16_t sClip;
+	short sClip;
 
 	// 2) Destination Clipping:
 	if (prClip)
@@ -1033,8 +1033,8 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 
 	//**************  INSERT BUFFER HOOKS HERE!  ************************
 
-	int16_t sNeedToUnlock = 0; // will be the name of a buffer to unlock.
-	int16_t sBlitTypeDst = 0;
+	short sNeedToUnlock = 0; // will be the name of a buffer to unlock.
+	short sBlitTypeDst = 0;
 
 	// IN RELEASE MODE, GIVE THE USER A CHANCE:
 #ifndef _DEBUG
@@ -1049,7 +1049,7 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 	// must record which UNLOCK (if any) needs to be done AFTER the BLiT
 	// has completed. (Lord help me if a blit gets interrupted)
 
-	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (int16_t)((S64)pimDst->m_pSpecial);
+	if (pimDst->m_type == RImage::IMAGE_STUB) sBlitTypeDst = (short)((long)pimDst->m_pSpecial);
 
 	switch (sBlitTypeDst) // 0 = normal image
 		{
@@ -1109,7 +1109,7 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 	// Multiply color word based on 8-bit concepts:
 	//
 	color &= 255;
-	int16_t sByteW = sW;
+	short sByteW = sW;
 
 	switch (pimDst->m_sDepth)
 		{
@@ -1135,13 +1135,13 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 	
 	// Determine Byte Alignment:
 	// sX and sByteW are in BYTES!
-	int16_t sAlign = sX | sByteW | (int16_t)( ABS(pimDst->m_lPitch) );
+	short sAlign = sX | sByteW | (short)( ABS(pimDst->m_lPitch) );
 
 	// Do the draw rect as fast as possible!
 	if ( (sAlign & 3) == 0)	
 		{
 		// 32-bit copy
-		uint32_t ulColor = color;
+		ULONG ulColor = color;
 		ulColor += (color << 8); // 16-bit
 		ulColor += (ulColor << 16); // 32-bit
 
@@ -1150,7 +1150,7 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 	else if ( (sAlign & 1) == 0)
 		{
 		// 16-bit copy
-		uint16_t usColor = (uint16_t)(color + (color << 8)); // 16-bit;
+		USHORT usColor = (USHORT)(color + (color << 8)); // 16-bit;
 		_ClearRect(usColor,(U16*)pDst,pimDst->m_lPitch,sH,sByteW); 
 		}
 	else
@@ -1199,7 +1199,7 @@ int16_t rspRect(U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_
 
 // Does a "hollow" rectangle! (grows inwards)
 //
-int16_t rspRect(int16_t sThickness,U32 color,RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,RRect* prClip)
+short rspRect(short sThickness,U32 color,RImage* pimDst,short sX,short sY,short sW,short sH,RRect* prClip)
 	{
 	// 1) preliminary parameter validation:
 #ifdef _DEBUG
@@ -1255,8 +1255,8 @@ int16_t rspRect(int16_t sThickness,U32 color,RImage* pimDst,int16_t sX,int16_t s
 // This only crops uncompressed images.
 //
 // Modify current:
-int16_t	rspCrop(RImage* pimSrc,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
-				  int16_t sAlign) // sAlign in BYTES
+short	rspCrop(RImage* pimSrc,short sX,short sY,short sW,short sH,
+				  short sAlign) // sAlign in BYTES
 	{
 #ifdef _DEBUG
 
@@ -1287,15 +1287,15 @@ int16_t	rspCrop(RImage* pimSrc,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 
 #endif
 
-	int32_t lNewPitch;
+	long lNewPitch;
 
 	// 2) Create a new buffer with 128-bit alignment and pitch:
 
 	// Determine pixel size:
-	int16_t	sPixSize = pimSrc->m_sDepth >> 3;
-	int16_t sShift[] = {-1,0,1,-1,2};
-	int16_t sAlignMask = sAlign - 1; // sAlign is in BYTES
-	int16_t sPixShift = sShift[sPixSize];
+	short	sPixSize = pimSrc->m_sDepth >> 3;
+	short sShift[] = {-1,0,1,-1,2};
+	short sAlignMask = sAlign - 1; // sAlign is in BYTES
+	short sPixShift = sShift[sPixSize];
 
 	// Determine Optimum Pitch...
 	lNewPitch = (sW + sAlignMask) & (~sAlignMask);
@@ -1309,7 +1309,7 @@ int16_t	rspCrop(RImage* pimSrc,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 	rspBlit(pimSrc,&imDst,sX,sY,0,0,sW,sH);
 
 	// tricky part: Swap buffers...
-	uint8_t	*pSrcMem,*pSrcBuf;
+	UCHAR	*pSrcMem,*pSrcBuf;
 	pimSrc->DetachData((void**)&pSrcMem,(void**)&pSrcBuf);
 	// Move the new buffer back to the original
 	imDst.DetachData((void**)&(pimSrc->m_pMem),(void**)&(pimSrc->m_pData));
@@ -1335,9 +1335,9 @@ int16_t	rspCrop(RImage* pimSrc,int16_t sX,int16_t sY,int16_t sW,int16_t sH,
 // This only pads uncompressed images.
 //
 // Modify current:
-int16_t	rspPad(RImage* pimSrc,int16_t sX,int16_t sY, // where to move the old image to
-					int16_t sW,int16_t sH, // new width and height
-					int16_t sAlign) // sAlign in BYTES
+short	rspPad(RImage* pimSrc,short sX,short sY, // where to move the old image to
+					short sW,short sH, // new width and height
+					short sAlign) // sAlign in BYTES
 	{
 #ifdef _DEBUG
 
@@ -1377,17 +1377,17 @@ int16_t	rspPad(RImage* pimSrc,int16_t sX,int16_t sY, // where to move the old im
 #endif
 
 	// Save size of old image...
-	int32_t lNewPitch;
-	int16_t sOldW = pimSrc->m_sWidth;
-	int16_t sOldH = pimSrc->m_sHeight;
+	long lNewPitch;
+	short sOldW = pimSrc->m_sWidth;
+	short sOldH = pimSrc->m_sHeight;
 
 	// 2) Create a new buffer with 128-bit alignment and pitch:
 
 	// Determine pixel size:
-	int16_t	sPixSize = pimSrc->m_sDepth >> 3;
-	int16_t sShift[] = {-1,0,1,-1,2};
-	int16_t sAlignMask = sAlign - 1; // sAlign is in BYTES
-	int16_t sPixShift = sShift[sPixSize];
+	short	sPixSize = pimSrc->m_sDepth >> 3;
+	short sShift[] = {-1,0,1,-1,2};
+	short sAlignMask = sAlign - 1; // sAlign is in BYTES
+	short sPixShift = sShift[sPixSize];
 
 	// Determine Optimum Pitch...
 	lNewPitch = (sW + sAlignMask) & (~sAlignMask);
@@ -1417,7 +1417,7 @@ int16_t	rspPad(RImage* pimSrc,int16_t sX,int16_t sY, // where to move the old im
 		}
 
 	// tricky part: Swap buffers...
-	uint8_t	*pSrcMem,*pSrcBuf;
+	UCHAR	*pSrcMem,*pSrcBuf;
 	pimSrc->DetachData((void**)&pSrcMem,(void**)&pSrcBuf);
 	// Move the new buffer back to the original
 	imDst.DetachData((void**)&(pimSrc->m_pMem),(void**)&(pimSrc->m_pData));
@@ -1442,9 +1442,9 @@ int16_t	rspPad(RImage* pimSrc,int16_t sX,int16_t sY, // where to move the old im
 // If clipped completely, sets rect to 0
 // & sets this rect to {0,0,0,0}
 //
-int16_t RRect::ClipTo(RRect* prClipTo)
+short RRect::ClipTo(RRect* prClipTo)
 		{
-		int16_t sClipL,sClipT,sClipR,sClipB;
+		short sClipL,sClipT,sClipR,sClipB;
 		sClipL = prClipTo->sX - sX;
 		sClipT = prClipTo->sY - sY;
 		sClipR = sX + sW - prClipTo->sX - prClipTo->sW;
@@ -1473,3 +1473,4 @@ int16_t RRect::ClipTo(RRect* prClipTo)
 
 		return 0;
 		}
+

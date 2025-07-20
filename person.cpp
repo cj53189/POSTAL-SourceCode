@@ -277,7 +277,6 @@
 #define NEAR_DEATH_HITPOINTS	20
 #define MS_BETWEEN_SAMPLES		100
 #define PERSONALITY_ITEM_ID_BASE 200
-#define NUM_ELEMENTS(a)		(sizeof(a) / sizeof(a[0]) )
 
 ////////////////////////////////////////////////////////////////////////////////
 // Variables/data
@@ -290,18 +289,18 @@ double CPerson::ms_dInRangeLow = 190*190;		// Squared distance to be in range wi
 double CPerson::ms_dInRangeHigh = 230*230;	// Squared distance to be in range with weapon
 double CPerson::ms_dThrowHorizVel = 200;		// Throw out at this velocity
 double CPerson::ms_dMaxCrawlVel = 2.5;			// Speed at which cop crawls
-int32_t CPerson::ms_lMinCommentTime = 10000;		// Amount of time before making a comment
-int32_t CPerson::ms_lCommentTimeVariance = 35000;// Random amount added on.
-int32_t CPerson::ms_lRandomAvoidTime = 200;		// Time to wander before looking again
-int32_t CPerson::ms_lReseekTime = 1000;			// Do a 'find' again 
-int32_t CPerson::ms_lWatchWaitTime = 5000;		// Time to watch shot go
-int32_t CPerson::ms_lReselectDudeTime	= 3000;	// Time to go without finding a dude
+long CPerson::ms_lMinCommentTime = 10000;		// Amount of time before making a comment
+long CPerson::ms_lCommentTimeVariance = 35000;// Random amount added on.
+long CPerson::ms_lRandomAvoidTime = 200;		// Time to wander before looking again
+long CPerson::ms_lReseekTime = 1000;			// Do a 'find' again 
+long CPerson::ms_lWatchWaitTime = 5000;		// Time to watch shot go
+long CPerson::ms_lReselectDudeTime	= 3000;	// Time to go without finding a dude
 															// before calling SelectDude() to find
 															// possibly a closer one.
-int16_t CPerson::ms_sLogTabUserGlobal = 0;		// Logic table variable for group effects
+short CPerson::ms_sLogTabUserGlobal = 0;		// Logic table variable for group effects
 
 // Let this auto-init to 0
-int16_t CPerson::ms_sFileCount;
+short CPerson::ms_sFileCount;
 
 // This is the one CPerson that can log its AI table transitions or
 // CIdBank::IdNil.
@@ -319,13 +318,13 @@ extern bool demoCompat;
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::Load(				// Returns 0 if successfull, non-zero otherwise
+short CPerson::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	int16_t sFileCount,					// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)				// In:  Version of file format to load.
+	short sFileCount,					// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)				// In:  Version of file format to load.
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	sResult = CDoofus::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	
 	if (sResult == 0)
@@ -351,7 +350,7 @@ int16_t CPerson::Load(				// Returns 0 if successfull, non-zero otherwise
 			}
 		}
 
-		uint8_t uc;
+		UCHAR uc;
 
 		// Load data specific to CPerson (if any)
 		switch (ulFileVersion)
@@ -385,8 +384,6 @@ int16_t CPerson::Load(				// Returns 0 if successfull, non-zero otherwise
 		}
 
 		// Cache the samples that this type of person uses
-		TRACE("m_ePersonType = %d\n", m_ePersonType);
-		TRACE("NUM_ELEMENTS(g_apersons) = %d\n", NUM_ELEMENTS(g_apersons));
 		CacheSample(*(g_apersons[m_ePersonType].Sample.psmidSuffering1));
 		CacheSample(*(g_apersons[m_ePersonType].Sample.psmidSuffering2));
 		CacheSample(*(g_apersons[m_ePersonType].Sample.psmidSuffering3));
@@ -436,11 +433,11 @@ int16_t CPerson::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::Save(				// Returns 0 if successfull, non-zero otherwise
+short CPerson::Save(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to save to
-	int16_t sFileCount)					// In:  File count (unique per file, never 0)
+	short sFileCount)					// In:  File count (unique per file, never 0)
 {
-	int16_t sResult = SUCCESS;
+	short sResult = SUCCESS;
 	// Call the base class save to save the u16InstanceID
 	CDoofus::Save(pFile, sFileCount);
 
@@ -460,7 +457,7 @@ int16_t CPerson::Save(				// Returns 0 if successfull, non-zero otherwise
 		}
 
 	// Save imbecile specific data if any
-	pFile->Write((uint8_t*) &m_ePersonType);
+	pFile->Write((UCHAR*) &m_ePersonType);
 	pFile->Write(&m_sShowState);
 	m_rstrLogicFile.Save(pFile);
 
@@ -481,9 +478,9 @@ int16_t CPerson::Save(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CPerson::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Set the current height, previous time, and Nav Net
 	CDoofus::Startup();
@@ -498,9 +495,9 @@ int16_t CPerson::Startup(void)								// Returns 0 if successfull, non-zero othe
 // Init - Call this after the resources are in place
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CPerson::Init(void)
+short CPerson::Init(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Prepare shadow (get resources and setup sprite).
 	sResult	= PrepareShadow();
@@ -595,7 +592,7 @@ void CPerson::Update(void)
 
 	if (!m_sSuspend)
 	{
-		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+		long lThisTime = m_pRealm->m_time.GetGameTime();
 
 		// See if its time to reevaluate the states
 		if (lThisTime > m_lEvalTimer)
@@ -925,14 +922,14 @@ void CPerson::Logic_Writhing(void)
 
 #if 1
 		// Get radius.
-		int16_t	sRadius			= m_sprite.m_sRadius;
+		short	sRadius			= m_sprite.m_sRadius;
 		// Determine pseudo-head point.
-		int16_t	sRot				= rspMod360(m_dAnimRot);
-		int16_t	sPseudoHeadX	= m_dX + COSQ[sRot] * sRadius;
-		int16_t	sPseudoHeadY	= m_dZ - SINQ[sRot] * sRadius;
+		short	sRot				= rspMod360(m_dAnimRot);
+		short	sPseudoHeadX	= m_dX + COSQ[sRot] * sRadius;
+		short	sPseudoHeadY	= m_dZ - SINQ[sRot] * sRadius;
 		// Check pseudo-head point.
 		U16	u16Attrib	= 0;	// Safety.
-		int16_t	sHeight		= 0;	// Safety.
+		short	sHeight		= 0;	// Safety.
 		GetFloorAttributes(sPseudoHeadX, sPseudoHeadY, &u16Attrib, &sHeight);
 		if ( (u16Attrib & REALM_ATTR_NOT_WALKABLE) || sHeight > m_dY + WRITHING_VERTICAL_TOLERANCE
 			|| (dX == m_dX && dZ == m_dZ) )
@@ -968,7 +965,7 @@ void CPerson::Logic_Writhing(void)
 			{
 				// This is a sort of randomness that will make some turn left and
 				// others turn right depending on if their rotation is even or odd.
-				if (((int16_t) m_dRot) & 0x01)
+				if (((short) m_dRot) & 0x01)
 					m_dRot = rspMod360(m_dRot - 20);
 				else
 					m_dRot = rspMod360(m_dRot + 20);
@@ -990,7 +987,7 @@ void CPerson::Logic_Writhing(void)
 	#else
 				// This is a sort of randomness that will make some turn left and
 				// others turn right depending on if their rotation is even or odd.
-				if (((int16_t) m_dRot) & 0x01)
+				if (((short) m_dRot) & 0x01)
 					m_dAnimRot = m_dShootAngle = m_dRot = rspMod360(m_dRot - 20);
 				else
 					m_dAnimRot = m_dShootAngle = m_dRot = rspMod360(m_dRot + 20);
@@ -1004,7 +1001,7 @@ void CPerson::Logic_Writhing(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CPerson::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -1012,12 +1009,12 @@ int16_t CPerson::Shutdown(void)							// Returns 0 if successfull, non-zero othe
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CPerson::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	sResult = CDoofus::EditNew(sX, sY, sZ);
 
@@ -1064,7 +1061,7 @@ static void LogicUserBrowse(	// Returns nothing
 		if (rspStrnicmp(szLogicFile, szHDPath, strlen(szHDPath) ) == 0)
 			{
 			// Determine amount of path to ignore.
-			int32_t	lSubPathBegin	= strlen(szHDPath);
+			long	lSubPathBegin	= strlen(szHDPath);
 
 			// Update the GUI that shows the filename.
 			pguiLogicFileName->SetText("%s", rspPathFromSystem(szLogicFile + lSubPathBegin) );
@@ -1076,9 +1073,9 @@ static void LogicUserBrowse(	// Returns nothing
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::EditModify(void)
+short CPerson::EditModify(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	Personatorium::Index eCurrentType = m_ePersonType;
 	RGuiItem* pGuiItem = NULL;
 	RGuiItem* pGui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/person.gui"));
@@ -1108,14 +1105,14 @@ int16_t CPerson::EditModify(void)
 			ASSERT(pbtnLogicUserBrowse->m_type == RGuiItem::Btn);
 
 			// Fill in list box with current available personalities
-			int16_t i;
+			short i;
 			for (i = 0; i < Personatorium::NumPersons; i++)
 			{
 				pGuiItem = pPersonalityList->AddString(g_apersons[i].pszDescription);
 				if (pGuiItem != NULL)
 				{
 					pGuiItem->m_lId = PERSONALITY_ITEM_ID_BASE + i;
-					pGuiItem->m_ulUserData = (uint32_t) i;
+					pGuiItem->m_ulUserData = (ULONG) i;
 				}
 			}
 
@@ -1188,7 +1185,7 @@ int16_t CPerson::EditModify(void)
 			// Set callback for logic browser button.
 			pbtnLogicUserBrowse->m_bcUser	= LogicUserBrowse;
 			// Set instance data to GUI to query/update.
-			pbtnLogicUserBrowse->m_ulUserInstance	= (U64)peditLogicFile;
+			pbtnLogicUserBrowse->m_ulUserInstance	= (ULONG)peditLogicFile;
 
 			SetGuiToNotify(pGui->GetItemFromId(ID_GUI_EDIT_TEXTURES) );
 
@@ -1279,10 +1276,10 @@ void CPerson::EditUpdate(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CPerson::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
-	int16_t sLoadResult = 0;
+	short sResult = 0;
+	short sLoadResult = 0;
 
 	
 	// Load Stand animation
@@ -1665,7 +1662,7 @@ int16_t CPerson::GetResources(void)						// Returns 0 if successfull, non-zero o
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPerson::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CPerson::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_animRun.Release();
 	m_animStand.Release();
@@ -1701,7 +1698,7 @@ int16_t CPerson::FreeResources(void)						// Returns 0 if successfull, non-zero 
 ////////////////////////////////////////////////////////////////////////////////
 
 SampleMaster::SoundInstance CPerson::PlaySoundWrithing(
-			int32_t* plDuration)					// Out:  Duration of sample, if not NULL.
+			long* plDuration)					// Out:  Duration of sample, if not NULL.
 {
 	m_siPlaying = 0;
 	SampleMasterID*	psmid	= &g_smidNil;
@@ -1751,11 +1748,10 @@ SampleMaster::SoundInstance CPerson::PlaySoundShot(void)
 {
 	m_siPlaying = 0;
 	SampleMasterID*	psmid	= &g_smidNil;
-	int32_t lThisTime = m_pRealm->m_time.GetGameTime();
-	int32_t	lSampleDuration	= 0;	// Safety.
-	static int_fast8_t chModGrunts = 0;
+	long lThisTime = m_pRealm->m_time.GetGameTime();
+	long	lSampleDuration	= 0;	// Safety.
 
-	if ((++chModGrunts > (16 - g_GameSettings.m_sPainFrequency)) && (lThisTime > m_lSampleTimeIsPlaying))
+	if (lThisTime > m_lSampleTimeIsPlaying)
 	{
 		if (m_state == State_Writhing)
 		{
@@ -1803,13 +1799,7 @@ SampleMaster::SoundInstance CPerson::PlaySoundShot(void)
 		// get it to run the same from machine to machine is to use the sample
 		// duration whether we succeed or fail to play the sample.
 		m_lSampleTimeIsPlaying = lThisTime + lSampleDuration;
-		
-		// reset counter
-		chModGrunts = 0;
-		TRACE("played grunt\n");
 	}
-	
-	TRACE("chModGrunts = %d\n", chModGrunts);
 
 	PlaySample(										// Returns nothing.
 														// Does not fail.

@@ -91,8 +91,8 @@ struct TriggerRgn
 	///////////////////////////////////////////////////////////////////////////
 	// Instantiable data.
 	///////////////////////////////////////////////////////////////////////////
-	int16_t		sX;
-	int16_t		sY;
+	short		sX;
+	short		sY;
 	RImage*	pimRgn;
 	U16		u16InstanceId;
 
@@ -124,11 +124,11 @@ struct TriggerRgn
 	///////////////////////////////////////////////////////////////////////////
 	// Create.
 	///////////////////////////////////////////////////////////////////////////
-	int16_t Create(		// Returns 0 on success.
-		int16_t	sWidth,	// In:  Max width of region (width of image).
-		int16_t	sHeight)	// In:  Max height of region (height of image).
+	short Create(		// Returns 0 on success.
+		short	sWidth,	// In:  Max width of region (width of image).
+		short	sHeight)	// In:  Max height of region (height of image).
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 
 		Destroy();
 
@@ -160,10 +160,10 @@ struct TriggerRgn
 	// Edit mode is the 8 bit mode used when editing the region.
 	// Storage is whatever compressed mode is used for the sake of saving mem.
 	///////////////////////////////////////////////////////////////////////////
-	int16_t SetMode(
+	short SetMode(
 		Mode mode)	// In:  New mode { Edit, Storage }.
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 
 		// If we have no image . . .
 		if (pimRgn == NULL)
@@ -206,15 +206,15 @@ struct TriggerRgn
 	///////////////////////////////////////////////////////////////////////////
 	// Load.
 	///////////////////////////////////////////////////////////////////////////
-	int16_t Load(			// Returns 0 on success.
+	short Load(			// Returns 0 on success.
 		RFile* pfile)	// In:  File to load from.
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 
 		Destroy();
 
 		// Always a boolean indicating whether we exist . . .
-		int16_t	sExist	= FALSE;	// Safety.
+		short	sExist	= FALSE;	// Safety.
 		if (pfile->Read(&sExist) == 1)
 			{
 			if (sExist != FALSE)
@@ -259,13 +259,13 @@ struct TriggerRgn
 	///////////////////////////////////////////////////////////////////////////
 	// Save.
 	///////////////////////////////////////////////////////////////////////////
-	int16_t Save(			// Returns 0 on success.
+	short Save(			// Returns 0 on success.
 		RFile* pfile)	// In:  File to save to.
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 
 		// Always a boolean indicating whether we exist . . .
-		int16_t	sExist	= (pimRgn != NULL) ? TRUE : FALSE;
+		short	sExist	= (pimRgn != NULL) ? TRUE : FALSE;
 		if (pfile->Write(sExist) == 1)
 			{
 			if (pimRgn != NULL)

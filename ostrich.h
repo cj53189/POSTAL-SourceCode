@@ -53,17 +53,17 @@ class COstrich : public CDoofus
 		CAnim3D m_animBlownup;					// Blown up by explosion
 		CAnim3D m_animDie;						// Fall down dead
 
-		int16_t m_sRotDirection;					// Which direction to rotate to avoid walls
+		short m_sRotDirection;					// Which direction to rotate to avoid walls
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dExplosionVelocity;// How high he will get blown up.
 		static double ms_dMaxMarchVel;		// How fast to march
 		static double ms_dMaxRunVel;			// Hos fast to run
-		static int32_t ms_lStateChangeTime;		// How long to go before changing states
-		static int16_t ms_sStartingHitPoints;	// How many hit points to start with
+		static long ms_lStateChangeTime;		// How long to go before changing states
+		static short ms_sStartingHitPoints;	// How many hit points to start with
 	
 	//---------------------------------------------------------------------------
 	// Constructor(s) / destructor
@@ -93,11 +93,11 @@ class COstrich : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new COstrich(pRealm);
 			if (*ppNew == 0)
 				{
@@ -112,19 +112,19 @@ class COstrich : public CDoofus
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Update object
 		void Update(void);
@@ -133,10 +133,10 @@ class COstrich : public CDoofus
 		void Render(void);
 
 		// Called by editor when a new object is created
-		int16_t EditNew(int16_t sX, int16_t sY, int16_t sZ);
+		short EditNew(short sX, short sY, short sZ);
 
 		// Called by editor to modify object
-		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 		// Called by editor to render object
 //		void EditRender(void);
 
@@ -168,13 +168,13 @@ class COstrich : public CDoofus
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Initalize the object - this should be called after the resources are loaded
-		int16_t Init(void);
+		short Init(void);
 
 		// Go through the message queue and change the state if necessary
 		void ProcessMessages(void);

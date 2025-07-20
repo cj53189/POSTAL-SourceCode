@@ -95,7 +95,7 @@ class CGrenade : public CWeapon
 	public:
 
 	protected:
-		int16_t m_sPrevHeight;										// Previous height
+		short m_sPrevHeight;										// Previous height
 
 		CAnim3D		m_anim;										// 3D animation.  One should be enough, I think.
 		RTransform	m_trans;										// Transform.
@@ -107,10 +107,10 @@ class CGrenade : public CWeapon
 		double		m_dAnimRotVelY;							// Rate of apparent rotation around Y axis.
 		double		m_dAnimRotVelZ;							// Rate of apparent rotation around X axis.
 
-		int32_t			m_lNextSmokeTime;							// Time of dispersion of next smoke.
+		long			m_lNextSmokeTime;							// Time of dispersion of next smoke.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 	public:
 		// "Constant" values that we want to be able to tune using the editor
@@ -122,10 +122,10 @@ class CGrenade : public CWeapon
 
 		static double ms_dDegPerSec;							// Degrees of rotation per second
 		static double ms_dCloseDistance;						// Close enough to hit CDude
-		static int32_t ms_lRandomAvoidTime;						// Time to wander before looking again
-		static int32_t ms_lReseekTime;							// Time to wait before doing the next 'find'
-		static int32_t ms_lGrenadeFuseTime;						// Time from throw to blow
-		static int32_t ms_lSmokeInterval;						// Time between smokes.
+		static long ms_lRandomAvoidTime;						// Time to wander before looking again
+		static long ms_lReseekTime;							// Time to wait before doing the next 'find'
+		static long ms_lGrenadeFuseTime;						// Time from throw to blow
+		static long ms_lSmokeInterval;						// Time between smokes.
 		static double ms_dGravity;								// Acceleration due to gravity
 		static double ms_dThrowVertVel;						// Throw up at this velocity
 		static double ms_dThrowHorizVel;						// Throw out at this velocity
@@ -169,11 +169,11 @@ class CGrenade : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CGrenade(pRealm);
 			if (*ppNew == 0)
 				{
@@ -184,11 +184,11 @@ class CGrenade : public CWeapon
 			}
 
 		// Construct object as dynamite.
-		static int16_t ConstructDynamite(						// Returns 0 if successfull, non-zero otherwise
+		static short ConstructDynamite(						// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t	sRes	= Construct(pRealm, ppNew);
+			short	sRes	= Construct(pRealm, ppNew);
 			if (sRes == 0)
 				{
 				( (CGrenade*)(*ppNew) )->m_style	= Dynamite;
@@ -202,7 +202,7 @@ class CGrenade : public CWeapon
 	//---------------------------------------------------------------------------
 
 		// Called before play begins to cache resources for this object.
-		static int16_t Preload(
+		static short Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -210,16 +210,16 @@ class CGrenade : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -228,10 +228,10 @@ class CGrenade : public CWeapon
 		void Render(void);
 
 		// Called by the object that is creating this weapon
-		int16_t Setup(
-			int16_t sX,												// In: New x coord
-			int16_t sY,												// In: New y coord
-			int16_t sZ/*,												// In: New z coord
+		short Setup(
+			short sX,												// In: New x coord
+			short sY,												// In: New y coord
+			short sZ/*,												// In: New z coord
 			double dHorizVelocity = ms_dThrowHorizVel,	// In: Starting horiz velocity with default
 			double dVertVelocity = ms_dThrowVertVel*/);	// In: Starting vert velocity with default
 
@@ -244,12 +244,12 @@ class CGrenade : public CWeapon
 			}
 
 		// Function to modify the velocity for a requested range
-		virtual int16_t SetRangeToTarget(int16_t sRequestedRange)
+		virtual short SetRangeToTarget(short sRequestedRange)
 		{
-			int16_t sSetRange;
+			short sSetRange;
 			// Must go at least 40 or at most 400 pixels
-			sSetRange = MAX(sRequestedRange, (int16_t) 40);
-			sSetRange = MIN(sSetRange, (int16_t) 400);
+			sSetRange = MAX(sRequestedRange, (short) 40);
+			sSetRange = MIN(sSetRange, (short) 400);
 			if (m_style == Grenade)
 				m_dHorizVel = (double) sSetRange / 0.8476; //0.6855;
 			else
@@ -265,10 +265,10 @@ class CGrenade : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Process Message queue
 		void ProcessMessages(void);

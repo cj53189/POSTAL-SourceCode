@@ -45,19 +45,19 @@ class RTask
 	public:
 		// Typedef for user task callback.  This is the type of function called.
 		typedef void (*TaskFunc)(	// Returns nothing.
-			uint32_t ulUser);				// User defined m_ulUser.
+			ULONG ulUser);				// User defined m_ulUser.
 
 		// Typedef to override this RTask's timer.  If overridden, this RTask
 		// will use this callback to get the time.
 		typedef long (*TimeFunc)(	// Returns time as a long in milliseconds.
-			int32_t lTimeUser);			// User defined m_lTimeUser.
+			long lTimeUser);			// User defined m_lTimeUser.
 
 	/////////////////////// Con/Destruction ////////////////////////////////////
 	public:
 		// Default constructor.
 		RTask();
 		// Special constructor that passes parms on to Init().
-		RTask(TaskFunc tf, uint32_t ulUser);
+		RTask(TaskFunc tf, ULONG ulUser);
 		// Destructor.
 		~RTask();
 
@@ -65,29 +65,29 @@ class RTask
 	public:
 		// Returns TRUE if this task is currently in the list of tasks to be
 		// run; FALSE, otherwise.
-		int16_t IsActive(void) { return m_sActive; }
+		short IsActive(void) { return m_sActive; }
 
 		// Returns the current time based on either the user base or Blue.
-		int32_t GetTime(void)
+		long GetTime(void)
 			{ return (m_fnTime == NULL ? rspGetMilliseconds() : (*m_fnTime)(m_lTimeUser)); }
 		
 	////////////////////////// Methods ////////////////////////////////////////
 	public:
 		// Initialize task info.
-		void Init(TaskFunc tf, uint32_t ulUser);
+		void Init(TaskFunc tf, ULONG ulUser);
 		// Kill task info.
 		// Returns 0 on success.
-		int16_t Kill(void);
+		short Kill(void);
 
 		// Start this task.
 		// Returns 0 on success.
-		int16_t Start(void);
+		short Start(void);
 		// Suspend this task (can be restarted after this is call).
 		// Returns 0 on success.
-		int16_t Suspend(void);
+		short Suspend(void);
 
 		// Use a custom timer.
-		void SetTimeFunc(TimeFunc fnTime, int32_t lTimeUser)
+		void SetTimeFunc(TimeFunc fnTime, long lTimeUser)
 			{ m_fnTime = fnTime; m_lTimeUser = lTimeUser; }
 		
 		/////////////////////// Static functions ///////////////////////////////
@@ -107,18 +107,18 @@ class RTask
 		// this function, and that is why they're public.
 
 		TaskFunc		m_fnTask;		// User specified task function.
-		uint32_t			m_ulUser;		// User specified parm to task function.
+		ULONG			m_ulUser;		// User specified parm to task function.
 
-		int32_t			m_lInterval;	// User specified timer interval.
-		int32_t			m_lNextExpiration;	// Next time to call task.
+		long			m_lInterval;	// User specified timer interval.
+		long			m_lNextExpiration;	// Next time to call task.
 
 	protected:
 		// The following member variables are NOT safe to tamper with from 
 		// outside this function, and that is why they're protected.
 
-		int16_t				m_sActive;	// TRUE if active (in list), FALSE otherwise.
+		short				m_sActive;	// TRUE if active (in list), FALSE otherwise.
 		TimeFunc			m_fnTime;	// Custom time function.
-		int32_t				m_lTimeUser;// Custom time function user value.
+		long				m_lTimeUser;// Custom time function user value.
 
 
 		/////////////////////// Static members /////////////////////////////////

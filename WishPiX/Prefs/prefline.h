@@ -78,16 +78,16 @@ class RPrefsLine
 		RPrefsLine::ePrefsLineType GetType();
 
 		// Get the section name
-		int16_t GetSectionName(char *pszSection);
+		short GetSectionName(char *pszSection);
 		
 		// Get the variable name
-		int16_t GetVariableName(char *pszVariable);
+		short GetVariableName(char *pszVariable);
 
 		// Get the value of the variable
-		int16_t GetVariableValue(char *pszValue);
+		short GetVariableValue(char *pszValue);
 
 		// Set the value of the variable
-		int16_t SetVariableValue(const char *pszValue);
+		short SetVariableValue(const char *pszValue);
 	};
 
 

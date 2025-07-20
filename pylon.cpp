@@ -94,20 +94,20 @@
 // These are default values -- actually values are set using the editor!
 
 // Let this auto-init to 0
-int16_t CPylon::ms_sFileCount;
+short CPylon::ms_sFileCount;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::Load(										// Returns 0 if successfull, non-zero otherwise
+short CPylon::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	int16_t sFileCount,										// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)									// In:  Version of file format to load.
+	short sFileCount,										// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)									// In:  Version of file format to load.
 {
 	// Call the base load to get the u16InstanceID
-	int16_t sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
+	short sResult = CThing::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
 	{
 		// Load common data just once per file (not with each object)
@@ -185,9 +185,9 @@ int16_t CPylon::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::Save(										// Returns 0 if successfull, non-zero otherwise
+short CPylon::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	int16_t sFileCount)										// In:  File count (unique per file, never 0)
+	short sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// Call the base class save to save the u16InstanceID
 	CThing::Save(pFile, sFileCount);
@@ -219,12 +219,12 @@ int16_t CPylon::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CPylon::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// At this point we can assume the CHood was loaded, so we init our height
-	m_dY = m_pRealm->GetHeight((int16_t) m_dX, (int16_t) m_dZ);
+	m_dY = m_pRealm->GetHeight((short) m_dX, (short) m_dZ);
 
 	// Init other stuff
 	sResult = GetResources();
@@ -247,7 +247,7 @@ int16_t CPylon::Startup(void)								// Returns 0 if successfull, non-zero other
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CPylon::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	return 0;
 }
@@ -300,12 +300,12 @@ void CPylon::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CPylon::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	// Use specified position
 	m_dX = (double)sX;
@@ -335,8 +335,8 @@ int16_t CPylon::EditNew(									// Returns 0 if successfull, non-zero otherwise
 inline
 void SetText(					// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	int32_t			lId,			// In:  ID of GUI to set text.
-	int32_t			lVal)			// In:  Value to set text to.
+	long			lId,			// In:  ID of GUI to set text.
+	long			lVal)			// In:  Value to set text to.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui != NULL)
@@ -349,9 +349,9 @@ void SetText(					// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::EditModify(void)
+short CPylon::EditModify(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	RGuiItem* pGui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/bouy.gui"));
 	RGuiItem* pSecondaryGui = NULL;
 	if (pGui)
@@ -482,10 +482,10 @@ int16_t CPylon::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to move object to specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::EditMove(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CPylon::EditMove(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
 	m_dX = (double)sX;
 	m_dY = (double)sY;
@@ -524,9 +524,9 @@ void CPylon::EditRender(void)
 
 	// Map from 3d to 2d coords
 	Map3Dto2D(
-		(int16_t) m_dX, 
-		(int16_t) m_dY, 
-		(int16_t) m_dZ, 
+		(short) m_dX, 
+		(short) m_dY, 
+		(short) m_dZ, 
 		&m_sprite.m_sX2, 
 		&m_sprite.m_sY2);
 
@@ -538,7 +538,7 @@ void CPylon::EditRender(void)
 	m_sprite.m_sY2	-= m_pImage->m_sHeight;
 
 	// Layer should be based on info we get from attribute map.
-	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((int16_t) m_dX, (int16_t) m_dZ));
+	m_sprite.m_sLayer = CRealm::GetLayerViaAttrib(m_pRealm->GetLayer((short) m_dX, (short) m_dZ));
 
 	// Image would normally animate, but doesn't for now
 	m_sprite.m_pImage = m_pImage;
@@ -576,9 +576,9 @@ void CPylon::EditRect(RRect* pRect)
 // Called by editor to get the hotspot of an object in 2D.
 ////////////////////////////////////////////////////////////////////////////////
 void CPylon::EditHotSpot(	// Returns nothiing.
-	int16_t*	psX,				// Out: X coord of 2D hotspot relative to
+	short*	psX,				// Out: X coord of 2D hotspot relative to
 									// EditRect() pos.
-	int16_t*	psY)				// Out: Y coord of 2D hotspot relative to
+	short*	psY)				// Out: Y coord of 2D hotspot relative to
 									// EditRect() pos.
 	{
 	// Base of pylon is hotspot.
@@ -590,9 +590,9 @@ void CPylon::EditHotSpot(	// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CPylon::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	
 	if (m_pImage == 0)
 		{
@@ -628,7 +628,7 @@ int16_t CPylon::GetResources(void)						// Returns 0 if successfull, non-zero ot
 						0,						// Dst.
 						18,						// Dst.
 						"%d",					// Format.
-						(int16_t)m_ucID);	// Src.
+						(short)m_ucID);	// Src.
 
 					// Convert to efficient transparent blit format . . .
 					if (m_pImage->Convert(RImage::FSPR8) != RImage::FSPR8)
@@ -671,7 +671,7 @@ int16_t CPylon::GetResources(void)						// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CPylon::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CPylon::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	if (m_pImage != NULL)
 		{
@@ -700,9 +700,9 @@ void CPylon::MessageRequest(CThing* pRequestingThing)
 //						  not used before it is given out.
 ////////////////////////////////////////////////////////////////////////////////
 
-uint8_t CPylon::GetFreePylonID(void)
+UCHAR CPylon::GetFreePylonID(void)
 {
-	uint8_t id = m_pRealm->m_ucNextPylonID;
+	UCHAR id = m_pRealm->m_ucNextPylonID;
 
 	if (m_pRealm->m_sNumPylons >= PYLON_MAX_PYLONS)
 		return 0;
@@ -746,7 +746,7 @@ uint8_t CPylon::GetFreePylonID(void)
 // GetPylon
 ////////////////////////////////////////////////////////////////////////////////
 
-CPylon* CPylon::GetPylon(uint8_t ucPylonID)
+CPylon* CPylon::GetPylon(UCHAR ucPylonID)
 {
 	CPylon* pPylon = NULL;;
 
@@ -760,7 +760,7 @@ CPylon* CPylon::GetPylon(uint8_t ucPylonID)
 // GetPylonUniqueID - loop through list of pylons to get Unique ID
 ////////////////////////////////////////////////////////////////////////////////
 
-U16 CPylon::GetPylonUniqueID(uint8_t ucPylonID)
+U16 CPylon::GetPylonUniqueID(UCHAR ucPylonID)
 {
 	U16 u16UniqueID = CIdBank::IdNil;
 	CListNode<CThing>* pNext = m_pRealm->m_aclassHeads[CThing::CPylonID].m_pnNext;

@@ -66,7 +66,6 @@
 // instead.
 ///////////////////////////////////////////////////////////////////////////////
 #include "System.h"
-#include "update.h"
 
 #ifdef PATHS_IN_INCLUDES
 	#include "ORANGE/GUI/ProcessGui.h"
@@ -95,7 +94,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // ID of last item pressed.
-int32_t RProcessGui::ms_lPressedId;
+long RProcessGui::ms_lPressedId;
 
 //////////////////////////////////////////////////////////////////////////////
 // Helper Functions.
@@ -145,14 +144,14 @@ void DrawDirty(			// Returns nothing.
 // Prepare to handle a GUI.
 // This must be called to setup components before Do*Gui() is called.
 //////////////////////////////////////////////////////////////////////////////
-int16_t RProcessGui::Prepare(			// Returns 0 on success.
+short RProcessGui::Prepare(			// Returns 0 on success.
 	RGuiItem* pguiRoot,					// In:  GUI to be processed.
 	RGuiItem* pguiOk/* = NULL*/,		// In:  If not NULL, specifies GUI 
 												// activated by ENTER key.
 	RGuiItem* pguiCancel/* = NULL*/)	// In:  If not NULL, specifies GUI
 												// activated by ESCAPE key.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Create erase buffer . . .
 	if (m_imEraser.CreateImage(
@@ -267,7 +266,7 @@ void RProcessGui::SetGuisToNotify(	// Returns nothing.
 // with an ID other than 0 or the update callback, m_fnUpdate, if any,
 // returns non-zero.
 //////////////////////////////////////////////////////////////////////////////
-int32_t RProcessGui::DoModal(				// Returns ID of pressed GUI that terminated 
+long RProcessGui::DoModal(				// Returns ID of pressed GUI that terminated 
 												// modal loop or value returned from 
 												// m_fnUpdate, if any.
 	RGuiItem* pgui,						// In:  GUI to be processed or NULL.
@@ -282,7 +281,7 @@ int32_t RProcessGui::DoModal(				// Returns ID of pressed GUI that terminated
 												// screen image unless pimDst is the screen
 												// image.
 	{
-	int32_t	lId	= 0;
+	long	lId	= 0;
 
 	// Set up ptrs and erase buffer.
 	Prepare(pgui, pguiOk, pguiCancel);
@@ -322,7 +321,7 @@ int32_t RProcessGui::DoModal(				// Returns ID of pressed GUI that terminated
 // Call this to process a GUI modelessly.  This function processes the
 // GUI for only one iteration allowing the caller continuous control.
 //////////////////////////////////////////////////////////////////////////////
-int32_t RProcessGui::DoModeless(		// Returns ID of pressed GUI or value.
+long RProcessGui::DoModeless(		// Returns ID of pressed GUI or value.
 	RGuiItem* pgui,					// In:  GUI to be processed or NULL.
 	RInputEvent* pie,					// In:  Input event to process.
 	RImage* pimDst /*= NULL*/)		// Where to draw dialog and rspBlit from.
@@ -392,7 +391,7 @@ int32_t RProcessGui::DoModeless(		// Returns ID of pressed GUI or value.
 	rspGeneralLock(pimDst);
 
 	// Store area of composite buffer that is to be dirtied.
-	RRect rect(0, 0, pimDst->m_sWidth, pimDst->m_sHeight); //It's assigned to and... not much..?
+	RRect rect(0, 0, pimDst->m_sWidth, pimDst->m_sHeight);
 	rspBlit(
 		pimDst,						// Source.
 		&m_imEraser,				// Destination.
@@ -412,11 +411,8 @@ int32_t RProcessGui::DoModeless(		// Returns ID of pressed GUI or value.
 		rspShieldMouseCursor();
 		}
 
-	 //Draw the GUI tree.
+	// Draw the GUI tree.
 	pgui->Draw(pimDst);
-
-	//Actually render gui with sdl2
-	UpdateSystem();
 
 	// Add rectangle where GUI drew.
 	m_drl.Add(
@@ -445,8 +441,7 @@ int32_t RProcessGui::DoModeless(		// Returns ID of pressed GUI or value.
 		rspGeneralLock(pimDst);
 		}
 
-	//This is what 'prevents' guis form rendering properly, no idea why.
-	 //Undirty buffer of GUIs.
+	// Undirty buffer of GUIs.
 	rspBlit(
 		&m_imEraser,				// Source.
 		pimDst,						// Destination.

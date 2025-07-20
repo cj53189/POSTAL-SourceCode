@@ -217,15 +217,15 @@ RBtn* RMsgBox::AddButton(	// Returns allocated GUI item on success.
 									// Do NOT delete this item; it will be deleted
 									// by a RemoveAll() call.
 	char* pszText,				// Text for btn item.
-	int16_t	sX,					// X position in RMsgBox dlg.
-	int16_t	sY,					// Y position in RMsgBox dlg.
-	uint32_t	ulId,				// ID to return if this item is chosen.
+	short	sX,					// X position in RMsgBox dlg.
+	short	sY,					// Y position in RMsgBox dlg.
+	ULONG	ulId,				// ID to return if this item is chosen.
 								// There will be no response to this item
 								// if lId is 0.
-	int16_t	sAddW /*= 0*/,	// Additional width for guis that require more.
-	int16_t	sAddH /*= 0*/)	// Additional height for guis that require more.
+	short	sAddW /*= 0*/,	// Additional width for guis that require more.
+	short	sAddH /*= 0*/)	// Additional height for guis that require more.
 	{
-	int16_t	sError	= 0;
+	short	sError	= 0;
 
 	// Attempt to allocate new btn.
 	RBtn*	pbtn	= new RBtn;
@@ -266,15 +266,15 @@ RTxt* RMsgBox::AddText(	// Returns allocated GUI item on success.
 								// Do NOT delete this item; it will be deleted
 								// by a RemoveAll() call.
 	char* pszText,			// Text for txt item.
-	int16_t	sX,				// X position in RMsgBox dlg.
-	int16_t	sY,				// Y position in RMsgBox dlg.
-	uint32_t	ulId,				// ID to return if this item is chosen.
+	short	sX,				// X position in RMsgBox dlg.
+	short	sY,				// Y position in RMsgBox dlg.
+	ULONG	ulId,				// ID to return if this item is chosen.
 								// There will be no response to this item
 								// if lId is 0.
-	int16_t	sAddW /*= 0*/,	// Additional width for guis that require more.
-	int16_t	sAddH /*= 0*/)	// Additional height for guis that require more.
+	short	sAddW /*= 0*/,	// Additional width for guis that require more.
+	short	sAddH /*= 0*/)	// Additional height for guis that require more.
 	{
-	int16_t	sError	= 0;
+	short	sError	= 0;
 
 	// Attempt to allocate new btn.
 	RTxt*	ptxt	= new RTxt;
@@ -315,15 +315,15 @@ REdit* RMsgBox::AddEdit(	// Returns allocated GUI item on success.
 									// Do NOT delete this item; it will be deleted
 									// by a RemoveAll() call.
 	char* pszText,				// Text for edit item.
-	int16_t	sX,					// X position in RMsgBox dlg.
-	int16_t	sY,					// Y position in RMsgBox dlg.
-	uint32_t	ulId,				// ID to return if this item is chosen.
+	short	sX,					// X position in RMsgBox dlg.
+	short	sY,					// Y position in RMsgBox dlg.
+	ULONG	ulId,				// ID to return if this item is chosen.
 								// There will be no response to this item
 								// if lId is 0.
-	int16_t	sAddW /*= 0*/,	// Additional width for guis that require more.
-	int16_t	sAddH /*= 0*/)	// Additional height for guis that require more.
+	short	sAddW /*= 0*/,	// Additional width for guis that require more.
+	short	sAddH /*= 0*/)	// Additional height for guis that require more.
 	{
-	int16_t	sError	= 0;
+	short	sError	= 0;
 
 	// Attempt to allocate new btn.
 	REdit*	pedit	= new REdit;
@@ -332,7 +332,7 @@ REdit* RMsgBox::AddEdit(	// Returns allocated GUI item on success.
 		// Need to create string so we can determine size of caret.
 		char	szCaret[]	= { pedit->m_cCaretChar, '\0' };
 		// Store text width.
-		int16_t sTextWidth	= pedit->m_pprint->GetWidth(szCaret);
+		short sTextWidth	= pedit->m_pprint->GetWidth(szCaret);
 
 		if (AddItem(pedit, pszText, sX, sY, ulId, sTextWidth + sAddW, sAddH) == 0)
 			{
@@ -374,7 +374,7 @@ RGuiItem* RMsgBox::AddItem(	// Returns pgui on success.
 										// already have been set).
 	{
 	// Store RMsgBox instance.
-	pgui->m_ulUserInstance	= (U64)this;
+	pgui->m_ulUserInstance	= (ULONG)this;
 	// Let RGuiItem know where to call.
 	pgui->m_bcUser				= ItemBtnUpCall;
 
@@ -427,7 +427,7 @@ inline void DrawDirty(	// Returns nothing.
 // Check m_pguiFocus to determine RGuiItem with focus.
 //
 ////////////////////////////////////////////////////////////////////////
-uint32_t RMsgBox::DoModeless(		// Returns item clicked or 0, if none.
+ULONG RMsgBox::DoModeless(		// Returns item clicked or 0, if none.
 	RInputEvent* pie)				// In:  Most recent user input event.
 										// Out: pie->sUsed = TRUE, if used.
 	{
@@ -435,7 +435,7 @@ uint32_t RMsgBox::DoModeless(		// Returns item clicked or 0, if none.
 	if (m_mbcUser != NULL)
 		{
 		// Allow the user to call stuff.
-		uint32_t	ulRes	= (*m_mbcUser)(this);
+		ULONG	ulRes	= (*m_mbcUser)(this);
 		// If the user returned a non-zero value . . .
 		if (ulRes != 0)
 			{
@@ -452,7 +452,7 @@ uint32_t RMsgBox::DoModeless(		// Returns item clicked or 0, if none.
 
 	RGuiItem::DoFocus(pie);
 
-	uint32_t	ulResId	= m_ulId;
+	ULONG	ulResId	= m_ulId;
 	// Reset.
 	m_ulId			= 0;
 
@@ -467,7 +467,7 @@ uint32_t RMsgBox::DoModeless(		// Returns item clicked or 0, if none.
 // reactivated before exitting DoModal().
 //
 ////////////////////////////////////////////////////////////////////////
-uint32_t RMsgBox::DoModal(					// Returns chosen ID on success, 
+ULONG RMsgBox::DoModal(					// Returns chosen ID on success, 
 												// 0 on failure.
 	RInputEvent* pie,						// In:  Most recent user input event.
 												// Out: pie->sUsed = TRUE, if used.
@@ -479,7 +479,7 @@ uint32_t RMsgBox::DoModal(					// Returns chosen ID on success,
 												// image.
 	{
 	m_ulId			= 0;	// ID to return.
-	int16_t	sError	= 0;	// No errors yet.
+	short	sError	= 0;	// No errors yet.
 
 	// Deactivate RHots, adding them to our list.
 	// We now can just service our own RHots.
@@ -548,7 +548,7 @@ uint32_t RMsgBox::DoModal(					// Returns chosen ID on success,
 		DrawDirty(pimDst, pimScr, &drl);
 
 		// Do GUI maintainence.
-		uint32_t	ulRes	= DoModeless(pie);
+		ULONG	ulRes	= DoModeless(pie);
 		if (ulRes != 0)
 			{
 			// Override ours.
@@ -635,18 +635,18 @@ void RMsgBox::ItemBtnUpCall(RGuiItem* pgui)
 // Add a GUI item already allocated by this RMsgBox.
 //
 ////////////////////////////////////////////////////////////////////////
-int16_t RMsgBox::AddItem(	// Returns 0 on success.
+short RMsgBox::AddItem(	// Returns 0 on success.
 	RGuiItem* pgui,		// Item to add.
 	char* pszText,			// Text for item.
-	int16_t	sX,				// X position in RMsgBox dlg.
-	int16_t	sY,				// Y position in RMsgBox dlg.
-	uint32_t	ulId,				// ID to return if this item is chosen.
+	short	sX,				// X position in RMsgBox dlg.
+	short	sY,				// Y position in RMsgBox dlg.
+	ULONG	ulId,				// ID to return if this item is chosen.
 								// There will be no response to this item
 								// if lId is 0.
-	int16_t	sAddW /*= 0*/,	// Additional width for guis that require more.
-	int16_t	sAddH /*= 0*/)	// Additional height for guis that require more.
+	short	sAddW /*= 0*/,	// Additional width for guis that require more.
+	short	sAddH /*= 0*/)	// Additional height for guis that require more.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Copy settings.
 	CopyParms(pgui);
@@ -658,7 +658,7 @@ int16_t RMsgBox::AddItem(	// Returns 0 on success.
 	pgui->SetText(pszText);
 
 	// Store text width.
-	int16_t sTextWidth			= pgui->m_pprint->GetWidth(pszText);
+	short sTextWidth			= pgui->m_pprint->GetWidth(pszText);
 
 	// Active when visible.
 	pgui->m_sActive			= TRUE;
@@ -666,7 +666,7 @@ int16_t RMsgBox::AddItem(	// Returns 0 on success.
 	pgui->m_sFontCellHeight	= m_sFontCellHeight;
 	
 	// Reserve space for borders, if there are any.
-	int16_t sTotalBorderThickness	= pgui->GetTopLeftBorderThickness()
+	short sTotalBorderThickness	= pgui->GetTopLeftBorderThickness()
 											+ pgui->GetBottomRightBorderThickness();
 
 	// Create to font/text appropriate size . . .

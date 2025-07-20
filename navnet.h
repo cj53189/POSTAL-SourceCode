@@ -55,9 +55,9 @@ class CNavigationNet : public CThing
 			#if __MWERKS__ >= 0x1100
 				ITERATOR_TRAITS(const CBouy*);
 			#endif
-			typedef map <uint8_t, CBouy*, less<uint8_t>, allocator<CBouy*> > nodeMap;
+			typedef map <UCHAR, CBouy*, less<UCHAR>, allocator<CBouy*> > nodeMap;
 		#else
-			typedef map <uint8_t, CBouy*, less<uint8_t> > nodeMap;
+			typedef map <UCHAR, CBouy*, less<UCHAR> > nodeMap;
 		#endif
 
 	//---------------------------------------------------------------------------
@@ -70,18 +70,18 @@ class CNavigationNet : public CThing
 		double m_dX;												// x coord
 		double m_dY;												// y coord
 		double m_dZ;												// z coord
-		uint8_t	 m_ucNextID;
-		uint8_t	 m_ucNumSavedBouys;
+		UCHAR	 m_ucNextID;
+		UCHAR	 m_ucNumSavedBouys;
 		RImage* m_pImage;											// Pointer to only image (replace with 3d anim, soon)
 		CSprite2 m_sprite;										// Sprite (replace with CSprite3, soon)
 		RString  m_rstrNetName;									// Name of Nav Net
 		TreeListNode m_BouyTreeListHead;						// Head of sorted list
 		TreeListNode m_BouyTreeListTail;						// Tail of sorted list
 
-		int16_t m_sSuspend;											// Suspend flag
+		short m_sSuspend;											// Suspend flag
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 
@@ -129,11 +129,11 @@ class CNavigationNet : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CNavigationNet(pRealm);
 			if (*ppNew == 0)
 				{
@@ -148,22 +148,22 @@ class CNavigationNet : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -178,22 +178,22 @@ class CNavigationNet : public CThing
 		void Render(void);
 
 		// Called by editor to init new object at specified position
-		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditNew(												// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to init nav net after it is loaded
-		int16_t EditPostLoad(void);
+		short EditPostLoad(void);
 
 		// Called by editor to modify object
-		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditMove(											// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -206,9 +206,9 @@ class CNavigationNet : public CThing
 
 		// Called by editor to get the hotspot of an object in 2D.
 		void EditHotSpot(			// Returns nothiing.
-			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
+			short*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
+			short*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 		// Get the coordinates of this thing.
@@ -222,16 +222,16 @@ class CNavigationNet : public CThing
 		double GetZ(void)	{ return m_dZ; }
 
 		// Add a bouy to this network and assign it an ID
-		uint8_t AddBouy(CBouy* pBouy);
+		UCHAR AddBouy(CBouy* pBouy);
 
 		// Remove a bouy from the network
-		void RemoveBouy(uint8_t ucBouyID);
+		void RemoveBouy(UCHAR ucBouyID);
 
 		// Get the address of the Bouy with this ID
-		CBouy* GetBouy(uint8_t ucBouy);
+		CBouy* GetBouy(UCHAR ucBouy);
 
 		// Find the bouy closest to this location in the world
-		uint8_t FindNearestBouy(int16_t sX, int16_t sZ);
+		UCHAR FindNearestBouy(short sX, short sZ);
 
 		// Preprocess the routing tables by pinging all nodes
 		void UpdateRoutingTables(void);
@@ -240,15 +240,15 @@ class CNavigationNet : public CThing
 		void PrintRoutingTables(void);
 
 		// Ping - return minimum number of hops from source to destination nodes
-//		uint8_t Ping(uint8_t dst, uint8_t src, uint8_t depth, uint8_t maxdepth);
-		uint8_t Ping(uint8_t dst, uint8_t src, uint8_t depth);
+//		UCHAR Ping(UCHAR dst, UCHAR src, UCHAR depth, UCHAR maxdepth);
+		UCHAR Ping(UCHAR dst, UCHAR src, UCHAR depth);
 
-		uint8_t GetNumNodes(void)
+		UCHAR GetNumNodes(void)
 			{ return m_ucNextID;}
 
 		// Set this NavNet as the default one for the Realm.  
-		int16_t SetAsDefault(void)
-			{  int16_t sReturn = SUCCESS;
+		short SetAsDefault(void)
+			{  short sReturn = SUCCESS;
 				if (m_pRealm)
 				{
 					m_pRealm->m_pCurrentNavNet = this;
@@ -259,17 +259,17 @@ class CNavigationNet : public CThing
 			}
 
 		// Delete all bouys from this network.
-		int16_t DeleteNetwork(void);
+		short DeleteNetwork(void);
 
 	//---------------------------------------------------------------------------
 	// Internal functions
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 	};
 
 

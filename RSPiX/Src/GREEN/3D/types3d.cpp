@@ -45,7 +45,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Allocate specified number of indices and colors
-void RTexture::Alloc(int16_t sNum)
+void RTexture::Alloc(short sNum)
 	{
 	m_sNum = sNum;
 	AllocIndices();
@@ -57,7 +57,7 @@ void RTexture::Alloc(int16_t sNum)
 void RTexture::AllocIndices(void)
 	{
 	FreeIndices();
-	m_pIndices = (uint8_t*)calloc(m_sNum, 1);
+	m_pIndices = (UCHAR*)calloc(m_sNum, 1);
 	ASSERT(m_pIndices != 0);
 	}
 
@@ -102,14 +102,14 @@ void RTexture::FreeColors(void)
 	}
 
 
-int16_t RTexture::Load(RFile* fp)
+short RTexture::Load(RFile* fp)
 	{
 	Free();
 
-	int16_t sResult = 0;
+	short sResult = 0;
 	if (fp->Read(&m_sNum) == 1)
 		{
-		int16_t sFlags;
+		short sFlags;
 		if (fp->Read(&sFlags) == 1)
 			{
 			if (sFlags & HasIndices)
@@ -134,13 +134,13 @@ int16_t RTexture::Load(RFile* fp)
 	}
 
 
-int16_t RTexture::Save(RFile* fp)
+short RTexture::Save(RFile* fp)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	fp->Write(&m_sNum);
 
-	int16_t sFlags = 0;
+	short sFlags = 0;
 	if (m_pIndices)
 		sFlags |= HasIndices;
 	if (m_pColors)
@@ -166,24 +166,24 @@ int16_t RTexture::Save(RFile* fp)
 // index is written to the array of indices.  If the array of indices
 // doesn't exist, it will be created.
 void RTexture::Remap(
-	int16_t sStartIndex,
-	int16_t sNumIndex,
-	uint8_t* pr,
-	uint8_t* pg,
-	uint8_t* pb,
-	int32_t linc)
+	short sStartIndex,
+	short sNumIndex,
+	UCHAR* pr,
+	UCHAR* pg,
+	UCHAR* pb,
+	long linc)
 	{
 	ASSERT(m_pColors);
 		
 	if (m_pIndices == 0)
 		AllocIndices();
 
-	for (int16_t i = 0; i < m_sNum; i++)
+	for (short i = 0; i < m_sNum; i++)
 		{
 		m_pIndices[i] = rspMatchColorRGB(
-			int32_t(m_pColors[i].u8Red),
-			int32_t(m_pColors[i].u8Green),
-			int32_t(m_pColors[i].u8Blue),
+			long(m_pColors[i].u8Red),
+			long(m_pColors[i].u8Green),
+			long(m_pColors[i].u8Blue),
 			sStartIndex,sNumIndex,
 			pr,pg,pb,linc);
 		}
@@ -196,10 +196,10 @@ void RTexture::Remap(
 ////////////////////////////////////////////////////////////////////////////////
 void 
 RTexture::Unmap(
-	uint8_t* pr,
-	uint8_t* pg,
-	uint8_t* pb,
-	int32_t lInc)
+	UCHAR* pr,
+	UCHAR* pg,
+	UCHAR* pb,
+	long lInc)
 	{
 	ASSERT(m_pIndices);
 		
@@ -208,7 +208,7 @@ RTexture::Unmap(
 
 	U8*			pu8	= m_pIndices;
 	RPixel32*	ppix	= m_pColors;
-	int16_t	sCount		= m_sNum;
+	short	sCount		= m_sNum;
 	while (sCount--)
 		{
 		ppix->u8Red		= pr[*pu8];
@@ -227,7 +227,7 @@ RTexture::Unmap(
 void
 RTexture::Adjust(
 	float fAdjustment,	// In:  Adjustment factor (1.0 == same, < 1 == dimmer, > 1 == brighter).
-	int32_t lInc)				// In:  Number of colors to skip.
+	long lInc)				// In:  Number of colors to skip.
 	{
 	ASSERT(m_pColors);
 	ASSERT(fAdjustment >= 0.0f);
@@ -235,7 +235,7 @@ RTexture::Adjust(
 #define CLAMP255(u8Color, fColor)	( (u8Color) = ( (fColor) < 255) ? (fColor) + 0.5f : 255)
 
 	RPixel32*	ppix	= m_pColors;
-	int16_t	sCount		= m_sNum / lInc;
+	short	sCount		= m_sNum / lInc;
 	float	fColor;
 	while (sCount--)
 		{
@@ -255,11 +255,11 @@ RTexture::Adjust(
 ////////////////////////////////////////////////////////////////////////////////
 // RMesh Functions
 ////////////////////////////////////////////////////////////////////////////////
-void RMesh::Alloc(int16_t sNum)
+void RMesh::Alloc(short sNum)
 	{
 	Free();
 	m_sNum = sNum;
-	m_pArray = (uint16_t*)calloc((int32_t)m_sNum * 3, sizeof(uint16_t));
+	m_pArray = (USHORT*)calloc((long)m_sNum * 3, sizeof(USHORT));
 	ASSERT(m_pArray != 0);
 	}
 
@@ -272,15 +272,15 @@ void RMesh::Free(void)
 	}
 
 
-int16_t RMesh::Load(RFile* fp)
+short RMesh::Load(RFile* fp)
 	{
 	Free();
 
-	int16_t sResult = 0;
+	short sResult = 0;
 	if (fp->Read(&m_sNum) == 1)
 		{
 		Alloc(m_sNum);
-		fp->Read(m_pArray, (int32_t)m_sNum * 3);
+		fp->Read(m_pArray, (long)m_sNum * 3);
 		}
 	if (fp->Error())
 		{
@@ -291,11 +291,11 @@ int16_t RMesh::Load(RFile* fp)
 	}
 
 
-int16_t RMesh::Save(RFile* fp)
+short RMesh::Save(RFile* fp)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	fp->Write(&m_sNum);
-	fp->Write(m_pArray, (int32_t)m_sNum * 3);
+	fp->Write(m_pArray, (long)m_sNum * 3);
 	if (fp->Error())
 		{
 		sResult = -1;
@@ -308,7 +308,7 @@ int16_t RMesh::Save(RFile* fp)
 ////////////////////////////////////////////////////////////////////////////////
 // RSop Functions
 ////////////////////////////////////////////////////////////////////////////////
-void RSop::Alloc(int32_t lNum)
+void RSop::Alloc(long lNum)
 	{
 	Free();
 	m_lNum = lNum;
@@ -325,11 +325,11 @@ void RSop::Free(void)
 	}
 
 
-int16_t RSop::Load(RFile* fp)
+short RSop::Load(RFile* fp)
 	{
 	Free();
 
-	int16_t sResult = 0;
+	short sResult = 0;
 	if (fp->Read(&m_lNum) == 1)
 		{
 		Alloc(m_lNum);
@@ -345,9 +345,9 @@ int16_t RSop::Load(RFile* fp)
 	}
 
 
-int16_t RSop::Save(RFile* fp)
+short RSop::Save(RFile* fp)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 	fp->Write(&m_lNum);
 	ASSERT(sizeof(RP3d) == (sizeof(REAL) * 4));
 	fp->Write((REAL*)m_pArray, m_lNum * 4);

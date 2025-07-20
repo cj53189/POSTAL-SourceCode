@@ -77,7 +77,7 @@
 // Module specific (static) variables / Instantiate class statics.
 //////////////////////////////////////////////////////////////////////////////
 
-static int16_t ms_asUpper2Lower[256]	=
+static short ms_asUpper2Lower[256]	=
 	{
 	0,
 	1,
@@ -356,13 +356,13 @@ static int16_t ms_asUpper2Lower[256]	=
 // way if the comparison is lowercase ("abcde" > "abcd^") and the other way 
 // ("ABCDE" < "ABCD^") if it is uppercase."
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t rspStricmp(	// Returns 0 if equivalent.
+extern short rspStricmp(	// Returns 0 if equivalent.
 									// Returns < 0 if pszStr1 less than pszStr2.
 									// Returns > 0 if pszStr1 greater than pszStr2.
 	const char* pszStr1,		// In:  First string to compare.
 	const char* pszStr2)		// In:  Second string to compare.
 	{
-	int16_t	sRes	= 0;	// Assume equivalent.
+	short	sRes	= 0;	// Assume equivalent.
 
 	while (*pszStr1 != '\0' && *pszStr2 != '\0' && sRes == 0)
 		{
@@ -398,7 +398,7 @@ extern int16_t rspStricmp(	// Returns 0 if equivalent.
 // way if the comparison is lowercase ("abcde" > "abcd^") and the other way 
 // ("ABCDE" < "ABCD^") if it is uppercase."
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t rspStrnicmp(	// Returns 0 if equivalent.
+extern short rspStrnicmp(	// Returns 0 if equivalent.
 									// Returns < 0 if pszStr1 less than pszStr2.
 									// Returns > 0 if pszStr1 greater than pszStr2.
 	const char* pszStr1,		// In:  First string to compare.
@@ -407,7 +407,7 @@ extern int16_t rspStrnicmp(	// Returns 0 if equivalent.
 	{
 	ASSERT(count >= 0);
 
-	int16_t	sRes	= 0;	// Assume equivalent.
+	short	sRes	= 0;	// Assume equivalent.
 
 	while (*pszStr1 != '\0' && *pszStr2 != '\0' && sRes == 0 && count--)
 		{

@@ -77,11 +77,11 @@ class CNapalm : public CWeapon
 		CSprite3		m_sprite;					// 3D sprite to render this thing.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dAccDrag;				// Acceleration due to drag (always towards 0)
-		static int32_t   ms_lGrenadeFuseTime;	// Time from throw to blow
+		static long   ms_lGrenadeFuseTime;	// Time from throw to blow
 		static double ms_dThrowVertVel;		// Throw up at this velocity
 		static double ms_dThrowHorizVel;		// Throw out at this velocity
 		static double ms_dMinFireInterval;	// Lay fire down every this amount of distance
@@ -113,11 +113,11 @@ class CNapalm : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CNapalm(pRealm);
 			if (*ppNew == 0)
 				{
@@ -132,7 +132,7 @@ class CNapalm : public CWeapon
 	//---------------------------------------------------------------------------
 
 		// Called before play begins to cache resources for this object
-		static int16_t Preload(
+		static short Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	public:
@@ -147,16 +147,16 @@ class CNapalm : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -165,10 +165,10 @@ class CNapalm : public CWeapon
 		void Render(void);
 
 		// Called by the object that is creating this weapon
-		int16_t Setup(
-			int16_t sX,												// In: New x coord
-			int16_t sY,												// In: New y coord
-			int16_t sZ/*,												// In: New z coord
+		short Setup(
+			short sX,												// In: New x coord
+			short sY,												// In: New y coord
+			short sZ/*,												// In: New z coord
 			double dHorizVel = ms_dThrowHorizVel,			// In: Starting horizontal velocity
 			double dVertVel = ms_dThrowVertVel*/);			// In: Starting vertical velocity
 
@@ -181,12 +181,12 @@ class CNapalm : public CWeapon
 			}
 
 		// Function to modify the velocity for a requested range
-		virtual int16_t SetRangeToTarget(int16_t sRequestedRange)
+		virtual short SetRangeToTarget(short sRequestedRange)
 		{
-			int16_t sSetRange;
+			short sSetRange;
 			// Must go at least 30 or at most 400 pixels
-			sSetRange = MAX(sRequestedRange, (int16_t) 30);
-			sSetRange = MIN(sSetRange, (int16_t) 400);
+			sSetRange = MAX(sRequestedRange, (short) 30);
+			sSetRange = MIN(sSetRange, (short) 400);
 			m_dHorizVel = (double) sSetRange / 0.8544; //0.6782;
 			return sSetRange;
 		}
@@ -196,10 +196,10 @@ class CNapalm : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Process messages in the message queue.
 		void ProcessMessages(void);

@@ -86,10 +86,10 @@
 class RRegion
 {
 	protected:
-		uint16_t usType;	// User defined region type
-		int32_t m_lAbsX;	// Absolute X position
-		int32_t m_lAbsY;	// Absolute Y position
-		int32_t m_lAbsZ;	// Absolute Z position
+		USHORT usType;	// User defined region type
+		long m_lAbsX;	// Absolute X position
+		long m_lAbsY;	// Absolute Y position
+		long m_lAbsZ;	// Absolute Z position
 
 	public:
 		// Constructor
@@ -129,10 +129,10 @@ class RCircularRegion : virtual public RRegion
 		// Constructors
 		RCircularRegion();
 		RCircularRegion(RCircle* pCircle);
-		RCircularRegion(int32_t lX, int32_t lY, int32_t lR);
-		RCircularRegion(int32_t lX, int32_t lY, 
-				                           int32_t lXCirc, int32_t lYCirc, 
-													int32_t lRadius);
+		RCircularRegion(long lX, long lY, long lR);
+		RCircularRegion(long lX, long lY, 
+				                           long lXCirc, long lYCirc, 
+													long lRadius);
 		RCircularRegion(R2DPoint* pPoint, RCircle* pCircle);
 
 		// Destructor
@@ -140,16 +140,16 @@ class RCircularRegion : virtual public RRegion
 			{};
 
 		// Query function to tell if a point (x,y) is in the circle
-		int16_t Collide(R2DPoint* pPoint);
+		short Collide(R2DPoint* pPoint);
 
 		// Query function to tell if a line will intersect
-		int16_t Collide(R2DRay* pRay);
+		short Collide(R2DRay* pRay);
 
 		// Query function to tell if two circular regions collide
-		int16_t Collide(RCircularRegion* pCircRegion);
+		short Collide(RCircularRegion* pCircRegion);
 
 		// Query function to tell if this circular region collides with a rectangle
-		int16_t Collide(RRectangularRegion* pRectRegion);
+		short Collide(RRectangularRegion* pRectRegion);
 };
 
 class RSphericalRegion : virtual public RRegion
@@ -161,10 +161,10 @@ class RSphericalRegion : virtual public RRegion
 		// Constructors
 		RSphericalRegion();
 		RSphericalRegion(RSphere* pSphere);
-		RSphericalRegion(int32_t lX, int32_t lY, int32_t lZ, int32_t lR);
-		RSphericalRegion(int32_t lX, int32_t lY, int32_t lZ,
-							  int32_t lXSphere, int32_t lYSphere, int32_t lZSphere,
-							  int32_t lRadius);
+		RSphericalRegion(long lX, long lY, long lZ, long lR);
+		RSphericalRegion(long lX, long lY, long lZ,
+							  long lXSphere, long lYSphere, long lZSphere,
+							  long lRadius);
 		RSphericalRegion(R3DPoint* pPoint, RSphere* pSphere);
 		
 		// Destructor
@@ -172,19 +172,19 @@ class RSphericalRegion : virtual public RRegion
 			{};
 		
 		// Query function to tell if a point (x,y,z) is in the sphere
-		int16_t Collide(R3DPoint* pPoint);
+		short Collide(R3DPoint* pPoint);
 
 		// Query function to tell if a line will intersect
-		int16_t Collide(R3DRay* pRay);
+		short Collide(R3DRay* pRay);
 
 		// Query function to tell if a line intersects.
-		int16_t Collide(R3DLine* pline);
+		short Collide(R3DLine* pline);
 
 		// Query function to tell if two spherical regions collide
-		int16_t Collide(RSphericalRegion* pSphereRegion);
+		short Collide(RSphericalRegion* pSphereRegion);
 
 		// Query function to tell if this sphere collides with a cube
-		int16_t Collide(RCubicRegion* pCubeRegion);
+		short Collide(RCubicRegion* pCubeRegion);
 
 		// Query function to tell if this sphere collides with a generic region.
 };
@@ -198,29 +198,29 @@ class RRectangularRegion : virtual public RRegion
 		// Constructors
 		RRectangularRegion();
 		RRectangularRegion(RPt* pPoint, RRectangle* pRect);
-		RRectangularRegion(int32_t lX, int32_t lY, 
-		                   int32_t lLeft, int32_t lRight, int32_t lTop, int32_t lBottom);
+		RRectangularRegion(long lX, long lY, 
+		                   long lLeft, long lRight, long lTop, long lBottom);
 
 		// Destructor
 		~RRectangularRegion()
 			{};
 
 		// Query function to tell if a point (x,y) is in the rectangle
-		int16_t Collide(RPt* pPoint);
+		short Collide(RPt* pPoint);
 		// Query function to tell is a point (lX, lY) is in the rectangle.
-		int16_t Collide(int32_t lX, int32_t lY);
+		short Collide(long lX, long lY);
 
 		// Query function to tell if a line will intersect
-		int16_t Collide(R2DRay* pRay);
+		short Collide(R2DRay* pRay);
 
 		// Query function to tell if two rectangular regions collide
 		// The default bFullCheck = FALSE will cause the function to
 		// return COLLIDE or NO_COLLIDE, but will not bother to check
 		// to see if one region fully encloses the other.
-		int16_t Collide(RRectangularRegion* pRectRegion, int16_t bFullCheck = FALSE);
+		short Collide(RRectangularRegion* pRectRegion, short bFullCheck = FALSE);
 
 		// Query function to tell if this rectangle collides with a circle
-		int16_t Collide(RCircularRegion* pCircRegion, int16_t bFullCheck = FALSE);
+		short Collide(RCircularRegion* pCircRegion, short bFullCheck = FALSE);
 };
 
 class RCubicRegion : virtual public RRegion
@@ -232,26 +232,26 @@ class RCubicRegion : virtual public RRegion
 		// Constructors
 		RCubicRegion();
 		RCubicRegion(R3DPoint* pPoint, RCube* pCube);
-		RCubicRegion(int32_t lX, int32_t lY, int32_t lLeft, int32_t lRight, 
-		             int32_t lTop, int32_t lBottom, int32_t lFront, int32_t lBack);
-		RCubicRegion(int32_t lX, int32_t lY, int32_t lZ, int32_t lLeft, int32_t lRight, 
-						 int32_t lTop, int32_t lBottom, int32_t lFront, int32_t lBack);
+		RCubicRegion(long lX, long lY, long lLeft, long lRight, 
+		             long lTop, long lBottom, long lFront, long lBack);
+		RCubicRegion(long lX, long lY, long lZ, long lLeft, long lRight, 
+						 long lTop, long lBottom, long lFront, long lBack);
 
 		// Destructor
 		~RCubicRegion()
 			{};
 
 		// Query function to tell if a point (x,y,z) is in the cube
-		int16_t Collide(R3DPoint* pPoint);
+		short Collide(R3DPoint* pPoint);
 
 		// Query function to tell if a line will intersect
-		int16_t Collide(R3DRay* pRay);
+		short Collide(R3DRay* pRay);
 
 		// Query function to tell if two cubic regions collide
-		int16_t Collide(RCubicRegion* pCubeRegion);
+		short Collide(RCubicRegion* pCubeRegion);
 
 		// Query function to tell if this cube collides with a sphere
-		int16_t Collide(RSphericalRegion* pSphereRegion);
+		short Collide(RSphericalRegion* pSphereRegion);
 };
 
 
@@ -262,3 +262,4 @@ class RCubicRegion : virtual public RRegion
 //////////////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////////////
+

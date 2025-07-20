@@ -84,7 +84,7 @@
 //							provides a complete interface to the sound instead of
 //							the partial one it used to.
 //
-//		09/04/96 MJR	Changed callback from uint32_t to long for size parameter.
+//		09/04/96 MJR	Changed callback from ULONG to long for size parameter.
 //
 //		09/06/96	JMI	I patched Reset() so it might work.
 //
@@ -183,23 +183,23 @@
 //////////////////////////////////////////////////////////////////////////////
 RList<RMix>		RMix::ms_listActive;						// List of active channels.
 
-int16_t				RMix::ms_sSetMode	= FALSE;				// TRUE if we set Blue's 
+short				RMix::ms_sSetMode	= FALSE;				// TRUE if we set Blue's 
 																	// sound output mode.
 
 RMix::State		RMix::ms_sState	= Idle;				// Current state for all
 																	// RMixes.
-int32_t				RMix::ms_lCurPos	= 0L;					// Current play position
+long				RMix::ms_lCurPos	= 0L;					// Current play position
 																	// based on absolute start.
-uint32_t				RMix::ms_ulBufSize	= 0xFFFFFFFF;	// The size to use when al-
+ULONG				RMix::ms_ulBufSize	= 0xFFFFFFFF;	// The size to use when al-
 																	// locating RMixBufs.
 
-int16_t				RMix::ms_sReset	= FALSE;				// If TRUE, current user
+short				RMix::ms_sReset	= FALSE;				// If TRUE, current user
 																	// buffers are returned.
 
 RSndFx*			RMix::ms_psndfx	= NULL;				// Pointer to a global 
 																	// RSndFx.
 
-int16_t				RMix::ms_sKeepPumping	= FALSE;		// Keep Blue pumped with
+short				RMix::ms_sKeepPumping	= FALSE;		// Keep Blue pumped with
 																	// silence when no channels
 																	// are playing, if TRUE.
 
@@ -288,11 +288,11 @@ void RMix::Init(void)
 // Implied this version of BlueCallStatic, called from BlueCallStatic.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::BlueCall(	// Returns FALSE when done.
-	int32_t		lDataPos,	// Position that this buffer represents in stream.
+short RMix::BlueCall(	// Returns FALSE when done.
+	long		lDataPos,	// Position that this buffer represents in stream.
 	PMIXBUF	pmb)			// Mix buffer to mix into.
 	{
-	int16_t	sRes	= FALSE;	// Assume no sound mixed in.
+	short	sRes	= FALSE;	// Assume no sound mixed in.
 
 	// If this channel is not suspending and not paused . . .
 	if (m_sSuspending == FALSE && m_sPauseLevel == 0)
@@ -302,15 +302,15 @@ int16_t RMix::BlueCall(	// Returns FALSE when done.
 			{
 			// Set start time and position.
 			m_lStartPos		= ms_lCurPos;
-			m_lStartTime	= (int32_t)(((float)ms_lCurPos * (float)1000) / 
+			m_lStartTime	= (long)(((float)ms_lCurPos * (float)1000) / 
 										((float)m_lSampleRate * ((float)m_lBitsPerSample / (float)8) 
 											* (float)m_lNumChannels
 										) );
 			}
 		
-		uint32_t ulTotalMixedIn	= 0L;
-		uint32_t	ulMixBufSize	= pmb->GetMixSize();
-		uint32_t	ulCurMix;
+		ULONG ulTotalMixedIn	= 0L;
+		ULONG	ulMixBufSize	= pmb->GetMixSize();
+		ULONG	ulCurMix;
 
 		// If we were recently reset . . .
 		if (ms_sReset == TRUE)
@@ -326,7 +326,7 @@ int16_t RMix::BlueCall(	// Returns FALSE when done.
 			if (m_ulAmount == 0L)
 				{
 				// Call user callback to get more data and the current volume!.
-				m_pucData = (uint8_t*) (*m_mcUser)(Data, m_pucData, &m_ulAmount, 
+				m_pucData = (UCHAR*) (*m_mcUser)(Data, m_pucData, &m_ulAmount, 
 					m_ulUser, &m_ucVolume, &m_ucSecondaryVolume);
 				}
 			
@@ -413,15 +413,15 @@ int16_t RMix::BlueCall(	// Returns FALSE when done.
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::BlueCallStatic(	// Returns TRUE to continue mixing in this
+short RMix::BlueCallStatic(	// Returns TRUE to continue mixing in this
 										// buffer or FALSE to not mix this buffer.
-	uint8_t*	pucData,				// Buffer to mix into.
-	int32_t		lBufSize,			// Size of memory that pucData points to.
-	int32_t		lDataPos,			// Position this buffer will take in the overall
+	UCHAR*	pucData,				// Buffer to mix into.
+	long		lBufSize,			// Size of memory that pucData points to.
+	long		lDataPos,			// Position this buffer will take in the overall
 										// stream.
-	uint32_t*	/*pul_ppmixbuf*/)	// An unused user value.
+	ULONG*	/*pul_ppmixbuf*/)	// An unused user value.
 	{
-	int16_t sBufDone	= TRUE;	// Assume buffer not needed.
+	short sBufDone	= TRUE;	// Assume buffer not needed.
 
 	// Get head of list of active channels.
 	RMix*	pmix	= ms_listActive.GetHead();
@@ -496,19 +496,19 @@ int16_t RMix::BlueCallStatic(	// Returns TRUE to continue mixing in this
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::SetMode(				// Returns 0 on success.
-	int32_t	lSamplesPerSec,		// Sample rate in samples per second.
-	int32_t	lDstBitsPerSample,	// Number of bits per sample.
-	int32_t	lNumChannels,			// Number of channels (1 == mono,2 == stereo).
-	int32_t	lBufferTime,			// Amount of time buffer spends in queue b4
+short RMix::SetMode(				// Returns 0 on success.
+	long	lSamplesPerSec,		// Sample rate in samples per second.
+	long	lDstBitsPerSample,	// Number of bits per sample.
+	long	lNumChannels,			// Number of channels (1 == mono,2 == stereo).
+	long	lBufferTime,			// Amount of time buffer spends in queue b4
 										// being played.
-	int32_t	lMaxBufferTime,		// Maximum that lBufferTime can be set to
+	long	lMaxBufferTime,		// Maximum that lBufferTime can be set to
 										// dynamically with RMix::SetBufferTime().
-	int32_t	lMixBitsPerSample,	// Bit depth at which samples will be mixed.
-	int32_t	lSrcBitsPerSample)	// Bit depth at which samples must be to be
+	long	lMixBitsPerSample,	// Bit depth at which samples will be mixed.
+	long	lSrcBitsPerSample)	// Bit depth at which samples must be to be
 										// mixed or 0 for no preference.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (ms_sSetMode == FALSE)
 		{
@@ -581,9 +581,9 @@ void RMix::KillMode(void)
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::Pause(void)	// Returns 0 on success.
+short RMix::Pause(void)	// Returns 0 on success.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (ms_sSetMode != FALSE)
 		{
@@ -612,9 +612,9 @@ int16_t RMix::Pause(void)	// Returns 0 on success.
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::Resume(void)	// Returns 0 on success.
+short RMix::Resume(void)	// Returns 0 on success.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (ms_sSetMode != FALSE)
 		{
@@ -642,7 +642,7 @@ int16_t RMix::Resume(void)	// Returns 0 on success.
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::IsPaused(void)	// Returns TRUE, if sound output is paused; FALSE otherwise.
+short RMix::IsPaused(void)	// Returns TRUE, if sound output is paused; FALSE otherwise.
 	{
 	return rspIsSoundOutPaused();
 	}
@@ -654,7 +654,7 @@ int16_t RMix::IsPaused(void)	// Returns TRUE, if sound output is paused; FALSE o
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RMix::Do(void)	// Returns value returned by rspDoSound() that
+long RMix::Do(void)	// Returns value returned by rspDoSound() that
 							// indicates how much audio, in milliseconds,
 							// was required to be queued.
 	{
@@ -664,7 +664,7 @@ int32_t RMix::Do(void)	// Returns value returned by rspDoSound() that
 
     rspLockSound();
 
-	int32_t	lPlayPos;
+	long	lPlayPos;
 	// If in a mode . . .
 	if (ms_sSetMode != FALSE)
 		{
@@ -712,7 +712,7 @@ int32_t RMix::Do(void)	// Returns value returned by rspDoSound() that
 	// Let Blue do its Sound schtuff:
    ///////////////////////////////////////////////////////////////////////////
 
-	int32_t rc = rspDoSound();
+	long rc = rspDoSound();
     rspUnlockSound();
     return(rc);
 	}
@@ -723,11 +723,11 @@ int32_t RMix::Do(void)	// Returns value returned by rspDoSound() that
 // Returns 0 on success, 1 if no mode, negative on error.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::OpenChannel(int32_t	lSampleRate,
-								int32_t	lBitsPerSample,
-								int32_t	lNumChannels)
+short RMix::OpenChannel(long	lSampleRate,
+								long	lBitsPerSample,
+								long	lNumChannels)
 	{
-	int16_t		sRes	= 0;	// Assume success.
+	short		sRes	= 0;	// Assume success.
 
 	// There must be a mode . . .
 	if (ms_sSetMode != FALSE)
@@ -763,9 +763,9 @@ int16_t RMix::OpenChannel(int32_t	lSampleRate,
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::CloseChannel(void)
+short RMix::CloseChannel(void)
 	{
-	int16_t		sRes	= 0;	// Assume success.
+	short		sRes	= 0;	// Assume success.
 	
 	if (m_sOpen == TRUE)
 		{
@@ -796,10 +796,10 @@ int16_t RMix::CloseChannel(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::Start(RMixCall mcUser, uintptr_t ulUser,
-					uint8_t	ucVolume /* = 255 */, uint8_t ucVol2 /* = 255 */)
+short RMix::Start(RMixCall mcUser, ULONG ulUser,
+					UCHAR	ucVolume /* = 255 */, UCHAR ucVol2 /* = 255 */)
 	{						 
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	ASSERT(m_sOpen == TRUE);
 	ASSERT(mcUser	!= NULL);
@@ -861,9 +861,9 @@ int16_t RMix::Start(RMixCall mcUser, uintptr_t ulUser,
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::Suspend(void)
+short RMix::Suspend(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (m_sActive == TRUE)
 		{
@@ -905,7 +905,7 @@ void RMix::ResumeChannel(void)
 // Check mix channel's paused status.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::IsChannelPaused(void)	// Returns TRUE, if sound output is paused; FALSE otherwise.
+short RMix::IsChannelPaused(void)	// Returns TRUE, if sound output is paused; FALSE otherwise.
 	{
 	return (m_sPauseLevel == 0) ? FALSE : TRUE;
 	}
@@ -919,9 +919,9 @@ int16_t RMix::IsChannelPaused(void)	// Returns TRUE, if sound output is paused; 
 //	Returns 0 on success.  (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::Reset(void)
+short RMix::Reset(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Attempt to reset sound output . . .
 	if (rspClearSoundOut() == 0)
@@ -948,9 +948,9 @@ int16_t RMix::Reset(void)
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::SuspendAll(void)	// Returns 0 on success.
+short RMix::SuspendAll(void)	// Returns 0 on success.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	RMix*	pmix		= ms_listActive.GetHead();
 	while (pmix != NULL)
@@ -972,9 +972,9 @@ int16_t RMix::SuspendAll(void)	// Returns 0 on success.
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::ChannelFinished(void)
+short RMix::ChannelFinished(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	ASSERT(m_sActive == TRUE);
 
@@ -1009,9 +1009,9 @@ int16_t RMix::ChannelFinished(void)
 // Returns the time for this RMix (positive if successful).
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RMix::GetTime(void)
+long RMix::GetTime(void)
 	{
-	int32_t lRes;
+	long lRes;
 
 	if (m_lStartTime >= 0L)
 		{
@@ -1039,9 +1039,9 @@ int32_t RMix::GetTime(void)
 // Returns the position for this RMix (positive if successful).
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RMix::GetPos(void)
+long RMix::GetPos(void)
 	{
-	int32_t lRes;
+	long lRes;
 
 	if (m_lStartPos >= 0L)
 		{
@@ -1070,33 +1070,33 @@ int32_t RMix::GetPos(void)
 // (static).
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RMix::GetMode(							// Returns 0 on success; 
+short RMix::GetMode(							// Returns 0 on success; 
 													// nonzero if no mode.
-	int32_t*		plSamplesPerSec,				// Sample rate in samples per second
+	long*		plSamplesPerSec,				// Sample rate in samples per second
 													// returned here, if not NULL.
-	int32_t*		plDevBitsPerSample,			// Bits per sample of device,
+	long*		plDevBitsPerSample,			// Bits per sample of device,
 													// returned here, if not NULL.
-	int32_t*		plNumChannels,					// Number of channels (1 == mono, 
+	long*		plNumChannels,					// Number of channels (1 == mono, 
 													// 2 == stereo) returned here, 
 													// if not NULL.
-	int32_t*		plBufferTime,					// Amount of time in ms to lead the 
+	long*		plBufferTime,					// Amount of time in ms to lead the 
 													// current play cursor returned here,
 													// if not NULL.  This could also be 
 													// described as the maximum amount of
 													// time in ms that can occur between 
 													// calls to rspDoSound.
-	int32_t*		plMaxBufferTime,				// Maximum buffer time.  This is the amt
+	long*		plMaxBufferTime,				// Maximum buffer time.  This is the amt
 													// that *plBufferTime can be increased to.
 													// This is indicative of how much space
 													// was/will-be allocated for the sound
 													// output device on rspLockSoundOut.
-	int32_t*		plMixBitsPerSample,			// Bits per sample at which samples are
+	long*		plMixBitsPerSample,			// Bits per sample at which samples are
 													// mixed, if not NULL.
-	int32_t*		plSrcBitsPerSample)			// Bits per sample at which samples must
+	long*		plSrcBitsPerSample)			// Bits per sample at which samples must
 													// be to be mixed (0 if no requirement), 
 													// if not NULL.
 	{
-	int16_t	sRes	= rspGetSoundOutMode(
+	short	sRes	= rspGetSoundOutMode(
 		plSamplesPerSec, 
 		plDevBitsPerSample,
 		plNumChannels,

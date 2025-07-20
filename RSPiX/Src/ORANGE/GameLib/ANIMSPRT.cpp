@@ -95,10 +95,10 @@ RAnimSprite::~RAnimSprite()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::Load(char* pszFilename)
+short RAnimSprite::Load(char* pszFilename)
 {
 	RFile cf;
-	int16_t sReturn = SUCCESS;
+	short sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "rb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -129,10 +129,10 @@ int16_t RAnimSprite::Load(char* pszFilename)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::Load(RFile* pcf)
+short RAnimSprite::Load(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	uint32_t ulFileType;
+	short sReturn = SUCCESS;
+	ULONG ulFileType;
 
 	if (pcf && pcf->IsOpen())
 	{
@@ -239,10 +239,10 @@ int16_t RAnimSprite::Load(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::ReadPictures(RFile* pcf)
+short RAnimSprite::ReadPictures(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	int16_t i = 0;
+	short sReturn = SUCCESS;
+	short i = 0;
 
 	AllocatePictures(m_sNumPictures);
 
@@ -269,10 +269,10 @@ int16_t RAnimSprite::ReadPictures(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::ReadFrames(RFile* pcf)
+short RAnimSprite::ReadFrames(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	int16_t i = 0;
+	short sReturn = SUCCESS;
+	short i = 0;
 
 	AllocateFrames(m_sNumFrames);
 
@@ -365,10 +365,10 @@ int16_t RAnimSprite::ReadFrames(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::Save(char* pszFilename)
+short RAnimSprite::Save(char* pszFilename)
 {	
 	RFile cf;
-	int16_t sReturn = SUCCESS;
+	short sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "wb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -401,10 +401,10 @@ int16_t RAnimSprite::Save(char* pszFilename)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::Save(RFile* pcf)
+short RAnimSprite::Save(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	uint32_t ulFileType = ANIMSPRITE_COOKIE;
+	short sReturn = SUCCESS;
+	ULONG ulFileType = ANIMSPRITE_COOKIE;
 
 	if (pcf && pcf->IsOpen())
 	{
@@ -490,10 +490,10 @@ int16_t RAnimSprite::Save(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::WritePictures(RFile* pcf)
+short RAnimSprite::WritePictures(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	int16_t i = 0;
+	short sReturn = SUCCESS;
+	short i = 0;
 
 	while (sReturn == SUCCESS && i < m_sNumPictures)
 		sReturn = m_apPictures[i++]->Save(pcf);
@@ -518,10 +518,10 @@ int16_t RAnimSprite::WritePictures(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::WriteFrames(RFile* pcf)
+short RAnimSprite::WriteFrames(RFile* pcf)
 {
-	int16_t sReturn = SUCCESS;
-	int16_t i = 0;
+	short sReturn = SUCCESS;
+	short i = 0;
 
 	while (sReturn == SUCCESS && i < m_sNumFrames)
 	{
@@ -614,7 +614,7 @@ int16_t RAnimSprite::WriteFrames(RFile* pcf)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::SetFrame(int16_t sFrameNum)
+short RAnimSprite::SetFrame(short sFrameNum)
 {
  	if (sFrameNum < 0 || sFrameNum >= m_sNumFrames)
 	{
@@ -672,7 +672,7 @@ int16_t RAnimSprite::SetFrame(int16_t sFrameNum)
 //	
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::NextFrame()
+short RAnimSprite::NextFrame()
 {
 	// See if it is on the last frame
 	if (m_sCurrFrame == m_sNumFrames-1)
@@ -737,7 +737,7 @@ int16_t RAnimSprite::NextFrame()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::PrevFrame()
+short RAnimSprite::PrevFrame()
 {
 	// See if it is on the first frame
 	if (m_sCurrFrame == 0)
@@ -801,7 +801,7 @@ int16_t RAnimSprite::PrevFrame()
 ///////////////////////////////////////////////////////////////////////////////
 
 
-int16_t RAnimSprite::NextKeyFrame()		// goes to next key frame of animation
+short RAnimSprite::NextKeyFrame()		// goes to next key frame of animation
 {
 	return SUCCESS;
 }
@@ -824,7 +824,7 @@ int16_t RAnimSprite::NextKeyFrame()		// goes to next key frame of animation
 //
 ///////////////////////////////////////////////////////////////////////////////
 	
-int16_t RAnimSprite::Animate()
+short RAnimSprite::Animate()
 {
 	if (rspGetMilliseconds() > m_lTimer)
 		return NextFrame();
@@ -848,7 +848,7 @@ int16_t RAnimSprite::Animate()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::AllocateFrames(int16_t sNumFrames)
+short RAnimSprite::AllocateFrames(short sNumFrames)
 {
 	if (m_aFrames)
 	{
@@ -879,7 +879,7 @@ int16_t RAnimSprite::AllocateFrames(int16_t sNumFrames)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::AllocatePictures(int16_t sNumPictures)
+short RAnimSprite::AllocatePictures(short sNumPictures)
 {
 	if (m_apPictures)
 	{
@@ -891,7 +891,7 @@ int16_t RAnimSprite::AllocatePictures(int16_t sNumPictures)
 	if (m_apPictures == NULL)
 		return FAILURE;
 	
-	int16_t i;
+	short i;
 
 	for (i = 0; i < sNumPictures; i++)
 		m_apPictures[i] = new RImage;
@@ -918,7 +918,7 @@ int16_t RAnimSprite::AllocatePictures(int16_t sNumPictures)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::FreeFrames()
+short RAnimSprite::FreeFrames()
 {
 	if (m_aFrames)
 	{
@@ -947,11 +947,11 @@ int16_t RAnimSprite::FreeFrames()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int16_t RAnimSprite::FreePictures()
+short RAnimSprite::FreePictures()
 {
 	if (m_apPictures)
 	{
-		int16_t i;
+		short i;
 		// free each picture
 		for (i = 0; i < m_sAllocatedPics; i++)
 			delete m_apPictures[i];

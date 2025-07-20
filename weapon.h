@@ -79,7 +79,7 @@ class CWeapon : public CThing
 	//---------------------------------------------------------------------------
 	public:
 
-	typedef uint8_t CWeaponState;
+	typedef unsigned char CWeaponState;
 
 	typedef enum
 		{
@@ -130,14 +130,14 @@ class CWeapon : public CThing
 		CSprite2	m_spriteShadow;			// 2D sprite for shadow on the ground
 
 	protected:
-		int32_t m_lTimer;							// Timer for explosion
-		int32_t m_lPrevTime;						// Previous update time
+		long m_lTimer;							// Timer for explosion
+		long m_lPrevTime;						// Previous update time
 
-		int16_t m_sSuspend;						// Suspend flag
-		int16_t	m_sCurRadius;					// Radius of the dude's current frame.
+		short m_sSuspend;						// Suspend flag
+		short	m_sCurRadius;					// Radius of the dude's current frame.
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 	public:
 		// "Constant" values that we want to be able to tune using the editor
@@ -177,7 +177,7 @@ class CWeapon : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
@@ -189,28 +189,28 @@ class CWeapon : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		virtual int16_t Load(										// Returns 0 if successfull, non-zero otherwise
+		virtual short Load(										// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		virtual int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		virtual short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Setup object after creating it
-		virtual int16_t Setup(
-			int16_t sX,												// In: Starting X position
-			int16_t sY,												// In: Starting Y position
-			int16_t sZ);												// In: Starting Z position
+		virtual short Setup(
+			short sX,												// In: Starting X position
+			short sY,												// In: Starting Y position
+			short sZ);												// In: Starting Z position
 
 		// Startup object
-		virtual int16_t Startup(void);							// Returns 0 if successfull, non-zero otherwise
+		virtual short Startup(void);							// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		virtual int16_t Shutdown(void);							// Returns 0 if successfull, non-zero otherwise
+		virtual short Shutdown(void);							// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		virtual void Suspend(void);
@@ -225,19 +225,19 @@ class CWeapon : public CThing
 		virtual void Render(void);
 
 		// Called by editor to init new object at specified position
-		virtual int16_t EditNew(									// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		virtual short EditNew(									// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		virtual int16_t EditModify(void);						// Returns 0 if successfull, non-zero otherwise
+		virtual short EditModify(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		virtual int16_t EditMove(									// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		virtual short EditMove(									// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		virtual void EditUpdate(void);
@@ -260,9 +260,9 @@ class CWeapon : public CThing
 		virtual					// Overriden here.
 		double GetZ(void)	{ return m_dZ; }
 
-		virtual int16_t GetResources(void);
+		virtual short GetResources(void);
 
-		virtual int16_t FreeResources(void);
+		virtual short FreeResources(void);
 
 		virtual double BounceAngle(double dAngle);
 
@@ -270,7 +270,7 @@ class CWeapon : public CThing
 		// Weapons that can modify their velocity to affect the
 		// range can do the calculation and modify their horizontal
 		// velocity.  This default one does nothing
-		virtual int16_t SetRangeToTarget(int16_t sRequestedRange)
+		virtual short SetRangeToTarget(short sRequestedRange)
 		{
 			return sRequestedRange;
 		}
@@ -358,7 +358,7 @@ class CWeapon : public CThing
 		// and set the shadow to visible
 		virtual			// Override to implement additional functionality
 							// Call base class to get default functionality
-		int16_t PrepareShadow(void);	// Returns SUCCESS if set successfully
+		short PrepareShadow(void);	// Returns SUCCESS if set successfully
 
 	//---------------------------------------------------------------------------
 	// Internal functions

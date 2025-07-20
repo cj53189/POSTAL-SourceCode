@@ -50,23 +50,23 @@
 // am ALIASING the hooks to the toolbar so recompiles will be minimal:
 
 // This should be done everytime the hood's palette changes.
-extern	int16_t	ToolBarInit(CHood* pHood);
+extern	short	ToolBarInit(CHood* pHood);
 
 // This does a FULL regeneration of the toolbar and draws it in yout area.
 // It returns false if it isn't time to render.
 extern	bool	ToolBarRender(
 						CHood* pHood,
 						RImage* pimDst,
-						int16_t sDstX,
-						int16_t sDstY,
+						short sDstX,
+						short sDstY,
 						CDude* pDude,
 						bool bForceRender = false
 						);
 
-extern	int16_t gsStatusFontForeIndex;
-extern	int16_t gsStatusFontBackIndex;
-extern	int16_t gsStatusFontShadowIndex;
+extern	short gsStatusFontForeIndex;
+extern	short gsStatusFontBackIndex;
+extern	short gsStatusFontShadowIndex;
 
-extern	int16_t gsStatusFontForeDeadIndex;
+extern	short gsStatusFontForeDeadIndex;
 
 #endif

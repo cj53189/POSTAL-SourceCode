@@ -80,19 +80,10 @@
 #define JOIN_MULTI_MENU_ID				25
 #define HOST_MULTI_MENU_ID				26
 #define PICK_FILE_MENU_ID				27
-#define LOAD_LEVEL_MENU_ID				28
-#define CHALLENGE_TIMED_MENU_ID			29
-#define CHALLENGE_GOAL_MENU_ID			30
-#define CHALLENGE_FLAG_MENU_ID			31
-#define CHALLENGE_CHECKPOINT_MENU_ID	32
 
 ////////////////////////////////////////////////////////////////////////////////
 // Externs.
 ////////////////////////////////////////////////////////////////////////////////
-
-// Level name strings (for the level select).
-
-extern char levelNames[22][256];
 
 // Forward declarations.
 extern Menu	menuStart;
@@ -100,7 +91,6 @@ extern Menu menuStartSingle;
 extern Menu menuStartMulti;
 extern Menu menuStartDemo;
 extern Menu	menuOptions;
-extern Menu	menuGameOptions;
 extern Menu menuControls;
 extern Menu menuKeyboard;
 extern Menu menuMouse;
@@ -110,10 +100,6 @@ extern Menu	menuVerifyExit;
 extern Menu menuMultiOptions;
 extern Menu	menuFeatures;
 extern Menu menuChallenge;
-extern Menu menuChallengeTimed;
-extern Menu menuChallengeGoal;
-extern Menu menuChallengeFlag;
-extern Menu menuChallengeCheckpoint;
 extern Menu menuVolumes;
 extern Menu	menuVideoOptions;
 extern Menu	menuAudioOptions;
@@ -121,8 +107,6 @@ extern Menu	menuPlayOptions;
 extern Menu menuRotation;
 extern Menu menuJoinMulti;
 extern Menu menuHostMulti;
-extern Menu menuLoadLevel;
-extern Menu	menuNewCampaign;
 
 // Main menu
 extern Menu	menuMain;
@@ -144,7 +128,7 @@ extern Menu	g_menuVerifyQuitGame;
 #define MAX_SAVE_SLOTS 9
 #endif
 
-int16_t PickFile(const char *title, void (*enumer)(Menu *), char *buf, size_t bufsize);
+short PickFile(const char *title, void (*enumer)(Menu *), char *buf, size_t bufsize);
 #endif
 
 #endif //MENUS_H

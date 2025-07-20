@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Internal functions.
 ///////////////////////////////////////////////////////////////////////////////
-static BOOL CALLBACK EnumChildIconizeProc(HWND hWnd, int32_t)
+static BOOL CALLBACK EnumChildIconizeProc(HWND hWnd, long)
 	{
 	BOOL	bRes	= TRUE;	// Assume we will continue enumeration.
 
@@ -90,9 +90,9 @@ static BOOL CALLBACK EnumChildIconizeProc(HWND hWnd, int32_t)
 // Returns 0 on success.
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t Iconize(CDialog* pdlg)
+extern short Iconize(CDialog* pdlg)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (EnumChildWindows(pdlg->GetSafeHwnd(), EnumChildIconizeProc, 0L) != FALSE)
 		{
@@ -113,9 +113,9 @@ extern int16_t Iconize(CDialog* pdlg)
 // Returns 0 on success.
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t StorePosition(CWnd* pwnd)
+extern short StorePosition(CWnd* pwnd)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Construct section name.
 	char	szSection[512];
@@ -140,9 +140,9 @@ extern int16_t StorePosition(CWnd* pwnd)
 // Returns 0 on success.
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t RestorePosition(CWnd* pwnd)
+extern short RestorePosition(CWnd* pwnd)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Construct section name.
 	char	szSection[512];
@@ -172,8 +172,8 @@ extern int16_t RestorePosition(CWnd* pwnd)
 	CDC*	pdc	= pwnd->GetDC();
 	if (pdc != NULL)
 		{
-		int32_t	lScrWidth	= pdc->GetDeviceCaps(HORZRES);
-		int32_t	lScrHeight	= pdc->GetDeviceCaps(VERTRES);
+		long	lScrWidth	= pdc->GetDeviceCaps(HORZRES);
+		long	lScrHeight	= pdc->GetDeviceCaps(VERTRES);
 		
 		if (rcWindow.bottom > lScrHeight)
 			{

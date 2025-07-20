@@ -76,7 +76,7 @@ class CMine : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 
-	typedef uint8_t MineType;
+	typedef unsigned char MineType;
 
 	typedef enum
 	{
@@ -93,7 +93,7 @@ class CMine : public CWeapon
 	public:
 
 	protected:
-		int16_t m_sPrevHeight;							// Previous height
+		short m_sPrevHeight;							// Previous height
 
 		RImage*		m_pImage;						// Pointer to mine image
 		CSprite2		m_sprite;						// Sprite for 2D mine
@@ -101,19 +101,19 @@ class CMine : public CWeapon
 		CBulletFest	m_bulletfest;					// Used for bouncing betty
 		double		m_dVertVel;						// Vertical velocity 
 		double		m_dVertDeltaVel;				// Change in vertical velocity
-		int32_t			m_lFuseTime;					// Time before timed mine goes off
+		long			m_lFuseTime;					// Time before timed mine goes off
 		SampleMaster::SoundInstance m_siMineBeep;// Arming beep sound that loops
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 	public:
 		// "Constant" values that we want to be able to tune using the editor
-		static int16_t ms_sProximityRadius;		// Distance at which mine goes off
-		static int16_t ms_sBettyRadius;				// Distance at which mine goes off
-		static int16_t ms_sBettyRange;				// Affected area for Bouncing Betty
-		static int32_t ms_lFuseTime;					// Timed mine explodes after this time
-		static int32_t ms_lArmingTime;				// Proximity mines arm after this time
-		static int32_t ms_lExplosionDelay;			// Delay before explosion triggers mine
+		static short ms_sProximityRadius;		// Distance at which mine goes off
+		static short ms_sBettyRadius;				// Distance at which mine goes off
+		static short ms_sBettyRange;				// Affected area for Bouncing Betty
+		static long ms_lFuseTime;					// Timed mine explodes after this time
+		static long ms_lArmingTime;				// Proximity mines arm after this time
+		static long ms_lExplosionDelay;			// Delay before explosion triggers mine
 		static double ms_dInitialBounceVelocity;//Bouncing Betty popup velocity
 
 
@@ -156,12 +156,12 @@ class CMine : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Construct mine object.
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew,										// Out: Pointer to new object
 			ClassIDType id)										// In:  ID of mine to construct.
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CMine(pRealm, id);
 			if (*ppNew == 0)
 				{
@@ -172,7 +172,7 @@ class CMine : public CWeapon
 			}
 
 		// Construct proximity mine object.
-		static int16_t ConstructProximity(						// Returns 0 if successfull, non-zero otherwise
+		static short ConstructProximity(						// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
@@ -180,7 +180,7 @@ class CMine : public CWeapon
 			}
 
 		// Construct timed mine object.
-		static int16_t ConstructTimed(							// Returns 0 if successfull, non-zero otherwise
+		static short ConstructTimed(							// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
@@ -188,7 +188,7 @@ class CMine : public CWeapon
 			}
 
 		// Construct bouncing betty mine object.
-		static int16_t ConstructBouncingBetty(				// Returns 0 if successfull, non-zero otherwise
+		static short ConstructBouncingBetty(				// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
@@ -196,7 +196,7 @@ class CMine : public CWeapon
 			}
 
 		// Construct remote control mine object.
-		static int16_t ConstructRemoteControl(				// Returns 0 if successfull, non-zero otherwise
+		static short ConstructRemoteControl(				// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
@@ -218,16 +218,16 @@ class CMine : public CWeapon
 			}
 
 		// Called after load to start the object
-		int16_t Startup(void);
+		short Startup(void);
 
 		// Init - common initialization code for startup, setup & edit new
-		int16_t Init(void);
+		short Init(void);
 
 		// Puts up a dialog box in the editor to select mine type
-		int16_t EditModify(void);
+		short EditModify(void);
 
 		// Sets up new item in the editor
-		int16_t EditNew(int16_t sX, int16_t sY, int16_t sZ);
+		short EditNew(short sX, short sY, short sZ);
 
 		void EditRect(RRect* pRect)
 		{
@@ -235,9 +235,9 @@ class CMine : public CWeapon
 			{
 				// Map from 3d to 2d coords
 				Map3Dto2D(
-					(int16_t) m_dX, 
-					(int16_t) m_dY, 
-					(int16_t) m_dZ, 
+					(short) m_dX, 
+					(short) m_dY, 
+					(short) m_dZ, 
 					&(pRect->sX), 
 					&(pRect->sY) );
 
@@ -250,9 +250,9 @@ class CMine : public CWeapon
 		}
 
 		void EditHotSpot(			// Returns nothiing.
-			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
+			short*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			int16_t*	psY)			// Out: Y coord of 2D hotspot relative to
+			short*	psY)			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 			{
 			if (m_pImage)
@@ -271,7 +271,7 @@ class CMine : public CWeapon
 	//---------------------------------------------------------------------------
 
 		// Called before play begins to cache resources for this object.
-		static int16_t Preload(
+		static short Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -279,16 +279,16 @@ class CMine : public CWeapon
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Update object
 		void Update(void);
@@ -299,18 +299,18 @@ class CMine : public CWeapon
 		// Called by the object that is creating this weapon - this
 		// overloaded version is for timed mines so that the fuse time
 		// can be set
-		int16_t Setup(
-			int16_t sX,												// In: New x coord
-			int16_t sY,												// In: New y coord
-			int16_t sZ,												// In: New z coord
-			int32_t lFuseTime);										// In: Time in ms for fuse
+		short Setup(
+			short sX,												// In: New x coord
+			short sY,												// In: New y coord
+			short sZ,												// In: New z coord
+			long lFuseTime);										// In: Time in ms for fuse
 
 		// Override base class Setup().
 		virtual				// Overridden here.
-		int16_t Setup(
-			int16_t sX,												// In: Starting X position
-			int16_t sY,												// In: Starting Y position
-			int16_t sZ);												// In: Starting Z position
+		short Setup(
+			short sX,												// In: Starting X position
+			short sY,												// In: Starting Y position
+			short sZ);												// In: Starting Z position
 
 		// Get this class's sprite.  Note that the type will vary.
 		// This is a pure virtual functionin the base class.
@@ -325,10 +325,10 @@ class CMine : public CWeapon
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Handle Explosion message
 		void OnExplosionMsg(Explosion_Message* pMessage);

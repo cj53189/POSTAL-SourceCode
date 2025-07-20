@@ -139,7 +139,7 @@ RMeter::RMeter()
 
 	m_guiMeter.SetParent(this);
 	m_guiMeter.m_bcUser				= BtnCall;
-	m_guiMeter.m_ulUserInstance	= (U64)this;
+	m_guiMeter.m_ulUserInstance	= (ULONG)this;
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -161,16 +161,16 @@ RMeter::~RMeter()
 // we have a height or width of 0.
 //
 ////////////////////////////////////////////////////////////////////////
-inline int16_t Rectangle(		// Returns 0 on success.
+inline short Rectangle(		// Returns 0 on success.
 	U32 u32Color,				// Color.
 	RImage* pimDst,			// Destination.
-	int16_t sDstX,				// Destination x coordinate.
-	int16_t sDstY,				// Destination y coordinate.
-	int16_t sDstW,				// Width.
-	int16_t sDstH,				// Height.
+	short sDstX,				// Destination x coordinate.
+	short sDstY,				// Destination y coordinate.
+	short sDstW,				// Width.
+	short sDstH,				// Height.
 	RRect* prClip = NULL)	// Optional clipping rectangle.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (sDstW > 0 && sDstH > 0)
 		{
@@ -190,7 +190,7 @@ void RMeter::Compose(				// Returns nothing.
 	RImage*	pimDst /*= NULL*/)	// In: Destination.  NULL == use 
 											// internal m_im.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (pimDst == NULL)
 		{
@@ -200,16 +200,16 @@ void RMeter::Compose(				// Returns nothing.
 	// Call base class.
 	RDlg::Compose();
 
-	int16_t	sX, sY, sW, sH;
+	short	sX, sY, sW, sH;
 	GetClient(&sX, &sY, &sW, &sH);
 
-	int16_t	sCellH;
+	short	sCellH;
 	m_pprint->GetPos(NULL, NULL, NULL, &sCellH);
 
-	int16_t	sMeterX;
-	int16_t	sMeterY;
-	int16_t	sMeterW;
-	int16_t	sMeterH;
+	short	sMeterX;
+	short	sMeterY;
+	short	sMeterW;
+	short	sMeterH;
 
 	// Behave by type.
 	switch (m_dtType)
@@ -275,24 +275,24 @@ void RMeter::Compose(				// Returns nothing.
 // should probably always draw the meter.
 //
 ////////////////////////////////////////////////////////////////////////
-int16_t RMeter::Draw(					// Returns 0 on success.
+short RMeter::Draw(					// Returns 0 on success.
 			RImage* pimDst,			// Destination image.
-			int16_t sDstX	/*= 0*/,		// X position in destination.
-			int16_t sDstY	/*= 0*/,		// Y position in destination.
-			int16_t sSrcX /*= 0*/,		// X position in source.
-			int16_t sSrcY /*= 0*/,		// Y position in source.
-			int16_t sW /*= 0*/,			// Amount to draw.
-			int16_t sH /*= 0*/,			// Amount to draw.
+			short sDstX	/*= 0*/,		// X position in destination.
+			short sDstY	/*= 0*/,		// Y position in destination.
+			short sSrcX /*= 0*/,		// X position in source.
+			short sSrcY /*= 0*/,		// Y position in source.
+			short sW /*= 0*/,			// Amount to draw.
+			short sH /*= 0*/,			// Amount to draw.
 			RRect* prc /*= NULL*/)	// Clip to.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	ASSERT(pimDst != NULL);	// Duh!
 
 	// If visible . . .
 	if (m_sVisible != FALSE)
 		{
-		int32_t	lTime	= rspGetMilliseconds();
+		long	lTime	= rspGetMilliseconds();
 		if (lTime >= m_lNextUpdate)
 			{
 			// First copy precomposed stuff.
@@ -301,17 +301,17 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 				RDlg::Draw(pimDst, sDstX, sDstY, sSrcX, sSrcY, sW, sH, prc);
 				}
 
-			int16_t	sMeterX;
-			int16_t	sMeterY;
-			int16_t	sMeterW;
-			int16_t sMeterH;
+			short	sMeterX;
+			short	sMeterY;
+			short	sMeterW;
+			short sMeterH;
 			m_guiMeter.GetClient(&sMeterX, &sMeterY, &sMeterW, &sMeterH);
 			sMeterX	+= m_sX + m_guiMeter.m_sX + sDstX;
 			sMeterY	+= m_sY + m_guiMeter.m_sY + sDstY;
 
-			int16_t	sInfoY	= m_sY + sDstY + m_sInfoY;
+			short	sInfoY	= m_sY + sDstY + m_sInfoY;
 
-			int32_t	lAvg	= 0;
+			long	lAvg	= 0;
 			if (m_lNumValues > 0)
 				{
 				lAvg = m_lCurTotal / m_lNumValues;
@@ -321,7 +321,7 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 			if (m_pprint->GetFont() != NULL)
 				{
 				// Determine info based on type.
-				int32_t	lVal	= lAvg;
+				long	lVal	= lAvg;
 				char	szExtra[32]	= "";
 				switch (m_itType)
 					{
@@ -339,7 +339,7 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 				// If digital . . .
 				if (m_dtType == Digital)
 					{
-					m_pprint->SetColor((int16_t)m_u32Needle);
+					m_pprint->SetColor((short)m_u32Needle);
 					}
 
 				SetJustification();
@@ -363,9 +363,9 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 			// Amount to adapt value to match meter width.
 			float	fAdaptor;
 			// Adapted values.
-			int16_t	sMeterVal;
-			int16_t	sMeterMax;
-			int16_t	sMeterMin;
+			short	sMeterVal;
+			short	sMeterMax;
+			short	sMeterMin;
 			// Draw meter based on type.
 			switch (m_dtType)
 				{
@@ -376,9 +376,9 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 					// Compute adaptor.
 					fAdaptor		= (float)sMeterW / (float)(m_lMax - m_lMin);
 					// Compute adapted.
-					sMeterVal	= (int16_t)((float)lAvg * fAdaptor);
-					sMeterMin	= (int16_t)((float)m_lMinValue * fAdaptor);
-					sMeterMax	= (int16_t)((float)m_lMaxValue * fAdaptor);
+					sMeterVal	= (short)((float)lAvg * fAdaptor);
+					sMeterMin	= (short)((float)m_lMinValue * fAdaptor);
+					sMeterMax	= (short)((float)m_lMaxValue * fAdaptor);
 					// Draw min.
 					Rectangle(
 						m_u32Overflow, 
@@ -405,9 +405,9 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 					// Compute adaptor.
 					fAdaptor	= (float)sMeterW / (float)(m_lMax - m_lMin);
 					// Compute adapted.
-					sMeterVal	= (int16_t)((float)lAvg * fAdaptor);
-					sMeterMin	= (int16_t)((float)m_lMinValue * fAdaptor);
-					sMeterMax	= (int16_t)((float)m_lMaxValue * fAdaptor);
+					sMeterVal	= (short)((float)lAvg * fAdaptor);
+					sMeterMin	= (short)((float)m_lMinValue * fAdaptor);
+					sMeterMax	= (short)((float)m_lMaxValue * fAdaptor);
 					// Draw min.
 					Rectangle(
 						m_u32Overflow, 
@@ -435,17 +435,17 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 					// Compute adaptor.
 					fAdaptor	= (float)sMeterH / (float)(m_lMax - m_lMin);
 					// Compute adapted.
-					sMeterVal	= (int16_t)((float)lAvg * fAdaptor);
-					sMeterMin	= (int16_t)((float)m_lMinValue * fAdaptor);
-					sMeterMax	= (int16_t)((float)m_lMaxValue * fAdaptor);
+					sMeterVal	= (short)((float)lAvg * fAdaptor);
+					sMeterMin	= (short)((float)m_lMinValue * fAdaptor);
+					sMeterMax	= (short)((float)m_lMaxValue * fAdaptor);
 					// Store new value.
 					m_asQHistory[m_lQIndex]	= sMeterVal;
 					// Increase index.
 					m_lQIndex	= (m_lQIndex + 1) % METER_HISTOGRAM_HISTORY;
-					int32_t	l;
-					int16_t	sVal;
-					int16_t	sBarWidth	= sMeterW / METER_HISTOGRAM_HISTORY;
-					int16_t	sBarPos		= sMeterX;
+					long	l;
+					short	sVal;
+					short	sBarWidth	= sMeterW / METER_HISTOGRAM_HISTORY;
+					short	sBarPos		= sMeterX;
 					for (l = 0; l < (METER_HISTOGRAM_HISTORY - 1); l++, sBarPos += sBarWidth)
 						{
 						// Get value.
@@ -460,8 +460,8 @@ int16_t RMeter::Draw(					// Returns 0 on success.
 							);
 						}
 
-					int16_t	sPosY	= sMeterY + sMeterH - sMeterMax;
-					int16_t	sDiff	= sMeterMax - sMeterVal;
+					short	sPosY	= sMeterY + sMeterH - sMeterMax;
+					short	sDiff	= sMeterMax - sMeterVal;
 					Rectangle(
 						m_u32Overflow,
 						pimDst,

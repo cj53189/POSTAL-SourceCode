@@ -46,19 +46,19 @@ static Uint8 *PalettedTexturePointer = NULL;
 
 typedef struct		// Stores information on usable video modes.
 	{
-	int16_t				sWidth;
-	int16_t				sHeight;
-	int16_t				sColorDepth;
-	int16_t				sPages;
+	short				sWidth;
+	short				sHeight;
+	short				sColorDepth;
+	short				sPages;
 	} VIDEO_MODE, *PVIDEO_MODE;
 
-static RSList<VIDEO_MODE, int16_t>	slvmModes;	// List of available video modes.
+static RSList<VIDEO_MODE, short>	slvmModes;	// List of available video modes.
 
 typedef union { struct { Uint8 b; Uint8 g; Uint8 r; Uint8 a; }; Uint32 argb; } ArgbColor;
 static ArgbColor	apeApp[256];				// App's palette.  The palette
 														// entries the App actually set.
-//Unused! Why?
-//static ArgbColor	apeMapped[256];			// Tweaked palette.
+
+static ArgbColor	apeMapped[256];			// Tweaked palette.
 														// This is the palette updated to
 														// the hardware.  apeApp is trans-
 														// lated through au8MapRed, Green,
@@ -76,7 +76,7 @@ static U8					au8MapBlue[256];			// Map of blue intensities to hardware
 														// values.  Initially an identity
 														// mapping.
 
-static int16_t				asPalEntryLocks[256];	// TRUE, if an indexed entry is locked.
+static short				asPalEntryLocks[256];	// TRUE, if an indexed entry is locked.
 														// FALSE, if not.  Implemented as 
 														// shorts in case we ever do levels of
 														// locking.
@@ -96,15 +96,15 @@ extern bool mouse_grabbed;
 // Clips [(*px,*py),(*pw,*ph)] into [(sx,sy),(sw, sh)].
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t Clip(	// Returns non-zero if image entirely clipped out.
-	int16_t*	px,		// Rectangle to be clipped.
-	int16_t*	py, 
-	int16_t*	pw, 
-	int16_t*	ph,
-	int16_t		sx,		// Bounding rectangle.
-	int16_t		sy, 
-	int16_t		sw, 
-	int16_t		sh)
+extern short Clip(	// Returns non-zero if image entirely clipped out.
+	short*	px,		// Rectangle to be clipped.
+	short*	py, 
+	short*	pw, 
+	short*	ph,
+	short		sx,		// Bounding rectangle.
+	short		sy, 
+	short		sw, 
+	short		sh)
 	{
 	if (*px < sx)
 		{
@@ -139,7 +139,7 @@ extern int16_t Clip(	// Returns non-zero if image entirely clipped out.
 		}
 	
 	// Return 0 (success) if there's a width and a height left.	
-	return (int16_t)(*pw > 0 && *ph > 0 ? 0 : -1);
+	return (short)(*pw > 0 && *ph > 0 ? 0 : -1);
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -147,15 +147,15 @@ extern int16_t Clip(	// Returns non-zero if image entirely clipped out.
 // Clips [(*px,*py),(*pw,*ph)] into [(sx,sy),(sw, sh)].
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t ClipQuiet(	// Returns non-zero if image entirely clipped out.
-	int16_t*	px,			// Rectangle to be clipped.
-	int16_t*	py, 
-	int16_t*	pw, 
-	int16_t*	ph,
-	int16_t		sx,			// Bounding rectangle.
-	int16_t		sy, 
-	int16_t		sw, 
-	int16_t		sh)
+extern short ClipQuiet(	// Returns non-zero if image entirely clipped out.
+	short*	px,			// Rectangle to be clipped.
+	short*	py, 
+	short*	pw, 
+	short*	ph,
+	short		sx,			// Bounding rectangle.
+	short		sy, 
+	short		sw, 
+	short		sh)
 	{
 	if (*px < sx)
 		{
@@ -186,7 +186,7 @@ extern int16_t ClipQuiet(	// Returns non-zero if image entirely clipped out.
 		}
 	
 	// Return 0 (success) if there's a width and a height left.	
-	return (int16_t)(*pw > 0 && *ph > 0 ? 0 : -1);
+	return (short)(*pw > 0 && *ph > 0 ? 0 : -1);
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,23 +195,23 @@ extern int16_t ClipQuiet(	// Returns non-zero if image entirely clipped out.
 // Uses short version of function ClipQuiet(...).
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t ClipQuiet(	// Returns non-zero if image entirely clipped out.
-	int32_t* px,				// Rectangle to be clipped.
-	int32_t* py, 
-	int32_t*	pw, 
-	int32_t*	ph,
-	int32_t	sx,			// Bounding rectangle.
-	int32_t	sy, 
-	int32_t	sw, 
-	int32_t	sh)
+extern short ClipQuiet(	// Returns non-zero if image entirely clipped out.
+	long* px,				// Rectangle to be clipped.
+	long* py, 
+	long*	pw, 
+	long*	ph,
+	long	sx,			// Bounding rectangle.
+	long	sy, 
+	long	sw, 
+	long	sh)
 	{
-	int16_t	sX	= (int16_t)(*px);
-	int16_t sY	= (int16_t)(*py);
-	int16_t	sW	= (int16_t)(*pw);
-	int16_t	sH	= (int16_t)(*ph);
+	short	sX	= (short)(*px);
+	short sY	= (short)(*py);
+	short	sW	= (short)(*pw);
+	short	sH	= (short)(*ph);
 
-	int16_t	sRes	= ClipQuiet(&sX, &sY, &sW, &sH, 
-									(int16_t)sx, (int16_t)sy, (int16_t)sw, (int16_t)sh);
+	short	sRes	= ClipQuiet(&sX, &sY, &sW, &sH, 
+									(short)sx, (short)sy, (short)sw, (short)sh);
 
 	*px	= sX;
 	*py	= sY;
@@ -222,7 +222,7 @@ extern int16_t ClipQuiet(	// Returns non-zero if image entirely clipped out.
 	}
 
 
-int16_t CompareModes(PVIDEO_MODE pvm1, PVIDEO_MODE pvm2);
+short CompareModes(PVIDEO_MODE pvm1, PVIDEO_MODE pvm2);
 
 extern void Disp_Init(void)	// Returns nothing.
 {
@@ -249,7 +249,7 @@ extern void Disp_Init(void)	// Returns nothing.
     }
 
 	// Initialize maps to indentities.
-	int16_t i;
+	short i;
 	for (i = 0; i < 256; i++)
 		{
 		au8MapRed[i]	= i;
@@ -283,11 +283,11 @@ extern void rspSetApplicationName(
 // Returns positive	if *pvm1 > *pvm2.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t CompareModes(	// Returns as described above.
+extern short CompareModes(	// Returns as described above.
 		PVIDEO_MODE	pvm1,		// First video mode to compare.
 		PVIDEO_MODE	pvm2)		// Second video mode to compare.
 	{
-	int16_t	sRes	= 1;	// Assume *pvm1 > *pvm2.
+	short	sRes	= 1;	// Assume *pvm1 > *pvm2.
 
 	if (pvm1->sColorDepth == pvm2->sColorDepth)
 		{
@@ -352,17 +352,17 @@ extern int16_t CompareModes(	// Returns as described above.
 // via rspQueryVideoMode.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t rspSuggestVideoMode(		// Returns 0 if successfull, non-zero otherwise
-	int16_t		sDepth,							// In:  Required depth
-	int16_t		sWidth,							// In:  Requested width
-	int16_t		sHeight,							// In:  Requested height
-	int16_t		sPages,							// In:  Required pages
-	int16_t		sScaling,						// In:  Requested scaling
-	int16_t*	psDeviceWidth /*= NULL*/,	// Out: Suggested device width (unless NULL)
-	int16_t*	psDeviceHeight /*= NULL*/,	// Out: Suggested device height (unless NULL)
-	int16_t*	psScaling /*= NULL*/)		// Out: Suggested scaling (unless NULL)
+extern short rspSuggestVideoMode(		// Returns 0 if successfull, non-zero otherwise
+	short		sDepth,							// In:  Required depth
+	short		sWidth,							// In:  Requested width
+	short		sHeight,							// In:  Requested height
+	short		sPages,							// In:  Required pages
+	short		sScaling,						// In:  Requested scaling
+	short*	psDeviceWidth /*= NULL*/,	// Out: Suggested device width (unless NULL)
+	short*	psDeviceHeight /*= NULL*/,	// Out: Suggested device height (unless NULL)
+	short*	psScaling /*= NULL*/)		// Out: Suggested scaling (unless NULL)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Store video mode that the app is currently iterating.
 	PVIDEO_MODE	pvmOldModeQuery	= slvmModes.GetCurrent();
@@ -370,15 +370,15 @@ extern int16_t rspSuggestVideoMode(		// Returns 0 if successfull, non-zero other
 	rspQueryVideoModeReset();
 
 	// Query results.
-	int16_t	sModeWidth;
-	int16_t	sModeHeight;
-	int16_t sModeColorDepth;
-	int16_t	sModePages;
+	short	sModeWidth;
+	short	sModeHeight;
+	short sModeColorDepth;
+	short	sModePages;
 
 	// Best results.
-	int16_t sBestModeWidth		= 16380;
-	int16_t	sBestModeHeight	= 16380;
-	int16_t	sModeFound			= FALSE;
+	short sBestModeWidth		= 16380;
+	short	sBestModeHeight	= 16380;
+	short	sModeFound			= FALSE;
 
 	while (rspQueryVideoMode(&sModeColorDepth, &sModeWidth, &sModeHeight, &sModePages) == 0)
 		{
@@ -451,23 +451,23 @@ extern int16_t rspSuggestVideoMode(		// Returns 0 if successfull, non-zero other
 // If in "no mode", psWidth, psHeight, and psPages will receive 0, if not NULL.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t rspGetVideoMode(
-	int16_t*	psDeviceDepth,				// Hardware display color depth returned here 
+extern short rspGetVideoMode(
+	short*	psDeviceDepth,				// Hardware display color depth returned here 
 												// (unless NULL).
-	int16_t*	psDeviceWidth,				// Hardware display width returned here 
+	short*	psDeviceWidth,				// Hardware display width returned here 
 												// (unless NULL).
-	int16_t*	psDeviceHeight,			// Hardware display height returned here 
+	short*	psDeviceHeight,			// Hardware display height returned here 
 												// (unless NULL).
-	int16_t*	psDevicePages,				// Hardware display back buffers returned here
+	short*	psDevicePages,				// Hardware display back buffers returned here
 												// (unless NULL).
-	int16_t*	psWidth,						// Display area width returned here 
+	short*	psWidth,						// Display area width returned here 
 												// (unless NULL).
-	int16_t*	psHeight,					// Display area height returned here
+	short*	psHeight,					// Display area height returned here
 												// (unless NULL).
-	int16_t*	psPages/*= NULL*/,			// Number of pages (1 to n) returned here 
+	short*	psPages/*= NULL*/,			// Number of pages (1 to n) returned here 
 												// (unless NULL).  More than 1 indicates a 
 												// page flipping scenario.
-	int16_t*	psPixelScaling/*= NULL*/)	// Pixel scaling in effect (1) or not (0)
+	short*	psPixelScaling/*= NULL*/)	// Pixel scaling in effect (1) or not (0)
 													// (unless NULL).
 {
     // lie about everything.
@@ -559,16 +559,16 @@ extern void rspQueryVideoModeReset(void)
 // non-zero, the other parameters are not updated.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t rspQueryVideoMode(			// Returns 0 for each valid mode, then non-zero thereafter
-	int16_t* psColorDepth,						// Color depth (8, 15, 16, 24, 32)
+extern short rspQueryVideoMode(			// Returns 0 for each valid mode, then non-zero thereafter
+	short* psColorDepth,						// Color depth (8, 15, 16, 24, 32)
 													// Unless NULL.
-	int16_t* psWidth /*= NULL*/,				// Width returned here
+	short* psWidth /*= NULL*/,				// Width returned here
 													// Unless NULL.
-	int16_t* psHeight /*= NULL*/,			// Height returned here
+	short* psHeight /*= NULL*/,			// Height returned here
 													// Unless NULL.
-	int16_t* psPages /*= NULL*/)				// Number of video pages possible.
+	short* psPages /*= NULL*/)				// Number of video pages possible.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	PVIDEO_MODE	pvm	= slvmModes.GetCurrent();
 
@@ -640,15 +640,15 @@ static SDL_Renderer *createRendererByName(SDL_Window *window, const char *name)
 // the display.
 //
 //////////////////////////////////////////////////////////////////////////////
-extern int16_t rspSetVideoMode(	// Returns 0 if successfull, non-zero otherwise
-	int16_t	sDeviceDepth,			// Specify required device video depth here.
-	int16_t	sDeviceWidth,			// Specify required device resolution width here.
-	int16_t	sDeviceHeight,			// Specify required device resolution height here.
-	int16_t sWidth,					// Specify width of display area on screen.
-	int16_t sHeight,					// Specify height of display area on screen.
-	int16_t	sPages /*= 1*/,		// Specify number of video pages.  More than 1
+extern short rspSetVideoMode(	// Returns 0 if successfull, non-zero otherwise
+	short	sDeviceDepth,			// Specify required device video depth here.
+	short	sDeviceWidth,			// Specify required device resolution width here.
+	short	sDeviceHeight,			// Specify required device resolution height here.
+	short sWidth,					// Specify width of display area on screen.
+	short sHeight,					// Specify height of display area on screen.
+	short	sPages /*= 1*/,		// Specify number of video pages.  More than 1
 										// indicates a page flipping scenario.
-	int16_t	sPixelDoubling	/*= FALSE*/)
+	short	sPixelDoubling	/*= FALSE*/)
 										// TRUE indicates to set the video mode
 										// to twice that indicated by sDeviceWidth,
 										// sDeviceHeight and double the coordinate
@@ -814,10 +814,10 @@ extern void rspUpdateDisplayRects(void)
 }
 
 extern void rspCacheDirtyRect(
-	int16_t sX,					// x coord of upper-left corner of area to update
-	int16_t sY,					// y coord of upper-left corner of area to update
-	int16_t sWidth,				// Width of area to update
-	int16_t sHeight)				// Height of area to update
+	short sX,					// x coord of upper-left corner of area to update
+	short sY,					// y coord of upper-left corner of area to update
+	short sWidth,				// Width of area to update
+	short sHeight)				// Height of area to update
 {
 }
 
@@ -877,10 +877,10 @@ extern void rspUpdateDisplay(void)
 //
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspUpdateDisplay(
-	int16_t sX,					// x coord of upper-left corner of area to update
-	int16_t sY,					// y coord of upper-left corner of area to update
-	int16_t sWidth,				// Width of area to update
-	int16_t sHeight)				// Height of area to update
+	short sX,					// x coord of upper-left corner of area to update
+	short sY,					// y coord of upper-left corner of area to update
+	short sWidth,				// Width of area to update
+	short sHeight)				// Height of area to update
 {
 }
 
@@ -890,11 +890,11 @@ extern void rspUpdateDisplay(
 // See function comment in appropriate CPP (BGDisp/BXDisp).
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t rspLockVideoPage(	// Returns 0 if screen memory could be locked.
+extern short rspLockVideoPage(	// Returns 0 if screen memory could be locked.
 											// Returns non-zero otherwise.
 	void**	ppvMemory,				// Pointer to display memory returned here.
 											// NULL returned if not supported.
-	int32_t*		plPitch)					// Pitch of display memory returned here.
+	long*		plPitch)					// Pitch of display memory returned here.
 	{
 	/* no-op. */
 	return 1;
@@ -917,11 +917,11 @@ extern void rspUnlockVideoPage(void)	// Returns nothing.
 // See function comment in appropriate CPP (BGDisp/BXDisp).
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t rspLockVideoFlipPage(	// Returns 0 if flip screen memory could be 
+extern short rspLockVideoFlipPage(	// Returns 0 if flip screen memory could be 
 											// locked.  Returns non-zero otherwise.
 	void**	ppvMemory,				// Pointer to flip screen memory returned here.
 											// NULL returned on failure.
-	int32_t*		plPitch)					// Pitch of flip screen memory returned here.
+	long*		plPitch)					// Pitch of flip screen memory returned here.
 	{
 	return -1;
 	}
@@ -942,11 +942,11 @@ extern void rspUnlockVideoFlipPage(void)	// Returns nothing.
 // See function comment in appropriate CPP (BGDisp/BXDisp).
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t rspLockVideoBuffer(	// Returns 0 if system buffer could be locked.
+extern short rspLockVideoBuffer(	// Returns 0 if system buffer could be locked.
 												// Returns non-zero otherwise.
 	void**	ppvBuffer,					// Pointer to system buffer returned here.
 												// NULL returned on failure.
-	int32_t*		plPitch)						// Pitch of system buffer returned here.
+	long*		plPitch)						// Pitch of system buffer returned here.
 	{
     if (!sdlWindow)
         return -1;
@@ -973,7 +973,7 @@ extern void rspUnlockVideoBuffer(void)	// Returns nothing.
 // See function comment in appropriate CPP (BGDisp/BXDisp).
 //
 ///////////////////////////////////////////////////////////////////////////////
-extern int16_t rspAllowPageFlip(void)	// Returns 0 on success.
+extern short rspAllowPageFlip(void)	// Returns 0 on success.
 	{
 	return 0;
 	}
@@ -991,20 +991,20 @@ extern int16_t rspAllowPageFlip(void)	// Returns 0 on success.
 //
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspSetPaletteEntries(
-	int16_t sStartIndex,			// Palette entry to start copying to (has no effect on source!)
-	int16_t sCount,					// Number of palette entries to do
-	uint8_t* pucRed,		// Pointer to first red component to copy from
-	uint8_t* pucGreen,	// Pointer to first green component to copy from
-	uint8_t* pucBlue,		// Pointer to first blue component to copy from
-	int32_t lIncBytes)				// Number of bytes by which to increment pointers after each copy
+	short sStartIndex,			// Palette entry to start copying to (has no effect on source!)
+	short sCount,					// Number of palette entries to do
+	unsigned char* pucRed,		// Pointer to first red component to copy from
+	unsigned char* pucGreen,	// Pointer to first green component to copy from
+	unsigned char* pucBlue,		// Pointer to first blue component to copy from
+	long lIncBytes)				// Number of bytes by which to increment pointers after each copy
 	{
 	// Set up destination pointers.
-	uint8_t*	pucDstRed	= &(apeApp[sStartIndex].r);
-	uint8_t*	pucDstGreen	= &(apeApp[sStartIndex].g);
-	uint8_t*	pucDstBlue	= &(apeApp[sStartIndex].b);
+	UCHAR*	pucDstRed	= &(apeApp[sStartIndex].r);
+	UCHAR*	pucDstGreen	= &(apeApp[sStartIndex].g);
+	UCHAR*	pucDstBlue	= &(apeApp[sStartIndex].b);
 
 	// Set up lock pointer.
-	int16_t*	psLock		= &(asPalEntryLocks[sStartIndex]);
+	short*	psLock		= &(asPalEntryLocks[sStartIndex]);
 
 	while (sCount-- > 0)
 		{
@@ -1034,10 +1034,10 @@ extern void rspSetPaletteEntries(
 //
 ///////////////////////////////////////////////////////////////////////////////
 void rspSetPaletteEntry(
-	int16_t sEntry,				// Palette entry (0 to 255)
-	uint8_t ucRed,				// Red component (0 to 255)
-	uint8_t ucGreen,				// Green component (0 to 255)
-	uint8_t ucBlue)				// Blue component (0 to 255)
+	short sEntry,				// Palette entry (0 to 255)
+	UCHAR ucRed,				// Red component (0 to 255)
+	UCHAR ucGreen,				// Green component (0 to 255)
+	UCHAR ucBlue)				// Blue component (0 to 255)
 	{
 	ASSERT(sEntry >= 0 && sEntry < 256);
 
@@ -1056,10 +1056,10 @@ void rspSetPaletteEntry(
 //
 ///////////////////////////////////////////////////////////////////////////////
 void rspGetPaletteEntry(
-	int16_t sEntry,				// Palette entry (0 to 255)
-	int16_t* psRed,				// Red component (0 to 255) returned if not NULL.
-	int16_t* psGreen,			// Green component (0 to 255) returned if not NULL.
-	int16_t* psBlue)				// Blue component (0 to 255) returned if not NULL.
+	short sEntry,				// Palette entry (0 to 255)
+	short* psRed,				// Red component (0 to 255) returned if not NULL.
+	short* psGreen,			// Green component (0 to 255) returned if not NULL.
+	short* psBlue)				// Blue component (0 to 255) returned if not NULL.
 	{
 	ASSERT(sEntry >= 0 && sEntry < 256);
 
@@ -1078,17 +1078,17 @@ void rspGetPaletteEntry(
 //
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspGetPaletteEntries(
-	int16_t sStartIndex,			// Palette entry to start copying from
-	int16_t sCount,					// Number of palette entries to do
-	uint8_t* pucRed,		// Pointer to first red component to copy to
-	uint8_t* pucGreen,	// Pointer to first green component to copy to
-	uint8_t* pucBlue,		// Pointer to first blue component to copy to
-	int32_t lIncBytes)				// Number of bytes by which to increment pointers after each copy
+	short sStartIndex,			// Palette entry to start copying from
+	short sCount,					// Number of palette entries to do
+	unsigned char* pucRed,		// Pointer to first red component to copy to
+	unsigned char* pucGreen,	// Pointer to first green component to copy to
+	unsigned char* pucBlue,		// Pointer to first blue component to copy to
+	long lIncBytes)				// Number of bytes by which to increment pointers after each copy
 	{
 	// Set up source pointers.
-	uint8_t*	pucSrcRed	= &(apeApp[sStartIndex].r);
-	uint8_t*	pucSrcGreen	= &(apeApp[sStartIndex].g);
-	uint8_t*	pucSrcBlue	= &(apeApp[sStartIndex].b);
+	UCHAR*	pucSrcRed	= &(apeApp[sStartIndex].r);
+	UCHAR*	pucSrcGreen	= &(apeApp[sStartIndex].g);
+	UCHAR*	pucSrcBlue	= &(apeApp[sStartIndex].b);
 
 	while (sCount-- > 0)
 		{
@@ -1128,17 +1128,17 @@ extern void rspUpdatePalette(void)
 // 
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspSetPaletteMaps(
-	int16_t sStartIndex,			// Map entry to start copying to (has no effect on source!)
-	int16_t sCount,					// Number of map entries to do
-	uint8_t* pucRed,		// Pointer to first red component to copy from
-	uint8_t* pucGreen,	// Pointer to first green component to copy from
-	uint8_t* pucBlue,		// Pointer to first blue component to copy from
-	int32_t lIncBytes)				// Number of bytes by which to increment pointers after each copy
+	short sStartIndex,			// Map entry to start copying to (has no effect on source!)
+	short sCount,					// Number of map entries to do
+	unsigned char* pucRed,		// Pointer to first red component to copy from
+	unsigned char* pucGreen,	// Pointer to first green component to copy from
+	unsigned char* pucBlue,		// Pointer to first blue component to copy from
+	long lIncBytes)				// Number of bytes by which to increment pointers after each copy
 	{
 	// Set up destination pointers.
-	uint8_t*	pucDstRed	= &(au8MapRed[sStartIndex]);
-	uint8_t*	pucDstGreen	= &(au8MapGreen[sStartIndex]);
-	uint8_t*	pucDstBlue	= &(au8MapBlue[sStartIndex]);
+	UCHAR*	pucDstRed	= &(au8MapRed[sStartIndex]);
+	UCHAR*	pucDstGreen	= &(au8MapGreen[sStartIndex]);
+	UCHAR*	pucDstBlue	= &(au8MapBlue[sStartIndex]);
 
 	while (sCount-- > 0)
 		{
@@ -1163,17 +1163,17 @@ extern void rspSetPaletteMaps(
 // 
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspGetPaletteMaps(
-	int16_t sStartIndex,			// Map entry to start copying from (has no effect on dest!)
-	int16_t sCount,					// Number of map entries to do
-	uint8_t* pucRed,		// Pointer to first red component to copy to
-	uint8_t* pucGreen,	// Pointer to first green component to copy to
-	uint8_t* pucBlue,		// Pointer to first blue component to copy to
-	int32_t lIncBytes)				// Number of bytes by which to increment pointers after each copy
+	short sStartIndex,			// Map entry to start copying from (has no effect on dest!)
+	short sCount,					// Number of map entries to do
+	unsigned char* pucRed,		// Pointer to first red component to copy to
+	unsigned char* pucGreen,	// Pointer to first green component to copy to
+	unsigned char* pucBlue,		// Pointer to first blue component to copy to
+	long lIncBytes)				// Number of bytes by which to increment pointers after each copy
 	{
 	// Set up source pointers.
-	uint8_t*	pucSrcRed	= &(au8MapRed[sStartIndex]);
-	uint8_t*	pucSrcGreen	= &(au8MapGreen[sStartIndex]);
-	uint8_t*	pucSrcBlue	= &(au8MapBlue[sStartIndex]);
+	UCHAR*	pucSrcRed	= &(au8MapRed[sStartIndex]);
+	UCHAR*	pucSrcGreen	= &(au8MapGreen[sStartIndex]);
+	UCHAR*	pucSrcBlue	= &(au8MapBlue[sStartIndex]);
 
 	while (sCount-- > 0)
 		{
@@ -1193,11 +1193,11 @@ extern void rspGetPaletteMaps(
 // with rspUnlockPaletteEntries() ).
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspLockPaletteEntries(
-	int16_t	sStartIndex,			// Palette entry at which to start locking.
-	int16_t	sCount)					// Number of palette entries to lock.
+	short	sStartIndex,			// Palette entry at which to start locking.
+	short	sCount)					// Number of palette entries to lock.
 	{
 	// Set up iterator pointer.
-	int16_t*	psLock	= &(asPalEntryLocks[sStartIndex]);
+	short*	psLock	= &(asPalEntryLocks[sStartIndex]);
 
 	while (sCount-- > 0)
 		{
@@ -1209,11 +1209,11 @@ extern void rspLockPaletteEntries(
 // Unlock several palette entries previously locked by rspLockPaletteEntries().
 ///////////////////////////////////////////////////////////////////////////////
 extern void rspUnlockPaletteEntries(
-	int16_t	sStartIndex,			// Palette entry at which to start locking.
-	int16_t	sCount)					// Number of palette entries to lock.
+	short	sStartIndex,			// Palette entry at which to start locking.
+	short	sCount)					// Number of palette entries to lock.
 	{
 	// Set up iterator pointer.
-	int16_t*	psLock	= &(asPalEntryLocks[sStartIndex]);
+	short*	psLock	= &(asPalEntryLocks[sStartIndex]);
 
 	while (sCount-- > 0)
 		{
@@ -1258,10 +1258,10 @@ extern void rspSetForegroundCallback(	// Returns nothing.
         /* no-op. */
 	}
 
-extern int16_t rspIsBackground(void)			// Returns TRUE if in background, FALSE otherwise
+extern short rspIsBackground(void)			// Returns TRUE if in background, FALSE otherwise
     {
         extern bool GSDLAppIsActive;
-        return (int16_t) (!GSDLAppIsActive);
+        return (short) (!GSDLAppIsActive);
     }
 //////////////////////////////////////////////////////////////////////////////
 // EOF

@@ -52,29 +52,29 @@ public:
 		//---------------
 
 		RImage** m_ppimCharacters; // FSPR1 has all kerning info inside
-		int16_t	m_sCellHeight;
-		int16_t m_sMaxWidth;
+		short	m_sCellHeight;
+		short m_sMaxWidth;
 		RFontSet* m_pNext;
 		};
 	//--------------- USER STUFF
-	int16_t Save(char* pszFileName);
-	int16_t Save(RFile* pcf);
-	int16_t Load(char* pszFileName);
-	int16_t Load(RFile* pcf);
+	short Save(char* pszFileName);
+	short Save(RFile* pcf);
+	short Load(char* pszFileName);
+	short Load(RFile* pcf);
 	//--------------- UTILITY STUFF
 
-	int16_t Add(char* pszFileName);
-	int16_t Add(RFile* pcf);
-	int16_t AddLetter(RImage* pimLetter, // if FSPR1, don't need other arguements
-		int16_t sASCII=-1,int16_t sKernL=0,int16_t sKernR=0);
+	short Add(char* pszFileName);
+	short Add(RFile* pcf);
+	short AddLetter(RImage* pimLetter, // if FSPR1, don't need other arguements
+		short sASCII=-1,short sKernL=0,short sKernR=0);
 	// pdScale will be <= 1.0
-	RFontSet* FindSize(int16_t sCellH,double *pdScale);
+	RFontSet* FindSize(short sCellH,double *pdScale);
 
-	int16_t	DeleteSet(RFontSet* pRemove); // will NOT delete the last FontSet!
+	short	DeleteSet(RFontSet* pRemove); // will NOT delete the last FontSet!
 	//---------------
-	int16_t m_sMaxCellHeight;
-	int16_t m_sMaxCellWidth;
-	int16_t m_sNumberOfScales;
+	short m_sMaxCellHeight;
+	short m_sMaxCellWidth;
+	short m_sNumberOfScales;
 	RFontSet* m_pFontSets;
 	};
 

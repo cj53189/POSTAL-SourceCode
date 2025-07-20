@@ -291,7 +291,7 @@
 
 // Init this flag to a non-zero value so we can detect whether a CThing is
 // created before these static member variables are initialized.
-int16_t CThing::ms_sDetectStaticInits = 1;
+short CThing::ms_sDetectStaticInits = 1;
 
 // This is used by DoGui() to perform GUI processing.
 RProcessGui	CThing::ms_pgDoGui;
@@ -445,7 +445,7 @@ void CThing::SetGuiToNotify(	// Returns nothing.
 //
 ////////////////////////////////////////////////////////////////////////////////
 // static							// Static for use as a callback.
-int32_t CThing::SysUpdate(			// Returns a non-zero ID to abort or zero
+long CThing::SysUpdate(			// Returns a non-zero ID to abort or zero
 										// to continue.                          
 	RInputEvent*	pie)			// Out: Next input event to process.     
 	{
@@ -468,7 +468,7 @@ int32_t CThing::SysUpdate(			// Returns a non-zero ID to abort or zero
 // (static).
 //
 ////////////////////////////////////////////////////////////////////////////////
-int32_t CThing::DoGui(			// Returns ID of item that terminated looping.
+long CThing::DoGui(			// Returns ID of item that terminated looping.
 									// Returns 0 if rspGetQuitStatus() is nonzero.
 									// Returns negative on error.
 	RGuiItem*	pguiRoot)	// Root of GUI items to process through user.
@@ -489,11 +489,11 @@ int32_t CThing::DoGui(			// Returns ID of item that terminated looping.
 // (virtual).
 //
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CThing::Load(										// Returns 0 if successfull, non-zero otherwise
+short CThing::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	int16_t sFileCount,										// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)									// In:  File version being loaded.
+	short sFileCount,										// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)									// In:  File version being loaded.
 	{
 	// Switch on the file version.
 	switch (ulFileVersion)
@@ -550,9 +550,9 @@ void CThing::SetInstanceID(	// Returns nothing.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CThing::SendThingMessage(pGameMessage pMessage, int16_t sPriority, U16 u16ID)
+short CThing::SendThingMessage(pGameMessage pMessage, short sPriority, U16 u16ID)
 	{
-	int16_t sResult = SUCCESS;
+	short sResult = SUCCESS;
 	CThing* pThing = NULL;
 
 	m_pRealm->m_idbank.GetThingByID(&pThing, u16ID);
@@ -562,9 +562,9 @@ int16_t CThing::SendThingMessage(pGameMessage pMessage, int16_t sPriority, U16 u
 		return -1;
 	}
 
-int16_t CThing::SendThingMessage(pGameMessage pMessage, int16_t sPriority, CThing* pThing)
+short CThing::SendThingMessage(pGameMessage pMessage, short sPriority, CThing* pThing)
 	{
-	int16_t sResult = SUCCESS;
+	short sResult = SUCCESS;
 
 	// Make sure this has been initialized.
 	// If you were using 0xebeb as your priority, stop that.
@@ -582,11 +582,11 @@ int16_t CThing::SendThingMessage(pGameMessage pMessage, int16_t sPriority, CThin
 // Maps a 3D coordinate onto the viewing plane.
 ////////////////////////////////////////////////////////////////////////////////
 void CThing::Map3Dto2D(	// Returns nothing.
-	int16_t sX,				// In.
-	int16_t	sY,				// In.
-	int16_t	sZ,				// In.
-	int16_t* psX,				// Out.
-	int16_t* psY)				// Out.
+	short sX,				// In.
+	short	sY,				// In.
+	short	sZ,				// In.
+	short* psX,				// Out.
+	short* psY)				// Out.
 	{
 	m_pRealm->Map3Dto2D(sX, sY, sZ, psX, psY); 
 	}
@@ -608,7 +608,7 @@ void CThing::Map3Dto2D(	// Returns nothing.
 // Construct object
 // (static).
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CThing::Construct(								// Returns 0 if successfull, non-zero otherwise
+short CThing::Construct(								// Returns 0 if successfull, non-zero otherwise
 	ClassIDType id,										// In:  Class ID
 	CRealm* pRealm,										// In:  Pointer to realm this object belongs to
  	CThing** ppNew)										// Out: Pointer to new object
@@ -634,12 +634,12 @@ int16_t CThing::Construct(								// Returns 0 if successfull, non-zero otherwis
 // if it does not already have one.
 // (static).
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CThing::ConstructWithID(						// Returns 0 if successfull, non-zero otherwise
+short CThing::ConstructWithID(						// Returns 0 if successfull, non-zero otherwise
 	ClassIDType id,										// In:  Class ID
 	CRealm* pRealm,										// In:  Pointer to realm this object belongs to
  	CThing** ppNew)										// Out: Pointer to new object
 	{
-	int16_t	sResult	= Construct(id, pRealm, ppNew);
+	short	sResult	= Construct(id, pRealm, ppNew);
 	if (sResult == 0)
 		{
 		// If new thing has no ID . . .

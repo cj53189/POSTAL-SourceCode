@@ -96,14 +96,14 @@ class RLaymage
 	public:
 
 		// Set to 1 if current file has layer info, 0 if not.
-		int16_t m_sHasLayerInfo;
+		short m_sHasLayerInfo;
 
 		// This number-of-channels is used only when the file has no layer info
-		int16_t m_sSpecialNumChannels;
+		short m_sSpecialNumChannels;
 
-		int16_t m_sNumLayers;
-		int32_t	m_lWidth;
-		int32_t	m_lHeight;
+		short m_sNumLayers;
+		long	m_lWidth;
+		long	m_lHeight;
 
 		// General Constructor
 		RLaymage();
@@ -115,53 +115,53 @@ class RLaymage
 		void Reset();
 
 		// Load funtion for loading Photoshop files
-		int16_t LoadPSD(char* pszFilename);
+		short LoadPSD(char* pszFilename);
 
 		// Set a Photoshop file from which to get information
 		// on demand.  Similar to load, but it does not load the
 		// the layer information at this time, only when a layer
 		// is requested by calling GetLayer()
-		int16_t SetPSD(char* pszFilename);
+		short SetPSD(char* pszFilename);
 
 		// Load function for loading RLaymage
-		int16_t Load(char* pszFilename);
+		short Load(char* pszFilename);
 
 		// Load function for loading RLaymage.  This version of
 		// the function reads from an open RFile pointer so
 		// that a RLaymage could be included within another 
 		// file
-		int16_t Load(RFile* pcf);
+		short Load(RFile* pcf);
 
 		// Save function for saving RLaymage (.IML)
-		int16_t Save(char* pszFilename);
+		short Save(char* pszFilename);
 
 		// Save function for saving RLaymage.  This version of
 		// the function writes to an open RFile pointer so
 		// that a RLaymage could be included in another file
-		int16_t Save(RFile* pcf);
+		short Save(RFile* pcf);
 
 		// Function to return a pointer to a specified layer
 		RImage* GetLayer(char* pszLayerName);
 
 		// Function to return a pointer to a specified layer
-		RImage* GetLayer(int16_t sLayer);
+		RImage* GetLayer(short sLayer);
 
 		// Function to free the RImage for the specified layer
 		void FreeLayer(char* pszLayerName);
 
 		// Function to free the RImage for the specified layer
-		void FreeLayer(int16_t sLayer);
+		void FreeLayer(short sLayer);
 
 		// Function to free all currently allocated layers
 		void FreeAllLayers(void);
 
 		// Query functions
-		int16_t GetNumLayers(void)	{return m_sNumLayers;};
+		short GetNumLayers(void)	{return m_sNumLayers;};
 
 		// Get the name of the specified layer
 		// given the sLayer number, fill in the char buffer
 		// pszNameBuffer with the name of this layer
-		int16_t GetLayerName(int16_t sLayer, char* pszNameBuffer);
+		short GetLayerName(short sLayer, char* pszNameBuffer);
 
 	private:
 		// Array of pointers to images
@@ -171,10 +171,10 @@ class RLaymage
 //		char* m_apszLayerNames[LAYMAGE_MAXLAYERS];
 
 		// File position to Layer Headers
-		int32_t m_lTellLayers;
+		long m_lTellLayers;
 
 		// file position to Channel data
-		int32_t m_lTellChannels;
+		long m_lTellChannels;
 
 		// save the Photoshop filename for virtual loading
 		char m_szPhotoshopFilename[1024];
@@ -188,44 +188,44 @@ class RLaymage
 		// to the layer info and channel data.  This routine
 		//	is used by LoadPSD and SavePSD to read the common info
 		// that they both need.
-		int16_t ReadPSDHeader(char* pszFilename);
+		short ReadPSDHeader(char* pszFilename);
 
 		// Skip a RFile pointer down to the channel data section
 		// of the file.  This is called by LoadPSD just before it
 		// begins to read the layers information.
-		int16_t SetChannelPointer(int16_t sNumLayers, RFile* pcfChannel);
+		short SetChannelPointer(short sNumLayers, RFile* pcfChannel);
 
 		// Fuction to read a specific layer.  It works like
 		// LoadPSD, but only keeps the layer it wants.
-		int16_t ReadLayer(int16_t sRequestedLayer);
+		short ReadLayer(short sRequestedLayer);
 
 		// Reads one layer from the Photoshop file and covnerts
 		// it to a new 32-bit ARGB RImage in the RLaymage.
-		int16_t ReadLayerInfo(int16_t sLayerNum, RFile* pcfLayer, RFile* pcfChannel);
+		short ReadLayerInfo(short sLayerNum, RFile* pcfLayer, RFile* pcfChannel);
 		
 		// Reads the name of a layer and saves it in the names array
-		int16_t ReadLayerName(int16_t sLayerNum, RFile* pcfLayer);
+		short ReadLayerName(short sLayerNum, RFile* pcfLayer);
 
 		// RLE decompression routine to decompress the Photoshop channel
 		// data.
-		int16_t RLE_Decompress(char* pcBuffer, uint32_t ulCompSize, RFile* pcfRLE);
+		short RLE_Decompress(char* pcBuffer, ULONG ulCompSize, RFile* pcfRLE);
 				
 		// Convert the m_pcChannels of Photoshop Alpha, R, G and B data into
 		// a RImage 32-bit ARGB format.  The data in the channels is bounded by
 		// a rectangle which needs to be mapped on to a full size CLamage layer.
-		int16_t ConvertToImage(int16_t sLayer, uint32_t ulTop, uint32_t ulBottom, uint32_t ulLeft, uint32_t ulRight);
+		short ConvertToImage(short sLayer, ULONG ulTop, ULONG ulBottom, ULONG ulLeft, ULONG ulRight);
 
 		// Deallocate channel buffers and reset the pointers to NULL
 		void ClearChannelBuffers(void);
 
 		// Allocate 4 standard channel buffers
-		int16_t AllocateChannelBuffers(uint32_t ulSize);
+		short AllocateChannelBuffers(ULONG ulSize);
 
 		// Allocate an array of RImage pointers and
 		// char* pointers, one for each layer.
 		// Calls FreeLayerArrays if the pointers are not
 		// initially NULL
-		int16_t AllocateLayerArrays(int16_t sNumLayers);
+		short AllocateLayerArrays(short sNumLayers);
 
 		// Deallocate RImage pointers and char* pointers
 		// for all of the layers.  Also deallocates what
@@ -240,3 +240,4 @@ class RLaymage
 //////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////
+

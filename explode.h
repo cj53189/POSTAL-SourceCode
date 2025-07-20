@@ -83,21 +83,21 @@ class CExplode : public CThing
 
 
 	protected:
-		int32_t m_lTimer;												// General purpose timer
+		long m_lTimer;												// General purpose timer
 
-		int32_t m_lPrevTime;											// Previous update time
+		long m_lPrevTime;											// Previous update time
 
 		CSprite2		m_sprite;									// Sprite 
 		ChannelAA*	m_pAnimChannel;							// Alpha Explosion animation stored as a channel
 
-		int16_t m_sSuspend;											// Suspend flag
+		short m_sSuspend;											// Suspend flag
 
 		CSmash		m_smash;										// Collision class
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
-		static int16_t ms_sBlastRadius;
-		static int16_t ms_sProjectVelocity;
+		static short ms_sFileCount;
+		static short ms_sBlastRadius;
+		static short ms_sProjectVelocity;
 
 		// "Constant" values that we want to be able to tune using the editor
 
@@ -130,11 +130,11 @@ class CExplode : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CExplode(pRealm);
 			if (*ppNew == 0)
 				{
@@ -148,7 +148,7 @@ class CExplode : public CThing
 	// Optional static functions
 	//---------------------------------------------------------------------------
 
-		static int16_t Preload(
+		static short Preload(
 			CRealm* prealm);				// In:  Calling realm.
 
 	//---------------------------------------------------------------------------
@@ -156,22 +156,22 @@ class CExplode : public CThing
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Suspend object
 		void Suspend(void);
@@ -185,28 +185,28 @@ class CExplode : public CThing
 		// Render object
 		void Render(void);
 
-		int16_t Setup(												// Returns 0 on success.
-			int16_t sX,												// In: New x coord
-			int16_t sY,												// In: New y coord
-			int16_t sZ,												// In: New z coord
+		short Setup(												// Returns 0 on success.
+			short sX,												// In: New x coord
+			short sY,												// In: New y coord
+			short sZ,												// In: New z coord
 			U16	u16ShooterID,									// In: Who is responsible for this explosion
-			int16_t sAnim = 0);										// In: Which explosion to use, standard = 0,
+			short sAnim = 0);										// In: Which explosion to use, standard = 0,
 																		//     grenade = 1 etc.
 
 		// Called by editor to init new object at specified position
-		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditNew(												// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditMove(											// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to update object
 		void EditUpdate(void);
@@ -219,10 +219,10 @@ class CExplode : public CThing
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(int16_t sAnim = 0);		// Returns 0 if successfull, non-zero otherwise
+		short GetResources(short sAnim = 0);		// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 	};
 
 

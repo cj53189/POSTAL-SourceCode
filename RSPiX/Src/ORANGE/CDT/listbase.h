@@ -71,9 +71,9 @@ template <class T> class RBList
 
 	public:
 		// Add a node to the list at the tail (it will be the new tail)
-		int16_t AddTail(LISTDATA ldNew)
+		short AddTail(LISTDATA ldNew)
 			{
-			int16_t sRes = 0; // Assume success.
+			short sRes = 0; // Assume success.
 			// Create new node.
 			PNODE pnNew = new NODE;
 			// If successful . . .
@@ -116,9 +116,9 @@ template <class T> class RBList
 			}
 		
 		// Insert a node at the Head (it will be the new head)
-		int16_t InsertHead(LISTDATA ldNew)
+		short InsertHead(LISTDATA ldNew)
 			{
-			int16_t sRes = 0; // Assume success.
+			short sRes = 0; // Assume success.
 			// Allocate new node.
 			PNODE pnNew = new NODE;
 			// If successful . . .
@@ -161,9 +161,9 @@ template <class T> class RBList
 
 
 		// Insert ldNew after ldAfter
-		int16_t InsertAfter(LISTDATA ldAfter, LISTDATA ldNew)
+		short InsertAfter(LISTDATA ldAfter, LISTDATA ldNew)
 			{
-			int16_t sRes = 0; // Assume success.
+			short sRes = 0; // Assume success.
 			// Make sure the list is not empty
 			if (IsEmpty() == FALSE)
 				{
@@ -224,9 +224,9 @@ template <class T> class RBList
 			}
 
 		// Insert pnNew before lnBefore
-		int16_t InsertBefore(LISTDATA ldBefore, LISTDATA ldNew)
+		short InsertBefore(LISTDATA ldBefore, LISTDATA ldNew)
 			{
-			int16_t sRes = 0; // Assume success.
+			short sRes = 0; // Assume success.
 			// Make sure the list is not empty
 			if (IsEmpty() == FALSE)
 				{
@@ -287,31 +287,31 @@ template <class T> class RBList
 			}
 
 		// Add pnNew after current
-		int16_t Add(LISTDATA ldNew)
+		short Add(LISTDATA ldNew)
 		{ return (m_pnCurrent ? InsertAfter(m_pnCurrent->ldData, ldNew) : 
 				(m_pnNext ? InsertAfter(m_pnNext->ldData, ldNew) : AddTail(ldNew) ) ); }
 
 		// Insert pnNew before current
-		int16_t Insert(LISTDATA ldNew)
+		short Insert(LISTDATA ldNew)
 		{ return (m_pnCurrent ? InsertBefore(m_pnCurrent->ldData, ldNew) : 
 				(m_pnNext ? InsertBefore(m_pnNext->ldData, ldNew) : AddTail(ldNew) ) ); }
 
 		// Remove current node from the list.
-		int16_t Remove(void)
+		short Remove(void)
 			{
 			return Remove(m_pnCurrent);
 			}
 
 		// Remove a node from the list.
-		int16_t Remove(LISTDATA ldRem)
+		short Remove(LISTDATA ldRem)
 			{
 			return Remove(Find(ldRem));
 			}
 
-		int16_t GetHead(			// Returns 0 on success.
+		short GetHead(			// Returns 0 on success.
 			PLISTDATA pldHead)	// Where to store head data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			m_pnCurrent = m_pnHead;
 			// If there is a head . . .
@@ -331,10 +331,10 @@ template <class T> class RBList
 			return sRes;
 			}
 
-		int16_t GetTail(			// Returns 0 on success.
+		short GetTail(			// Returns 0 on success.
 			PLISTDATA pldTail)	// Where to store tail data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			// If there is a tail . . .
 			m_pnCurrent = m_pnTail;
@@ -354,10 +354,10 @@ template <class T> class RBList
 			}
 
 		// Get node following last GetX
-		int16_t GetNext(			// Returns 0 on success.
+		short GetNext(			// Returns 0 on success.
 			PLISTDATA pldNext)	// Where to store next data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			m_pnCurrent = m_pnNext;
 			if (m_pnCurrent != NULL)
@@ -376,11 +376,11 @@ template <class T> class RBList
 			}
 
 		// Get node following ldData
-		int16_t GetNext(			// Returns 0 on success.
+		short GetNext(			// Returns 0 on success.
 			LISTDATA ldData, 	// Node to get next of.
 			PLISTDATA pldNext)	// Where to store next data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			// Make sure the list is not empty
 			if (IsEmpty() == FALSE)
@@ -424,10 +424,10 @@ template <class T> class RBList
 			}
 
 		// Get node logically following last GetX
-		int16_t GetLogicalNext(	// Returns 0 on success.
+		short GetLogicalNext(	// Returns 0 on success.
 			PLISTDATA pldNext)	// Where to store next data.
 			{
-			int16_t	sRes	= GetNext(pldNext);
+			short	sRes	= GetNext(pldNext);
 			if (sRes != 0)
 				{
 				sRes	= GetHead(pldNext);
@@ -437,11 +437,11 @@ template <class T> class RBList
 			}
 
 		// Get node logically following ldData
-		int16_t GetLogicalNext(	// Returns 0 on success.
+		short GetLogicalNext(	// Returns 0 on success.
 			LISTDATA ldData,	 	// Node to get next of.
 			PLISTDATA pldNext)	// Where to store next data.
 			{
-			int16_t	sRes	= GetNext(ldData, pldNext);
+			short	sRes	= GetNext(ldData, pldNext);
 			if (sRes != 0)
 				{
 				sRes	= GetHead(pldNext);
@@ -451,10 +451,10 @@ template <class T> class RBList
 			}
 
 		// Get node preceding last GetX
-		int16_t GetPrev(			// Returns 0 on success.
+		short GetPrev(			// Returns 0 on success.
 			PLISTDATA pldPrev)	// Where to store previous data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			m_pnCurrent = m_pnPrev;
 			if (m_pnCurrent != NULL)
@@ -473,11 +473,11 @@ template <class T> class RBList
 			}
 
 		// Get node preceding ldData
-		int16_t GetPrev(			// Returns 0 on success.
+		short GetPrev(			// Returns 0 on success.
 			LISTDATA ldData,	// Node to get previous of.
 			PLISTDATA pldPrev)	// Where to store previous data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			// Make sure the list is not empty.
 			if (IsEmpty() == FALSE)
@@ -522,10 +522,10 @@ template <class T> class RBList
 
 
 		// Get node logically preceding last GetX
-		int16_t GetLogicalPrev(	// Returns 0 on success.
+		short GetLogicalPrev(	// Returns 0 on success.
 			PLISTDATA pldPrev)	// Where to store prev data.
 			{
-			int16_t	sRes	= GetPrev(pldPrev);
+			short	sRes	= GetPrev(pldPrev);
 			if (sRes != 0)
 				{
 				sRes	= GetTail(pldPrev);
@@ -535,11 +535,11 @@ template <class T> class RBList
 			}
 
 		// Get node logically preceding ldData
-		int16_t GetLogicalPrev(	// Returns 0 on success.
+		short GetLogicalPrev(	// Returns 0 on success.
 			LISTDATA ldData,	 	// Node to get prev of.
 			PLISTDATA pldPrev)	// Where to store prev data.
 			{
-			int16_t	sRes	= GetPrev(ldData, pldPrev);
+			short	sRes	= GetPrev(ldData, pldPrev);
 			if (sRes != 0)
 				{
 				sRes	= GetTail(pldPrev);
@@ -548,10 +548,10 @@ template <class T> class RBList
 			return sRes;
 			}
 
-		int16_t GetCurrent(		// Returns 0 on success.
+		short GetCurrent(		// Returns 0 on success.
 			PLISTDATA	pldCur)	// Where to store current data.
 			{
-			int16_t	sRes	= 0;	// Assume success.
+			short	sRes	= 0;	// Assume success.
 
 			if (m_pnCurrent != NULL)
 				{
@@ -565,7 +565,7 @@ template <class T> class RBList
 			return sRes; 
 			}
 
-		int16_t IsEmpty(void)	// Returns TRUE if empty, FALSE otherwise.
+		short IsEmpty(void)	// Returns TRUE if empty, FALSE otherwise.
 			{ 
 			return (m_pnHead == NULL) ? TRUE : FALSE; 
 			}
@@ -591,7 +591,7 @@ template <class T> class RBList
 
 	public:
 		RBList(
-			int16_t sInitialize	= TRUE)	// If this flag is FALSE, no initialization
+			short sInitialize	= TRUE)	// If this flag is FALSE, no initialization
 												// or freeing will be done.  It will be the
 												// user's responsibility!
 			{
@@ -619,10 +619,10 @@ template <class T> class RBList
 	protected:
 
 		// Removes supplied node.
-		int16_t Remove(			// Returns 0 on success.
+		short Remove(			// Returns 0 on success.
 			NODE*	pn)			// In:  Node to remove.
 			{
-			int16_t	sRes	= 0;
+			short	sRes	= 0;
 
 			// Make sure the list is not empty
 			if (IsEmpty() == FALSE)
@@ -704,7 +704,7 @@ template <class T> class RBList
 		PNODE		m_pnCurrent;
 		PNODE		m_pnNext;
 		PNODE		m_pnTail;
-		int16_t		m_sInitialize;		// TRUE if this item should handle intializing
+		short		m_sInitialize;		// TRUE if this item should handle intializing
 											// and freeing the list and members.
 	};
    

@@ -219,9 +219,9 @@ RFile::CritiCall	RFile::ms_criticall		= NULL;
 
 // For hooking Open(char*, ...) calls.
 RFile::OpenHook	RFile::ms_hOpen			= NULL;
-int32_t					RFile::ms_lOpenUser		= 0L;
+long					RFile::ms_lOpenUser		= 0L;
 RFile::CloseHook	RFile::ms_hClose			= NULL;
-int32_t					RFile::ms_lCloseUser		= 0L;
+long					RFile::ms_lCloseUser		= 0L;
 
 // Used to byte swap by Write().
 U8					RFile::ms_au8SwapBuf[RFILE_SWAP_SIZE];
@@ -536,17 +536,18 @@ extern const char *FindCorrectFile(const char *_pszName, const char *pszMode)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Open(		// Returns 0 on success.
+short RFile::Open(		// Returns 0 on success.
 	const char* pszFileName,	// Filename to open.
 	const char* pszFlags,		// fopen flags to use for opening.
 	Endian endian,			// { BigEndian | LittleEndian | NeutralEndian }.
 	Flags flags)			// See comments in Typedefs & Enums section in .h.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
+
 	// If not already open . . .
 	if (m_fs == NULL && m_pucFile == NULL)
 		{
-		int16_t sOpen	= TRUE;
+		short sOpen	= TRUE;
 
 		// Store flags for this file.
 		// Make sure Ascii and Binary are not both specified.
@@ -663,12 +664,12 @@ int16_t RFile::Open(		// Returns 0 on success.
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Open(		// Returns 0 on success.
+short RFile::Open(		// Returns 0 on success.
 	void* pFile,			// Pointer to memory to open.
-	int32_t lSize,				// Size of *pFile in bytes.
+	long lSize,				// Size of *pFile in bytes.
 	Endian endian)			// { BigEndian | LittleEndian | NeutralEndian }.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// If not already open . . .
 	if (m_fs == NULL && m_pucFile == NULL)
@@ -680,7 +681,7 @@ int16_t RFile::Open(		// Returns 0 on success.
 		SetEndian(endian);
 
 		// Open memory.
-		m_pucFile	= m_pucCur	= (uint8_t*)pFile;
+		m_pucFile	= m_pucCur	= (UCHAR*)pFile;
 		// Do not own buffer.
 		m_sOwnMem	= FALSE;
 
@@ -709,14 +710,14 @@ int16_t RFile::Open(		// Returns 0 on success.
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Open(	// Returns 0 on success.
-	int32_t	lSize,		// Size in bytes to begin with.
-	int32_t	lGrowSize,	// Min amount in bytes to grow memory file when written passed end.
+short RFile::Open(	// Returns 0 on success.
+	long	lSize,		// Size in bytes to begin with.
+	long	lGrowSize,	// Min amount in bytes to grow memory file when written passed end.
 							// Note: The larger of lGrowSize and the amount overwritten will
 							// be allocated in the case of an overrun.
 	Endian endian)		// { BigEndian | LittleEndian | NeutralEndian }.
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// If not already open . . .
 	if (m_fs == NULL && m_pucFile == NULL)
@@ -728,7 +729,7 @@ int16_t RFile::Open(	// Returns 0 on success.
 		SetEndian(endian);
 
 		// Open memory.
-		m_pucFile	= m_pucCur	= (uint8_t*)malloc(lSize);
+		m_pucFile	= m_pucCur	= (UCHAR*)malloc(lSize);
 		if (m_pucFile != NULL)
 			{
 			// Do own buffer.
@@ -767,13 +768,13 @@ int16_t RFile::Open(	// Returns 0 on success.
 // if that is more convenient.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Open(		// Returns 0 on success.
+short RFile::Open(		// Returns 0 on success.
 	FILE*	fs,				// FILE* stream to open.
 	Endian endian,			// { RFile::BigEndian | RFile::LittleEndian | RFile::NeutralEndian }.
 	Flags flags	/*=		// See comments in Typedefs & Enums section 
 		Binary*/)			// above.
 	{
-	int16_t sRes	= 0;	// Assume success.
+	short sRes	= 0;	// Assume success.
 
 	if (fs != NULL)
 		{
@@ -814,10 +815,10 @@ int16_t RFile::Open(		// Returns 0 on success.
 // Danger:  Do not access the original RFile between Open(RFile*)/Close() pairs!
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Open(		// Returns 0 on success.
+short RFile::Open(		// Returns 0 on success.
 	RFile* pfile)			// RFile to open.
 	{
-	int16_t	sRes	= 0;
+	short	sRes	= 0;
 
 	// Synchronize.
 	m_fs				= pfile->m_fs;
@@ -855,9 +856,9 @@ void RFile::SetEndian(Endian endian)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Close(void)
+short RFile::Close(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	ASSERT(m_fs != NULL || m_pucFile != NULL);
 
@@ -887,7 +888,7 @@ int16_t RFile::Close(void)
 		}
 	else
 		{
-		int16_t sClose	= TRUE;
+		short sClose	= TRUE;
 		
 		// If hook defined . . .
 		if (ms_hClose != NULL)
@@ -972,15 +973,15 @@ int16_t RFile::Close(void)
 // Returns number of bytes successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(void* pData, int32_t lNum)
+long RFile::Read(void* pData, long lNum)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if (IsFile() == TRUE)
 		{
-		int32_t	lToRead;
-		int32_t	lDidRead	= 1;
-		int32_t	lMaxRead	= ms_criticall ? MAX_CALLBACK_GRANULARITY_BYTES : lNum;
+		long	lToRead;
+		long	lDidRead	= 1;
+		long	lMaxRead	= ms_criticall ? MAX_CALLBACK_GRANULARITY_BYTES : lNum;
 		do
 			{
 			lToRead	= MIN(lMaxRead, lNum);
@@ -1043,14 +1044,14 @@ int32_t RFile::Read(void* pData, int32_t lNum)
 template <
 	class TYPE>			// Type for storing and overflow checking.
 inline					// Speed.
-int32_t ReadASCII(		// Returns number of complete TYPE items successfully read 
+long ReadASCII(		// Returns number of complete TYPE items successfully read 
 							// and stored.
 	TYPE*		ptData,	// Out: Pointer to array of TYPE items for read data.
-	int32_t		lNum,		// In:  Number of TYPE items to read.
+	long		lNum,		// In:  Number of TYPE items to read.
 	FILE*		pfsIn,	// In:  File stream to use for input.
 	double	dMax)		// In:  Maximum value for this type.
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	// Temp var to read into.
 	double	dTemp;
@@ -1092,9 +1093,9 @@ int32_t ReadASCII(		// Returns number of complete TYPE items successfully read
 // Returns number of U8 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(U8*	pu8Data, int32_t lNum /*= 1L*/)
+long RFile::Read(U8*	pu8Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1116,9 +1117,9 @@ int32_t RFile::Read(U8*	pu8Data, int32_t lNum /*= 1L*/)
 // Returns number of S8 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(S8*	ps8Data, int32_t lNum /*= 1L*/)
+long RFile::Read(S8*	ps8Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1140,9 +1141,9 @@ int32_t RFile::Read(S8*	ps8Data, int32_t lNum /*= 1L*/)
 // Returns number of U16 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(U16* pu16Data, int32_t lNum /*= 1L*/)
+long RFile::Read(U16* pu16Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1164,9 +1165,9 @@ int32_t RFile::Read(U16* pu16Data, int32_t lNum /*= 1L*/)
 // Returns number of S16 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(S16* ps16Data, int32_t lNum /*= 1L*/)
+long RFile::Read(S16* ps16Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1188,9 +1189,9 @@ int32_t RFile::Read(S16* ps16Data, int32_t lNum /*= 1L*/)
 // Returns number of RPixel24 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(RPixel24* ppix24, int32_t lNum /*= 1L*/)
+long RFile::Read(RPixel24* ppix24, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1213,9 +1214,9 @@ int32_t RFile::Read(RPixel24* ppix24, int32_t lNum /*= 1L*/)
 // Returns number of U32 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(U32* pu32Data, int32_t lNum /*= 1L*/)
+long RFile::Read(U32* pu32Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1237,9 +1238,9 @@ int32_t RFile::Read(U32* pu32Data, int32_t lNum /*= 1L*/)
 // Returns number of S32 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(S32* ps32Data, int32_t lNum /*= 1L*/)
+long RFile::Read(S32* ps32Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1261,9 +1262,9 @@ int32_t RFile::Read(S32* ps32Data, int32_t lNum /*= 1L*/)
 // Returns number of U64 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(U64* pu64Data, int32_t lNum /*= 1L*/)
+long RFile::Read(U64* pu64Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1284,9 +1285,9 @@ int32_t RFile::Read(U64* pu64Data, int32_t lNum /*= 1L*/)
 // Returns number of S64 values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(S64* ps64Data, int32_t lNum /*= 1L*/)
+long RFile::Read(S64* ps64Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1307,9 +1308,9 @@ int32_t RFile::Read(S64* ps64Data, int32_t lNum /*= 1L*/)
 // Returns number of float values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(float* pfData, int32_t lNum /*= 1L*/)
+long RFile::Read(float* pfData, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1331,9 +1332,9 @@ int32_t RFile::Read(float* pfData, int32_t lNum /*= 1L*/)
 // Returns number of double values successfully read.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(double* pdData, int32_t lNum /*= 1L*/)
+long RFile::Read(double* pdData, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1373,9 +1374,9 @@ int32_t RFile::Read(double* pdData, int32_t lNum /*= 1L*/)
 // enough to hold the string.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read(char* pszString)
+long RFile::Read(char* pszString)
 	{
-	int32_t	lRes	= 0;	// Assume nothing.
+	long	lRes	= 0;	// Assume nothing.
 
 	if (m_flags & Binary)
 		{
@@ -1412,14 +1413,14 @@ int32_t RFile::Read(char* pszString)
 			} while (strchr(WHITE_SPACE, *pszString++) == NULL);
 
 		// Note whether started by qutoes.
-		int16_t	sInQuotes	= FALSE;
+		short	sInQuotes	= FALSE;
 		if (*pszString == '"')
 			{
 			sInQuotes	= TRUE;
 			}
 
 		// Store string.
-		int16_t	sLastCharWasBackSlash	= FALSE;
+		short	sLastCharWasBackSlash	= FALSE;
 		while (*pszString != '\0')
 			{
 			if (Read(pszString, 1) == 1)
@@ -1486,15 +1487,15 @@ int32_t RFile::Read(char* pszString)
 // Returns number of bytes successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const void* pData, int32_t lNum)
+long RFile::Write(const void* pData, long lNum)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if (IsFile() == TRUE)
 		{
-		int32_t	lToWrite;
-		int32_t	lDidWrite	= 1;
-		int32_t	lMaxWrite	= ms_criticall ? MAX_CALLBACK_GRANULARITY_BYTES : lNum;
+		long	lToWrite;
+		long	lDidWrite	= 1;
+		long	lMaxWrite	= ms_criticall ? MAX_CALLBACK_GRANULARITY_BYTES : lNum;
 		do
 			{
 			lToWrite	= MIN(lMaxWrite, lNum);
@@ -1542,12 +1543,12 @@ int32_t RFile::Write(const void* pData, int32_t lNum)
 					{
 					// Attempt to enlarge the buffer by the max of m_lGrowSize or the
 					// overrun amount.
-					int32_t	lCurPos			= m_pucCur - m_pucFile;
-					int32_t	lDistanceToEOF	= m_lSize - lCurPos;
-					int32_t	lNewSize			= m_lSize + MAX(m_lGrowSize, (lNum - lDistanceToEOF) );
+					long	lCurPos			= m_pucCur - m_pucFile;
+					long	lDistanceToEOF	= m_lSize - lCurPos;
+					long	lNewSize			= m_lSize + MAX(m_lGrowSize, (lNum - lDistanceToEOF) );
 
 					// Enlarge . . .
-					uint8_t*	pucNewFile	= (uint8_t*)realloc(m_pucFile, lNewSize);
+					UCHAR*	pucNewFile	= (UCHAR*)realloc(m_pucFile, lNewSize);
 					// If successful . . .
 					if (pucNewFile != NULL)
 						{
@@ -1592,14 +1593,14 @@ int32_t RFile::Write(const void* pData, int32_t lNum)
 template <
 	class TYPE>			// Type for storing and overflow checking.
 inline					// Speed.
-int32_t WriteASCII(		// Returns number of complete TYPE items successfully 
+long WriteASCII(		// Returns number of complete TYPE items successfully 
 							// written.
 	TYPE*		ptData,	// In:  Pointer to array of TYPE items for write data.
-	int32_t		lNum,		// In:  Number of TYPE items to read.
+	long		lNum,		// In:  Number of TYPE items to read.
 	FILE*		pfsOut,	// In:  File stream to use for output.
 	char*		pszFrmt)	// In:  Output printf style format specifier.
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	while (lNum--)
 		{
@@ -1627,9 +1628,9 @@ int32_t WriteASCII(		// Returns number of complete TYPE items successfully
 // Returns number of U8 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const U8*	pu8Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const U8*	pu8Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1651,9 +1652,9 @@ int32_t RFile::Write(const U8*	pu8Data, int32_t lNum /*= 1L*/)
 // Returns number of S8 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const S8*	ps8Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const S8*	ps8Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1675,9 +1676,9 @@ int32_t RFile::Write(const S8*	ps8Data, int32_t lNum /*= 1L*/)
 // Returns number of U16 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const U16* pu16Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const U16* pu16Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1699,9 +1700,9 @@ int32_t RFile::Write(const U16* pu16Data, int32_t lNum /*= 1L*/)
 // Returns number of S16 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const S16* ps16Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const S16* ps16Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0L;	// Assume success.
+	long	lRes	= 0L;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1723,9 +1724,9 @@ int32_t RFile::Write(const S16* ps16Data, int32_t lNum /*= 1L*/)
 // Returns number of RPixel24 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const RPixel24* ppix24, int32_t lNum /*= 1L*/)
+long RFile::Write(const RPixel24* ppix24, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1748,9 +1749,9 @@ int32_t RFile::Write(const RPixel24* ppix24, int32_t lNum /*= 1L*/)
 // Returns number of U32 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const U32* pu32Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const U32* pu32Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1772,9 +1773,9 @@ int32_t RFile::Write(const U32* pu32Data, int32_t lNum /*= 1L*/)
 // Returns number of S32 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const S32* ps32Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const S32* ps32Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1796,9 +1797,9 @@ int32_t RFile::Write(const S32* ps32Data, int32_t lNum /*= 1L*/)
 // Returns number of float values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const float* pfData, int32_t lNum /*= 1L*/)
+long RFile::Write(const float* pfData, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1820,9 +1821,9 @@ int32_t RFile::Write(const float* pfData, int32_t lNum /*= 1L*/)
 // Returns number of double values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const double* pdData, int32_t lNum /*= 1L*/)
+long RFile::Write(const double* pdData, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1844,9 +1845,9 @@ int32_t RFile::Write(const double* pdData, int32_t lNum /*= 1L*/)
 // Returns number of U64 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const U64* pu64Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const U64* pu64Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1867,9 +1868,9 @@ int32_t RFile::Write(const U64* pu64Data, int32_t lNum /*= 1L*/)
 // Returns number of S64 values successfully written.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const S64* ps64Data, int32_t lNum /*= 1L*/)
+long RFile::Write(const S64* ps64Data, long lNum /*= 1L*/)
 	{
-	int32_t	lRes	= 0;	// Assume success.
+	long	lRes	= 0;	// Assume success.
 
 	if ((m_flags & Ascii) != 0)
 		{
@@ -1902,9 +1903,9 @@ int32_t RFile::Write(const S64* ps64Data, int32_t lNum /*= 1L*/)
 // including the NULL terminator (UNlike strlen()).
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write(const char* pszString)
+long RFile::Write(const char* pszString)
 	{
-	int32_t	lRes	= 0;	// Assume nothing.
+	long	lRes	= 0;	// Assume nothing.
 	
 	if (m_flags & Binary)
 		{
@@ -1951,9 +1952,9 @@ int32_t RFile::Write(const char* pszString)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t RFile::Seek(int32_t lPos, int32_t lOrigin)
+short RFile::Seek(long lPos, long lOrigin)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (IsFile() == TRUE)
 		{
@@ -2026,9 +2027,9 @@ int16_t RFile::Seek(int32_t lPos, int32_t lOrigin)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Tell(void)
+long RFile::Tell(void)
 	{
-	int32_t lRes	= -1L;	// Assume error.
+	long lRes	= -1L;	// Assume error.
 	if (IsFile() == TRUE)
 		{
 		KEEPCONNECTEDANDUPDATELASTACCESS;
@@ -2054,12 +2055,12 @@ int32_t RFile::Tell(void)
 // Returns the size of the file on success.  Negative on error.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::GetSize(void)
+long RFile::GetSize(void)
 	{
-	int32_t	lRes;
+	long	lRes;
 
 	// Remember the current position.
-	int32_t	lPos	= Tell();
+	long	lPos	= Tell();
 	if (lPos >= 0L)
 		{
 		// Attempt to seek to the end . . .
@@ -2103,11 +2104,11 @@ int32_t RFile::GetSize(void)
 // Reads in 8 bit data, swapped if necessary (BWAH HA).
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read8(	// Returns number of 8 bit items read.
+long RFile::Read8(	// Returns number of 8 bit items read.
 	U8*	pu8,			// In:  8 bit data to read (swapping, if necessary).
-	int32_t	lNum)			// In:  Number of 8 bit items to read.
+	long	lNum)			// In:  Number of 8 bit items to read.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// Read data.
 	lRes = Read((void*)pu8, lNum);
@@ -2120,11 +2121,11 @@ int32_t RFile::Read8(	// Returns number of 8 bit items read.
 // Reads in 16 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read16(	// Returns number of 16 bit items read.
+long RFile::Read16(	// Returns number of 16 bit items read.
 	U16*	pu16,			// In:  16 bit data to read (swapping, if necessary).
-	int32_t	lNum)			// In:  Number of 16 bit items to read.
+	long	lNum)			// In:  Number of 16 bit items to read.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// Read data.
 	lRes = Read((void*)pu16, lNum * sizeof(U16)) / sizeof(U16);
@@ -2139,7 +2140,7 @@ int32_t RFile::Read16(	// Returns number of 16 bit items read.
 		// Convert.
 		U8		u8_0;
 		U8*	pu8	= (U8*)pu16;
-		for (int32_t l = 0L; l < lRes; l++, pu8 += sizeof(U16))
+		for (long l = 0L; l < lRes; l++, pu8 += sizeof(U16))
 			{
 			// Store end.
 			u8_0			= *(pu8 + 1);
@@ -2158,11 +2159,11 @@ int32_t RFile::Read16(	// Returns number of 16 bit items read.
 // Reads in 24 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read24(	// Returns number of 24 bit items read.
+long RFile::Read24(	// Returns number of 24 bit items read.
 	RPixel24* ppix24,	// In:  24 bit data to read (swapping, if necessary).
-	int32_t	lNum)			// In:  Number of 24 bit items to read.
+	long	lNum)			// In:  Number of 24 bit items to read.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// Read data.
 	lRes = Read((void*)ppix24, lNum * sizeof(RPixel24)) / sizeof(RPixel24);
@@ -2177,7 +2178,7 @@ int32_t RFile::Read24(	// Returns number of 24 bit items read.
 		// Convert.
 		U8		u8_0;
 		U8*	pu8	= (U8*)ppix24;
-		for (int32_t l = 0L; l < lRes; l++, pu8 += sizeof(RPixel24))
+		for (long l = 0L; l < lRes; l++, pu8 += sizeof(RPixel24))
 			{
 			// Store end.
 			u8_0			= *(pu8 + 2);
@@ -2197,11 +2198,11 @@ int32_t RFile::Read24(	// Returns number of 24 bit items read.
 // Reads in 32 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read32(	// Returns number of 32 bit items read.
+long RFile::Read32(	// Returns number of 32 bit items read.
 	U32*	pu32,			// In:  32 bit data to read (swapping, if necessary).
-	int32_t	lNum)			// In:  Number of 32 bit items to read.
+	long	lNum)			// In:  Number of 32 bit items to read.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// Read data.
 	lRes = Read((void*)pu32, lNum * sizeof(U32)) / sizeof(U32);
@@ -2217,7 +2218,7 @@ int32_t RFile::Read32(	// Returns number of 32 bit items read.
 		U8		u8_0;
 		U8		u8_1;
 		U8*	pu8	= (U8*)pu32;
-		for (int32_t l = 0L; l < lRes; l++, pu8 += sizeof(U32))
+		for (long l = 0L; l < lRes; l++, pu8 += sizeof(U32))
 			{
 			// Store end.
 			u8_0			= *(pu8 + 3);
@@ -2244,11 +2245,11 @@ int32_t RFile::Read32(	// Returns number of 32 bit items read.
 // Reads in 64 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Read64(	// Returns number of 64 bit items read.
+long RFile::Read64(	// Returns number of 64 bit items read.
 	U64*	pu64,			// In:  64 bit data to read (swapping, if necessary).
-	int32_t	lNum)			// In:  Number of 64 bit items to read.
+	long	lNum)			// In:  Number of 64 bit items to read.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// Read data.
 	lRes = Read((void*)pu64, lNum * sizeof(U64)) / sizeof(U64);
@@ -2263,7 +2264,7 @@ int32_t RFile::Read64(	// Returns number of 64 bit items read.
 		// Convert.
 		U8		u8Tmp;
 		U8*	pu8	= (U8*)pu64;
-		for (int32_t l = 0L; l < lRes; l++, pu8 += sizeof(U64))
+		for (long l = 0L; l < lRes; l++, pu8 += sizeof(U64))
 			{
 			u8Tmp			= *(pu8 + 0); 
 			*(pu8 + 0)	= *(pu8 + 7);
@@ -2291,11 +2292,11 @@ int32_t RFile::Read64(	// Returns number of 64 bit items read.
 // Writes out 8 bit data, swapped if necessary (BWAH HA).
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write8(	// Returns number of 8 bit items written.
+long RFile::Write8(	// Returns number of 8 bit items written.
 	const U8*	pu8,			// In:  8 bit data to write (swapping, if necessary).
-	int32_t	lNum)			// In:  Number of 8 bit items to write.
+	long	lNum)			// In:  Number of 8 bit items to write.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	lRes = Write((void*)pu8, lNum);
 
@@ -2307,11 +2308,11 @@ int32_t RFile::Write8(	// Returns number of 8 bit items written.
 // Writes out 16 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write16(	// Returns number of 16 bit items written.
+long RFile::Write16(	// Returns number of 16 bit items written.
 	const U16*	pu16,				// In:  16 bit data to write (swapping, if necessary).
-	int32_t	lNum)				// In:  Number of 16 bit items to write.
+	long	lNum)				// In:  Number of 16 bit items to write.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// If m_endian is consistent with this platform . . .
 	if (ENDIAN_CONSISTENT)
@@ -2331,10 +2332,10 @@ int32_t RFile::Write16(	// Returns number of 16 bit items written.
 		U8*	pu8Src	= (U8*)pu16;		// Source data.
 		U8*	pu8Dst;							// Temp destination to be written after
 													// swapped to.
-		int32_t	lSrc;								// Number of source items swapped/written.
-		int32_t	lDst;								// Number of items swapped on current
+		long	lSrc;								// Number of source items swapped/written.
+		long	lDst;								// Number of items swapped on current
 													// iteration.
-		int32_t	lWritten	= 0;					// Number of items written on current
+		long	lWritten	= 0;					// Number of items written on current
 													// iteration.
 		for (lSrc = 0L; lSrc < lNum && lWritten >= 0L; lRes += lWritten / sizeof(U16))
 			{
@@ -2361,11 +2362,11 @@ int32_t RFile::Write16(	// Returns number of 16 bit items written.
 // Writes out 24 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write24(	// Returns number of 24 bit items written.
+long RFile::Write24(	// Returns number of 24 bit items written.
 	const RPixel24*	ppix24,		// In:  24 bit data to write (swapping, if necessary).
-	int32_t	lNum)				// In:  Number of 24 bit items to write.
+	long	lNum)				// In:  Number of 24 bit items to write.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// If m_endian is consistent with this platform . . .
 	if (ENDIAN_CONSISTENT)
@@ -2385,10 +2386,10 @@ int32_t RFile::Write24(	// Returns number of 24 bit items written.
 		U8*	pu8Src	= (U8*)ppix24;		// Source data.
 		U8*	pu8Dst;							// Temp destination to be written after
 													// swapped to.
-		int32_t	lSrc;								// Number of source items swapped/written.
-		int32_t	lDst;								// Number of items swapped on current
+		long	lSrc;								// Number of source items swapped/written.
+		long	lDst;								// Number of items swapped on current
 													// iteration.
-		int32_t	lWritten	= 0;					// Number of items written on current
+		long	lWritten	= 0;					// Number of items written on current
 													// iteration.
 		for (lSrc = 0L; lSrc < lNum && lWritten >= 0L; lRes += lWritten / sizeof(RPixel24))
 			{
@@ -2416,11 +2417,11 @@ int32_t RFile::Write24(	// Returns number of 24 bit items written.
 // Writes out 32 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write32(	// Returns number of 32 bit items written.
+long RFile::Write32(	// Returns number of 32 bit items written.
 	const U32*	pu32,				// In:  32 bit data to write (swapping, if necessary).
-	int32_t	lNum)				// In:  Number of 32 bit items to write.
+	long	lNum)				// In:  Number of 32 bit items to write.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// If m_endian is consistent with this platform . . .
 	if (ENDIAN_CONSISTENT)
@@ -2440,10 +2441,10 @@ int32_t RFile::Write32(	// Returns number of 32 bit items written.
 		U8*	pu8Src	= (U8*)pu32;		// Source data.
 		U8*	pu8Dst;							// Temp destination to be written after
 													// swapped to.
-		int32_t	lSrc;								// Number of source items swapped/written.
-		int32_t	lDst;								// Number of items swapped on current
+		long	lSrc;								// Number of source items swapped/written.
+		long	lDst;								// Number of items swapped on current
 													// iteration.
-		int32_t	lWritten	= 0;					// Number of items written on current
+		long	lWritten	= 0;					// Number of items written on current
 													// iteration.
 		for (lSrc = 0L; lSrc < lNum && lWritten >= 0L; lRes += lWritten / sizeof(U32))
 			{
@@ -2472,11 +2473,11 @@ int32_t RFile::Write32(	// Returns number of 32 bit items written.
 // Writes out 64 bit data, swapped if necessary.
 //
 //////////////////////////////////////////////////////////////////////////////
-int32_t RFile::Write64(	// Returns number of 64 bit items written.
+long RFile::Write64(	// Returns number of 64 bit items written.
 	const U64*	pu64,				// In:  64 bit data to write (swapping, if necessary).
-	int32_t	lNum)				// In:  Number of 64 bit items to write.
+	long	lNum)				// In:  Number of 64 bit items to write.
 	{
-	int32_t	lRes	= 0;
+	long	lRes	= 0;
 
 	// If m_endian is consistent with this platform . . .
 	if (ENDIAN_CONSISTENT)
@@ -2495,10 +2496,10 @@ int32_t RFile::Write64(	// Returns number of 64 bit items written.
 		U8*	pu8Src	= (U8*)pu64;		// Source data.
 		U8*	pu8Dst;							// Temp destination to be written after
 													// swapped to.
-		int32_t	lSrc;								// Number of source items swapped/written.
-		int32_t	lDst;								// Number of items swapped on current
+		long	lSrc;								// Number of source items swapped/written.
+		long	lDst;								// Number of items swapped on current
 													// iteration.
-		int32_t	lWritten	= 0;					// Number of items written on current
+		long	lWritten	= 0;					// Number of items written on current
 													// iteration.
 		for (lSrc = 0L; lSrc < lNum && lWritten >= 0L; lRes += lWritten / sizeof(U64))
 			{
@@ -2533,9 +2534,9 @@ int32_t RFile::Write64(	// Returns number of 64 bit items written.
 	// can use the FILE* that is made available.  Returns 0 on success.
 	//
 	//////////////////////////////////////////////////////////////////////////////
-	int16_t RFile::Disconnect(void)
+	short RFile::Disconnect(void)
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 		
 		// Must be disk file and must be connected.
 		ASSERT(IsFile()			== TRUE);
@@ -2564,9 +2565,9 @@ int32_t RFile::Write64(	// Returns number of 64 bit items written.
 	// Returns 0 on success.
 	//
 	//////////////////////////////////////////////////////////////////////////////
-	int16_t RFile::Reconnect(void)
+	short RFile::Reconnect(void)
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 
 		// Must be disk file.
 		ASSERT(IsFile()			== TRUE);
@@ -2608,9 +2609,9 @@ int32_t RFile::Write64(	// Returns number of 64 bit items written.
 	// (static)
 	//
 	//////////////////////////////////////////////////////////////////////////////
-	int16_t RFile::MakeStreamAvailable(void)
+	short RFile::MakeStreamAvailable(void)
 		{
-		int16_t	sRes	= 0;	// Assume success.
+		short	sRes	= 0;	// Assume success.
 
 		// Find the open RFile attached to disk that was accessed longest ago.
 		// All RFiles in the ms_listOpen list are attached to disk files.
@@ -2668,3 +2669,4 @@ int32_t RFile::Write64(	// Returns number of 64 bit items written.
 //////////////////////////////////////////////////////////////////////////////
 //	EOF
 //////////////////////////////////////////////////////////////////////////////
+

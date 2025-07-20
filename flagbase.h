@@ -57,7 +57,7 @@ class CFlagbase : public CThing3d
 
 
 		// Tracks file counter so we know when to load/save "common" data 
-		static int16_t ms_sFileCount;
+		static short ms_sFileCount;
 
 		// "Constant" values that we want to be able to tune using the editor
 		static double ms_dInRange;				// In range to the base
@@ -96,11 +96,11 @@ class CFlagbase : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Construct object
-		static int16_t Construct(									// Returns 0 if successfull, non-zero otherwise
+		static short Construct(									// Returns 0 if successfull, non-zero otherwise
 			CRealm* pRealm,										// In:  Pointer to realm this object belongs to
 			CThing** ppNew)										// Out: Pointer to new object
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 			*ppNew = new CFlagbase(pRealm);
 			if (*ppNew == 0)
 				{
@@ -115,40 +115,40 @@ class CFlagbase : public CThing3d
 	//---------------------------------------------------------------------------
 	public:
 		// Load object (should call base class version!)
-		int16_t Load(													// Returns 0 if successfull, non-zero otherwise
+		short Load(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to load from
 			bool bEditMode,										// In:  True for edit mode, false otherwise
-			int16_t sFileCount,										// In:  File count (unique per file, never 0)
-			uint32_t	ulFileVersion);								// In:  Version of file format to load.
+			short sFileCount,										// In:  File count (unique per file, never 0)
+			ULONG	ulFileVersion);								// In:  Version of file format to load.
 
 		// Save object (should call base class version!)
-		int16_t Save(													// Returns 0 if successfull, non-zero otherwise
+		short Save(													// Returns 0 if successfull, non-zero otherwise
 			RFile* pFile,											// In:  File to save to
-			int16_t sFileCount);									// In:  File count (unique per file, never 0)
+			short sFileCount);									// In:  File count (unique per file, never 0)
 
 		// Startup object
-		int16_t Startup(void);										// Returns 0 if successfull, non-zero otherwise
+		short Startup(void);										// Returns 0 if successfull, non-zero otherwise
 
 		// Shutdown object
-		int16_t Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
+		short Shutdown(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Update object
 		void Update(void);
 
 		// Called by editor to init new object at specified position
-		int16_t EditNew(												// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditNew(												// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Called by editor to modify object
-		int16_t EditModify(void);									// Returns 0 if successfull, non-zero otherwise
+		short EditModify(void);									// Returns 0 if successfull, non-zero otherwise
 
 		// Called by editor to move object to specified position
-		int16_t EditMove(											// Returns 0 if successfull, non-zero otherwise
-			int16_t sX,												// In:  New x coord
-			int16_t sY,												// In:  New y coord
-			int16_t sZ);												// In:  New z coord
+		short EditMove(											// Returns 0 if successfull, non-zero otherwise
+			short sX,												// In:  New x coord
+			short sY,												// In:  New y coord
+			short sZ);												// In:  New z coord
 
 		// Give Edit a rectangle around this object
 		void EditRect(RRect* pRect);
@@ -156,9 +156,9 @@ class CFlagbase : public CThing3d
 		// Called by editor to get the hotspot of an object in 2D.
 		// (virtual (Overridden here)).
 		void EditHotSpot(			// Returns nothiing.
-			int16_t*	psX,			// Out: X coord of 2D hotspot relative to
+			short*	psX,			// Out: X coord of 2D hotspot relative to
 										// EditRect() pos.
-			int16_t*	psY);			// Out: Y coord of 2D hotspot relative to
+			short*	psY);			// Out: Y coord of 2D hotspot relative to
 										// EditRect() pos.
 
 	//---------------------------------------------------------------------------
@@ -166,13 +166,13 @@ class CFlagbase : public CThing3d
 	//---------------------------------------------------------------------------
 	protected:
 		// Get all required resources
-		int16_t GetResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short GetResources(void);						// Returns 0 if successfull, non-zero otherwise
 		
 		// Free all resources
-		int16_t FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
+		short FreeResources(void);						// Returns 0 if successfull, non-zero otherwise
 
 		// Initialize states, positions etc.
-		int16_t Init(void);
+		short Init(void);
 
 		// Update the animation radius based on the current frame
 		void UpdateRadius(void);

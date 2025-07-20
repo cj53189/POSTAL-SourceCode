@@ -53,27 +53,27 @@ class CSettings
 		
 	public:
 		// Read settings that are stored in preference file
-		static int16_t LoadPrefs(
+		static short LoadPrefs(
 			char* pszFile);
 
 		// Write settings that are stored in preference file
-		static int16_t SavePrefs(
+		static short SavePrefs(
 			char* pszFile);
 
 		// Load settings that are stored in game file
-		static int16_t LoadGame(
+		static short LoadGame(
 			char* pszFile);
 
 		// Save settings that are stored in game file
-		static int16_t SaveGame(
+		static short SaveGame(
 			char* pszFile);
 
 		// Temporarily set settings for demo mode
-		static int16_t PreDemo(
+		static short PreDemo(
 			void);
 
 		// Restore settings to what they were prior to demo mode
-		static int16_t PostDemo(
+		static short PostDemo(
 			void);
 
 	//---------------------------------------------------------------------------
@@ -87,27 +87,27 @@ class CSettings
 		~CSettings();
 
 		// Read settings that are stored in preference file
-		virtual int16_t LoadPrefs(
+		virtual short LoadPrefs(
 			RPrefs* pPrefs) = 0;
 
 		// Write settings that are stored in preference file
-		virtual int16_t SavePrefs(
+		virtual short SavePrefs(
 			RPrefs* pPrefs) = 0;
 
 		// Load settings that are stored in game file
-		virtual int16_t LoadGame(
+		virtual short LoadGame(
 			RFile* pFile) = 0;
 
 		// Save settings that are stored in game file
-		virtual int16_t SaveGame(
+		virtual short SaveGame(
 			RFile* pFile) = 0;
 
 		// Temporarily set settings for demo mode (file is for saving current settings)
-		virtual int16_t PreDemo(
+		virtual short PreDemo(
 			RFile* pFile) = 0;
 
 		// Restore settings to what they were prior to demo mode
-		virtual int16_t PostDemo(
+		virtual short PostDemo(
 			RFile* pFile) = 0;
 	};
 

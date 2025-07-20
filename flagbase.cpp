@@ -74,7 +74,7 @@
 double CFlagbase::ms_dInRange = 30 * 30;			// Sq distance to base
 
 // Let this auto-init to 0
-int16_t CFlagbase::ms_sFileCount;
+short CFlagbase::ms_sFileCount;
 
 /// Throwing Animation Files ////////////////////////////////////////////////////
 // An array of pointers to resource names (one for each channel of the animation)
@@ -118,13 +118,13 @@ static RP3d ms_apt3dAttribCheck[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::Load(				// Returns 0 if successfull, non-zero otherwise
+short CFlagbase::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	int16_t sFileCount,					// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)				// In:  Version of file format to load.
+	short sFileCount,					// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)				// In:  Version of file format to load.
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	// Call the base load function to get ID, position, etc.
 	sResult = CThing3d::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 	if (sResult == 0)
@@ -224,13 +224,13 @@ int16_t CFlagbase::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::Save(										// Returns 0 if successfull, non-zero otherwise
+short CFlagbase::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	int16_t sFileCount)										// In:  File count (unique per file, never 0)
+	short sFileCount)										// In:  File count (unique per file, never 0)
 {
 	// Swap the hotspot we want to save in.
 
-	int16_t sResult;
+	short sResult;
 
 	// Call the base class save to save the instance ID, position, etc
 	CThing3d::Save(pFile, sFileCount);
@@ -266,9 +266,9 @@ int16_t CFlagbase::Save(										// Returns 0 if successfull, non-zero otherwis
 // Init - Call this after the resources are in place
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CFlagbase::Init(void)
+short CFlagbase::Init(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Prepare shadow (get resources and setup sprite).
 	sResult	= PrepareShadow();
@@ -295,9 +295,9 @@ int16_t CFlagbase::Init(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CFlagbase::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Set the current height, previous time, and Nav Net
 	CThing3d::Startup();
@@ -312,9 +312,9 @@ int16_t CFlagbase::Startup(void)								// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CFlagbase::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	m_trans.Make1();
 
@@ -327,10 +327,10 @@ int16_t CFlagbase::Shutdown(void)							// Returns 0 if successfull, non-zero ot
 ////////////////////////////////////////////////////////////////////////////////
 void CFlagbase::Update(void)
 {
-	int16_t sHeight = m_sPrevHeight;
-	int32_t lThisTime;
-	int32_t lTimeDifference;
-	int32_t lSqDistanceToDude = 0;
+	short sHeight = m_sPrevHeight;
+	long lThisTime;
+	long lTimeDifference;
+	long lSqDistanceToDude = 0;
 	CSmash* pSmashed = NULL;
 
 	if (!m_sSuspend)
@@ -441,12 +441,12 @@ void CFlagbase::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CFlagbase::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	sResult = CThing3d::EditNew(sX, sY, sZ);
 
@@ -470,9 +470,9 @@ int16_t CFlagbase::EditNew(									// Returns 0 if successfull, non-zero otherw
 ////////////////////////////////////////////////////////////////////////////////
 // Edit Move
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::EditMove(int16_t sX, int16_t sY, int16_t sZ)
+short CFlagbase::EditMove(short sX, short sY, short sZ)
 {
-	int16_t sResult = CThing3d::EditMove(sX, sY, sZ);
+	short sResult = CThing3d::EditMove(sX, sY, sZ);
 
 	return sResult;
 }
@@ -492,17 +492,17 @@ void CFlagbase::EditRect(RRect* pRect)
 // (virtual (Overridden here)).
 ////////////////////////////////////////////////////////////////////////////////
 void CFlagbase::EditHotSpot(			// Returns nothiing.
-	int16_t*	psX,						// Out: X coord of 2D hotspot relative to
+	short*	psX,						// Out: X coord of 2D hotspot relative to
 											// EditRect() pos.
-	int16_t*	psY)						// Out: Y coord of 2D hotspot relative to
+	short*	psY)						// Out: Y coord of 2D hotspot relative to
 											// EditRect() pos.
 	{
 	// Get rectangle.
 	RRect	rc;
 	EditRect(&rc);
 	// Get 2D hotspot.
-	int16_t	sX;
-	int16_t	sY;
+	short	sX;
+	short	sY;
 	Map3Dto2D(
 		m_dX,
 		m_dY,
@@ -518,9 +518,9 @@ void CFlagbase::EditHotSpot(			// Returns nothiing.
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::EditModify(void)
+short CFlagbase::EditModify(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	U16 u16OrigColor = m_u16Color;
 	RGuiItem* pGuiItem = NULL;
 	RGuiItem* pguiRoot = RGuiItem::LoadInstantiate(FullPathVD("res/editor/flagbase.gui"));
@@ -543,7 +543,7 @@ int16_t CFlagbase::EditModify(void)
 			if (sResult == 1)
 			{
 				m_u16FlagID = peditFlagID->GetVal();
-				m_u16Color = MIN((int32_t) (CFlag::EndOfColors - 1), peditColor->GetVal());
+				m_u16Color = MIN((long) (CFlag::EndOfColors - 1), peditColor->GetVal());
 			}
 		}
 	}
@@ -562,9 +562,9 @@ int16_t CFlagbase::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CFlagbase::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	switch (m_u16Color)
 	{
@@ -595,7 +595,7 @@ int16_t CFlagbase::GetResources(void)						// Returns 0 if successfull, non-zero
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CFlagbase::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CFlagbase::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_animFlagWave.Release();
 

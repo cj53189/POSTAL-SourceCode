@@ -134,12 +134,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // These are default values -- actually values are set using the editor!
-int32_t CBarrel::ms_lExplosionWait = 0;			// Time to wait after explosion before fire
-int32_t CBarrel::ms_lExplosionDelay = 150;		// Delay before explosion is set off by another
-int16_t CBarrel::ms_sNumFires = 6;					// Number of fires to create after explosion
+long CBarrel::ms_lExplosionWait = 0;			// Time to wait after explosion before fire
+long CBarrel::ms_lExplosionDelay = 150;		// Delay before explosion is set off by another
+short CBarrel::ms_sNumFires = 6;					// Number of fires to create after explosion
 
 // Let this auto-init to 0
-int16_t CBarrel::ms_sFileCount;
+short CBarrel::ms_sFileCount;
 
 /// Still Animation Files ///////////////////////////////////////////////////////
 // An array of pointers to resource names (one for each channel of the animation)
@@ -174,13 +174,13 @@ static char* ms_apszSpinResNames[] =
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::Load(				// Returns 0 if successfull, non-zero otherwise
+short CBarrel::Load(				// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,						// In:  File to load from
 	bool bEditMode,					// In:  True for edit mode, false otherwise
-	int16_t sFileCount,					// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)				// In:  Version of file format to load.
+	short sFileCount,					// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)				// In:  Version of file format to load.
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	// Call the base load function to get ID, position, etc.
 	sResult = CThing3d::Load(pFile, bEditMode, sFileCount, ulFileVersion);
 
@@ -206,7 +206,7 @@ int16_t CBarrel::Load(				// Returns 0 if successfull, non-zero otherwise
 			}
 		}
 
-		int16_t sData = 0;
+		short sData = 0;
 		// Load any barrel specific data
 		switch (ulFileVersion)
 			{
@@ -292,11 +292,11 @@ int16_t CBarrel::Load(				// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::Save(										// Returns 0 if successfull, non-zero otherwise
+short CBarrel::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	int16_t sFileCount)										// In:  File count (unique per file, never 0)
+	short sFileCount)										// In:  File count (unique per file, never 0)
 {
-	int16_t sResult;
+	short sResult;
 
 	// Call the base class save to save the instance ID, position, etc
 	CThing3d::Save(pFile, sFileCount);
@@ -311,7 +311,7 @@ int16_t CBarrel::Save(										// Returns 0 if successfull, non-zero otherwise
 	}
 
 	// Save barrel specific data
-	int16_t sData;
+	short sData;
 	if (m_bSpecial)
 		sData = 1;
 	else
@@ -336,9 +336,9 @@ int16_t CBarrel::Save(										// Returns 0 if successfull, non-zero otherwise
 // Init - Call this after the resources are in place
 ////////////////////////////////////////////////////////////////////////////////
 
-int16_t CBarrel::Init(void)
+short CBarrel::Init(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Init other stuff
 	m_dVel = 0.0;
@@ -370,9 +370,9 @@ int16_t CBarrel::Init(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::Startup(void)								// Returns 0 if successfull, non-zero otherwise
+short CBarrel::Startup(void)								// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Set the current height, previous time, and Nav Net
 	CThing3d::Startup();
@@ -387,10 +387,10 @@ int16_t CBarrel::Startup(void)								// Returns 0 if successfull, non-zero othe
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CBarrel::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 {
 	// Call base class.
-	int16_t sResult = CThing3d::Shutdown();
+	short sResult = CThing3d::Shutdown();
 
 	m_trans.Make1();
 
@@ -422,8 +422,8 @@ void CBarrel::Resume(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CBarrel::Update(void)
 {
-	int32_t lThisTime;
-	int32_t lTimeDifference;
+	long lThisTime;
+	long lTimeDifference;
 
 	if (!m_sSuspend)
 	{
@@ -495,7 +495,7 @@ void CBarrel::Update(void)
 			case CBarrel::State_Burning:
 				if (lThisTime > m_lTimer)
 				{
-					int16_t i;
+					short i;
 					CFire* pFire;
 					for (i = 0; i < ms_sNumFires; i++)
 					{
@@ -537,12 +537,12 @@ void CBarrel::Update(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CBarrel::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	sResult = CThing3d::EditNew(sX, sY, sZ);
 
@@ -570,9 +570,9 @@ int16_t CBarrel::EditNew(									// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::EditModify(void)
+short CBarrel::EditModify(void)
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 	RGuiItem* pGuiItem = NULL;
 	RGuiItem* pGui = RGuiItem::LoadInstantiate(FullPathVD("res/editor/barrel.gui"));
 	if (pGui)
@@ -610,9 +610,9 @@ int16_t CBarrel::EditModify(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CBarrel::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	sResult	= m_animStill.Get(ms_apszStillResNames, RChannel_LoopAtStart | RChannel_LoopAtEnd);
 	sResult	|= m_animSpin.Get(ms_apszSpinResNames, RChannel_LoopAtStart | RChannel_LoopAtEnd);
@@ -632,7 +632,7 @@ int16_t CBarrel::GetResources(void)						// Returns 0 if successfull, non-zero o
 ////////////////////////////////////////////////////////////////////////////////
 // Free all resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CBarrel::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CBarrel::FreeResources(void)						// Returns 0 if successfull, non-zero otherwise
 {
 	m_animStill.Release();
 	m_animSpin.Release();
@@ -678,7 +678,7 @@ void CBarrel::OnShotMsg(Shot_Message* pMessage)
 			// Audible and visual feedback.
 			PlaySample(g_smidShotBarrel1, SampleMaster::Weapon);
 			// X/Z position depends on angle of shot (it is opposite).
-			int16_t	sDeflectionAngle	= rspMod360(pMessage->sAngle + 180);
+			short	sDeflectionAngle	= rspMod360(pMessage->sAngle + 180);
 			double	dHitX	= m_dX + COSQ[sDeflectionAngle] * HULL_RADIUS;
 			double	dHitZ	= m_dZ - SINQ[sDeflectionAngle] * HULL_RADIUS;
 			StartAnim(

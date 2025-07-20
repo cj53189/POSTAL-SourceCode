@@ -88,7 +88,7 @@ CResItem::CResItem()
 // Constructura Especial! Ole!
 //
 //////////////////////////////////////////////////////////////////////////////
-CResItem::CResItem(char* pszName, uint8_t* puc, int32_t lSize, CRes* pRes)
+CResItem::CResItem(char* pszName, UCHAR* puc, long lSize, CRes* pRes)
 	{
 	m_pszName	= pszName;
 	m_puc			= puc;
@@ -131,7 +131,7 @@ CResItem::~CResItem()
 // Returns new reference count.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t CResItem::Lock(void)
+short CResItem::Lock(void)
 	{
 	return ++m_sRefCnt;
 	}
@@ -142,7 +142,7 @@ int16_t CResItem::Lock(void)
 // Returns new reference count.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t CResItem::Unlock(void)
+short CResItem::Unlock(void)
 	{
 	ASSERT(m_sRefCnt > 0);
 

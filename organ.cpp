@@ -55,17 +55,17 @@
 #define OR_BANK_KEY		RSP_SK_TAB
 
 // Set by callback or within PlayWithMyOrgan() to quit.
-static int16_t	ms_sContinue;
+static short	ms_sContinue;
 
 void	PlayWithMyOrgan()
 	{
 	// only allow certain keys to be active:
 	char	acValidKeys[] = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM";
-	int16_t	sNumValid = strlen(acValidKeys);
-	int16_t sNumSounds = CSoundCatalogue::NumSounds();
-	int16_t sNumBanks = (sNumSounds + sNumValid - 1) / sNumValid;
+	short	sNumValid = strlen(acValidKeys);
+	short sNumSounds = CSoundCatalogue::NumSounds();
+	short sNumBanks = (sNumSounds + sNumValid - 1) / sNumValid;
 
-	int16_t sCurBank = 0;
+	short sCurBank = 0;
 	ms_sContinue = 1;
 
 	U8*	pau8KeyStatus	= rspGetKeyStatusArray();
@@ -77,7 +77,7 @@ void	PlayWithMyOrgan()
 	// Let's play some noise!
 	while (ms_sContinue)
 		{
-		int16_t i;
+		short i;
 
 		UpdateSystem();
 
@@ -89,7 +89,7 @@ void	PlayWithMyOrgan()
 				// Play sample CSoundCatalogue::ms_ppcNameList[
 				// i + sNumValid * sCurBank if this isn't bigger
 				// than sNumSounds
-				int16_t sCurSample = (sNumValid * sCurBank + i) % sNumSounds;
+				short sCurSample = (sNumValid * sCurBank + i) % sNumSounds;
 				if (sCurSample < sNumSounds)
 					{
 					// Play the sample
@@ -157,7 +157,7 @@ void	PlayWithMyOrgan()
 //////////////////////////////////////////////////////////////////////////////
 extern bool Organ_MenuChoice(	// Returns true to accept choice, false to deny.
 	Menu*	/*pmenuCurrent*/,		// Current menu.
-	int16_t	sMenuItem)				// Item chosen.
+	short	sMenuItem)				// Item chosen.
 	{
 	if (sMenuItem >= 0)
 		{

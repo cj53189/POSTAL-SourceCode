@@ -1178,7 +1178,7 @@ extern bool GetDudeFireAngle(double* d_Angle);
 #define MIN_CANNOT_BE_SHOT_DURATION	3000
 
 // Minimum duration between yells (for blown up and shot).
-#define MIN_BETWEEN_YELLS		(750 + (16 - g_GameSettings.m_sPainFrequency) * 125) // Current yell ('groan_male1.wav') is 640 ms.
+#define MIN_BETWEEN_YELLS		750 // Current yell ('groan_male1.wav') is 640 ms.
 
 // IDs for GUIs.
 #define GUI_ID_STOCKPILE		3
@@ -1323,7 +1323,7 @@ U32	CDude::ms_u32CollideBitsDontcare = CSmash::Bad;
 U32	CDude::ms_u32CollideBitsExclude = 0;
 
 // Let this auto-init to 0
-int16_t CDude::ms_sFileCount;
+short CDude::ms_sFileCount;
 
 // Weapon details database.
 CDude::WeaponDetails	CDude::ms_awdWeapons[NumWeaponTypes]	=
@@ -1532,16 +1532,16 @@ static CCrawler::Nub ms_anubs[] =
 // specified in the provided array of pointers to strings.
 ////////////////////////////////////////////////////////////////////////////////
 // virtual								// Overridden here.
-int16_t CDude::CDudeAnim3D::Get(	// Returns 0 on success.
+short CDude::CDudeAnim3D::Get(	// Returns 0 on success.
 	char*		pszBaseFileName,		// In:  Base string for resource filenames.
 	char*		pszRigidName,			// In:  String to add for rigid transform channel
 											// or NULL for none.
 	char*		pszEventName,			// In:  String to add for event states channel
 											// or NULL for none.
-	int16_t		sLoopFlags)				// In:  Looping flags to apply to all channels
+	short		sLoopFlags)				// In:  Looping flags to apply to all channels
 											// in this anim.
 	{
-	int16_t	sRes;
+	short	sRes;
 	char	szResName[RSP_MAX_PATH];
 	sprintf(szResName, "%s.sop", pszBaseFileName);
 	sRes	=  rspGetResource(&g_resmgrGame, szResName, &m_psops);
@@ -1656,13 +1656,13 @@ CDude::~CDude()
 ////////////////////////////////////////////////////////////////////////////////
 // Load object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::Load(										// Returns 0 if successfull, non-zero otherwise
+short CDude::Load(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to load from
 	bool bEditMode,										// In:  True for edit mode, false otherwise
-	int16_t sFileCount,										// In:  File count (unique per file, never 0)
-	uint32_t	ulFileVersion)									// In:  File version being loaded.
+	short sFileCount,										// In:  File count (unique per file, never 0)
+	ULONG	ulFileVersion)									// In:  File version being loaded.
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// In most cases, the base class Load() should be called.
 	sResult	= CCharacter::Load(pFile, bEditMode, sFileCount, ulFileVersion);
@@ -1753,11 +1753,11 @@ int16_t CDude::Load(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Save object (should call base class version!)
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::Save(										// Returns 0 if successfull, non-zero otherwise
+short CDude::Save(										// Returns 0 if successfull, non-zero otherwise
 	RFile* pFile,											// In:  File to save to
-	int16_t sFileCount)										// In:  File count (unique per file, never 0)
+	short sFileCount)										// In:  File count (unique per file, never 0)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// In most cases, the base class Save() should be called.
 	sResult	= CCharacter::Save(pFile, sFileCount);
@@ -1793,9 +1793,9 @@ int16_t CDude::Save(										// Returns 0 if successfull, non-zero otherwise
 ////////////////////////////////////////////////////////////////////////////////
 // Startup object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::Startup(void)						// Returns 0 if successfull, non-zero otherwise
+short CDude::Startup(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t	sResult	= CCharacter::Startup();
+	short	sResult	= CCharacter::Startup();
 	
 	// Init other stuff
 	m_lNextBulletTime = m_pRealm->m_time.GetGameTime() + MS_BETWEEN_BULLETS;
@@ -1811,9 +1811,9 @@ int16_t CDude::Startup(void)						// Returns 0 if successfull, non-zero otherwis
 ////////////////////////////////////////////////////////////////////////////////
 // Shutdown object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
+short CDude::Shutdown(void)							// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t	sResult	= CCharacter::Shutdown();
+	short	sResult	= CCharacter::Shutdown();
 	return sResult;
 	}
 
@@ -1825,7 +1825,7 @@ void CDude::Suspend(void)
 	if (m_sSuspend == 0)
 		{
 		// Store current delta so we can restore it.
-		int32_t	lCurTime		= m_pRealm->m_time.GetGameTime();
+		long	lCurTime		= m_pRealm->m_time.GetGameTime();
 		m_lNextBulletTime	= lCurTime - m_lNextBulletTime;
 		}
 
@@ -1841,7 +1841,7 @@ void CDude::Resume(void)
 
 	if (m_sSuspend == 0)
 		{
-		int32_t	lCurTime		= m_pRealm->m_time.GetGameTime();
+		long	lCurTime		= m_pRealm->m_time.GetGameTime();
 		m_lNextBulletTime	= lCurTime - m_lNextBulletTime;
 		}
 	}
@@ -1855,10 +1855,10 @@ void CDude::Update(void)
 	if (!m_sSuspend)
 		{
 		// Get new time
-		int32_t lThisTime = m_pRealm->m_time.GetGameTime();
+		long lThisTime = m_pRealm->m_time.GetGameTime();
 
 		// Advance the animation timer.
-		int32_t	lDifTime		= lThisTime - m_lAnimPrevUpdateTime;
+		long	lDifTime		= lThisTime - m_lAnimPrevUpdateTime;
 		m_lAnimTime			+= lDifTime;
 
 		// Update prev time.
@@ -1868,7 +1868,7 @@ void CDude::Update(void)
 
 		double	dMaxForeVel;
 		double	dMaxBackVel;
-		int16_t		sStrafeAngle	= INVALID_STRAFE_ANGLE;	// Angle of motion from strafing.
+		short		sStrafeAngle	= INVALID_STRAFE_ANGLE;	// Angle of motion from strafing.
 
 		ProcessInput(
 			&dMaxForeVel,
@@ -2139,7 +2139,7 @@ void CDude::Update(void)
 				m_lAnimTime	-= lDifTime;
 				// Tune the time.  Note that this is automathematically negative when
 				// velocity is negative.
-				int32_t	lDifAnimTime	= lDifTime * (m_dVel / RUN_ANIM_VELOCITY);
+				long	lDifAnimTime	= lDifTime * (m_dVel / RUN_ANIM_VELOCITY);
 
 				m_lAnimTime	+= lDifAnimTime;
 
@@ -2154,7 +2154,7 @@ void CDude::Update(void)
 				m_lAnimTime	-= lDifTime;
 				// Tune the time.  Note that this is automathematically negative when
 				// velocity is negative.
-				int32_t	lDifAnimTime	= lDifTime * (m_dVel / RUN_ANIM_VELOCITY);
+				long	lDifAnimTime	= lDifTime * (m_dVel / RUN_ANIM_VELOCITY);
 
 				m_lAnimTime	+= lDifAnimTime;
 
@@ -2240,14 +2240,7 @@ void CDude::Update(void)
 					// Play shot received.
 					PlaySample(g_smidDyingYell, SampleMaster::Voices);
 					// Start gore.
-#ifdef KID_FRIENDLY_OPTION
-					if (g_GameSettings.m_sKidMode == FALSE)
-					{
-#endif
 					StartBrainSplat();
-#ifdef KID_FRIENDLY_OPTION
-					}
-#endif
 					// Remember.
 					m_bBrainSplatted	= true;
 
@@ -2597,7 +2590,7 @@ void CDude::Update(void)
 void CDude::ProcessInput(		// Returns nothing.
 	double*	pdMaxForeVel,		// Out: Maximum forward velocity.
 	double*	pdMaxBackVel,		// Out: Maximum backward velocity.
-	int16_t*	psStrafeAngle)		// Out: Strafe angle.
+	short*	psStrafeAngle)		// Out: Strafe angle.
 	{
 	UINPUT input = 0;
 	// Get user input
@@ -3003,18 +2996,7 @@ if (!demoCompat)
 
 	// "Twinstick" style inputs.
 if (!demoCompat)
-{	
-	//New mouse implementation. 
-	if (g_InputSettings.m_sUseNewMouse && rspIsBackground() == FALSE) {
-
-		// Say we're using twinstick mode
-		m_bUseRotTS = true;
-
-		// Turn off the normal movement inputs if present
-		input &= ~(INPUT_FORWARD | INPUT_BACKWARD | INPUT_LEFT | INPUT_RIGHT);
-
-	}
-
+{
 	if ((input & INPUT_MOVE_UP) || (input & INPUT_MOVE_DOWN) || (input & INPUT_MOVE_LEFT) || (input & INPUT_MOVE_RIGHT)
 			|| (input & INPUT_FIRE_UP) || (input & INPUT_FIRE_DOWN) || (input & INPUT_FIRE_LEFT) || (input & INPUT_FIRE_RIGHT))
 	{
@@ -3056,7 +3038,6 @@ if (!demoCompat)
 		// Determine fire direction
 		if (bCanFire)
 		{
-			//Code for twinsticking on keyboard
 			if ((input & INPUT_FIRE_UP) || (input & INPUT_FIRE_DOWN) || (input & INPUT_FIRE_LEFT) || (input & INPUT_FIRE_RIGHT))
 			{
 				// Say we're firing our weapon
@@ -3071,11 +3052,10 @@ if (!demoCompat)
 					m_dRot = 180;
 				else if (input & INPUT_FIRE_RIGHT)
 					m_dRot = 0;
-			}//Keyboard twinstick wouldn't quite work with mouse in use
-			else if (g_InputSettings.m_sUseNewMouse == FALSE) {
-				//otherwise, point in the direction we're going
-				m_dRot = m_dRotTS;
 			}
+			else
+				// otherwise, point in the direction we're going
+				m_dRot = m_dRotTS;
 		}
 	}
 	//else
@@ -3090,7 +3070,6 @@ if (!demoCompat)
 
 	m_dJoyFireAngle = 0.f;
 	m_bJoyFire = (bCanFire && GetDudeFireAngle(&m_dJoyFireAngle));
-
 	if (m_dJoyMoveVel > 0 || m_bJoyFire)
 	{
 		// Setup movement
@@ -3215,7 +3194,7 @@ if (!demoCompat)
 		}
 
 		{
-		int16_t sRotDelta	= (int16_t)(input & INPUT_ROT_MASK);
+		short sRotDelta	= (short)(input & INPUT_ROT_MASK);
 		
 		if (sRotDelta != 0)
 			sRotDelta	-= 360;
@@ -3255,7 +3234,7 @@ else
 		*psStrafeAngle = m_dRot - 90;
 	else
 		{
-		int16_t sRotDelta	= (int16_t)(input & INPUT_ROT_MASK);
+		short sRotDelta	= (short)(input & INPUT_ROT_MASK);
 		
 		if (sRotDelta != 0)
 			sRotDelta	-= 360;
@@ -3392,10 +3371,10 @@ else
 // Applies accelerations, velocities, reacts to terrain obstructions, etc.
 ////////////////////////////////////////////////////////////////////////////////
 void CDude::ProcessForces(	// Returns nothing.
-	int32_t		lCurTime,		// In:  Current game time.
+	long		lCurTime,		// In:  Current game time.
 	double	dMaxForeVel,	// Out: Maximum forward velocity.
 	double	dMaxBackVel,	// Out: Maximum backward velocity.
-	int16_t		sStrafeAngle)	// Out: Strafe angle.
+	short		sStrafeAngle)	// Out: Strafe angle.
 	{
 	double	dNewX, dNewY, dNewZ;
 	
@@ -3582,12 +3561,12 @@ void CDude::Render(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to init new object at specified position
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::EditNew(									// Returns 0 if successfull, non-zero otherwise
-	int16_t sX,												// In:  New x coord
-	int16_t sY,												// In:  New y coord
-	int16_t sZ)												// In:  New z coord
+short CDude::EditNew(									// Returns 0 if successfull, non-zero otherwise
+	short sX,												// In:  New x coord
+	short sY,												// In:  New y coord
+	short sZ)												// In:  New z coord
 	{
-	int16_t sResult = CCharacter::EditNew(sX, sY, sZ);
+	short sResult = CCharacter::EditNew(sX, sY, sZ);
 
 	// Init dude
 	sResult = Init();
@@ -3601,8 +3580,8 @@ int16_t CDude::EditNew(									// Returns 0 if successfull, non-zero otherwise
 inline
 void SetText(					// Returns nothing.
 	RGuiItem*	pguiRoot,	// In:  Root GUI.
-	int32_t			lId,			// In:  ID of GUI to set text.
-	int32_t			lVal)			// In:  Value to set text to.
+	long			lId,			// In:  ID of GUI to set text.
+	long			lVal)			// In:  Value to set text to.
 	{
 	RGuiItem*	pgui	= pguiRoot->GetItemFromId(lId);
 	if (pgui != NULL)
@@ -3615,9 +3594,9 @@ void SetText(					// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 // Called by editor to modify object
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::EditModify(void)				// Returns 0 if successfull, non-zero otherwise.
+short CDude::EditModify(void)				// Returns 0 if successfull, non-zero otherwise.
 	{
-	int16_t	sResult	= CCharacter::EditModify();
+	short	sResult	= CCharacter::EditModify();
 
 	if (sResult == 0)
 		{
@@ -3659,9 +3638,9 @@ int16_t CDude::EditModify(void)				// Returns 0 if successfull, non-zero otherwi
 ////////////////////////////////////////////////////////////////////////////////
 // Init dude
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::Init(void)									// Returns 0 if successfull, non-zero otherwise
+short CDude::Init(void)									// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	m_lPrevTime			= m_pRealm->m_time.GetGameTime();
 	m_lNextBulletTime	= m_lPrevTime;
@@ -3751,9 +3730,9 @@ void CDude::Kill(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Get all required resources
 ////////////////////////////////////////////////////////////////////////////////
-int16_t CDude::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
+short CDude::GetResources(void)						// Returns 0 if successfull, non-zero otherwise
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	//											Anim base name					Rigid name		Event name		Loop flags
 	//											===================			=============	===========		===========
@@ -3778,7 +3757,7 @@ int16_t CDude::GetResources(void)						// Returns 0 if successfull, non-zero oth
 	sResult	|= m_animIdle.Get			("3d/main_idle",				NULL,				NULL,				0);
 
 	// Get the different textures this dude could have.
-	int16_t i;
+	short i;
 	char	szResName[RSP_MAX_PATH];
 	for (i = 0; i < MaxTextures && sResult == 0; i++)
 		{
@@ -3832,7 +3811,7 @@ void CDude::FreeResources(void)
 	m_animIdle.Release();
 
 	// Release the different textures.
-	int16_t i;
+	short i;
 	for (i = 0; i < MaxTextures; i++)
 		{
 		rspReleaseResource(&g_resmgrGame, &(m_aptextures[i]) );
@@ -4130,7 +4109,7 @@ bool CDude::SetState(	// Returns true if new state realized, false otherwise.
 				if (m_pRealm->m_idbank.GetThingByID((CThing**)&pweapon, m_u16IdWeapon) == 0 && state != State_ThrowRelease)
 					{
 					// It should drop like a rock.
-					pweapon->m_dHorizVel	= (GetRand() % (int16_t)CGrenade::ms_dThrowHorizVel);	// NOTE:   ****USING RAND()****
+					pweapon->m_dHorizVel	= (GetRand() % (short)CGrenade::ms_dThrowHorizVel);	// NOTE:   ****USING RAND()****
 					pweapon->m_dRot	= GetRand() % 360;
 					ShootWeapon();
 					// Delete it!
@@ -4476,10 +4455,10 @@ bool CDude::SetState(	// Returns true if new state realized, false otherwise.
 void CDude::GetWeaponInfo(		// Returns nothing.
 	WeaponType		weapon,		// In:  Weapon type to query.
 	ClassIDType*	pidWeapon,	// Out: CThing class ID of weapon.
-	int16_t**			ppsNum)		// Out: Ptr to the weapon's counter.
+	short**			ppsNum)		// Out: Ptr to the weapon's counter.
 	{
-	static int16_t sSafetyNum	= 0;
-	int16_t	*psNumLeft	= &sSafetyNum;
+	static short sSafetyNum	= 0;
+	short	*psNumLeft	= &sSafetyNum;
 	// Switch on weapon type . . .
 	switch (weapon)
 		{
@@ -4548,7 +4527,7 @@ void CDude::GetWeaponInfo(		// Returns nothing.
 			*ppsNum		= &m_stockpile.m_sNumShells;
 			break;
 		default:
-			TRACE("GetWeaponInfo():  Query on invalid weapon (%d).\n", (int16_t)weapon);
+			TRACE("GetWeaponInfo():  Query on invalid weapon (%d).\n", (short)weapon);
 			break;
 		}
 	}
@@ -4569,10 +4548,10 @@ void CDude::ArmWeapon(							// Returns nothing.
 			}
 
 		// Get current weapon and stockpile.
-		int16_t*	psNumLeft;
+		short*	psNumLeft;
 		GetWeaponInfo(weapon, &m_eWeaponType, &psNumLeft);
 
-		uint32_t weaponFlag = 0;
+		ULONG weaponFlag = 0;
 		switch (weapon)
 			{
 			case Grenade: weaponFlag = FLAG_USED_GRENADE; break;
@@ -4663,7 +4642,7 @@ void CDude::ArmWeapon(							// Returns nothing.
 					GameMessage msg;
 					msg.msg_WeaponFire.eType = typeWeaponFire;
 					msg.msg_WeaponFire.sPriority = 0;
-					msg.msg_WeaponFire.sWeapon = (int16_t) weapon;
+					msg.msg_WeaponFire.sWeapon = (short) weapon;
 					CThing* pDemon = m_pRealm->m_aclassHeads[CThing::CDemonID].GetNext();
 					if (pDemon)
 						SendThingMessage(&msg, pDemon);				
@@ -4722,7 +4701,7 @@ CWeapon* CDude::ShootWeapon(					// Returns the weapon ptr or NULL.
 		{
 		// Get the weapon info.
 		ClassIDType	idWeapon;
-		int16_t*	psNumLeft;
+		short*	psNumLeft;
 		GetWeaponInfo(m_weaponShooting, &idWeapon, &psNumLeft);
 
 //		ASSERT(idWeapon == m_eWeaponType);
@@ -4818,7 +4797,7 @@ CWeapon* CDude::ShootWeapon(					// Returns the weapon ptr or NULL.
 // Receive damage.
 ////////////////////////////////////////////////////////////////////////////////
 void CDude::Damage(			// Returns nothing.
-	int16_t	sHitPoints,			// Hit points of damage to do.
+	short	sHitPoints,			// Hit points of damage to do.
 	U16	u16ShooterId)		// In:  Thing responsible for damage.
 	{
 	// Remember if already dead . . .
@@ -4869,7 +4848,7 @@ void CDude::StartBrainSplat(void)	// Returns nothing.
 	dBrainZ	+= m_dZ;
 
 	// Create blood chunks.
-	int16_t	i;
+	short	i;
 	for (i = 0; i < BRAIN_SPLAT_NUM_CHUNKS; i++)
 		{
 		// Create blood particles . . .
@@ -4904,14 +4883,14 @@ bool CDude::MakeValidPosition(		// Returns true, if new position was valid.
 												// Out: New y position.
 	double*	pdNewZ,						// In:  z position to validate.
 												// Out: New z position.
-	int16_t	sVertTolerance /*= 0*/)		// Vertical tolerance.
+	short	sVertTolerance /*= 0*/)		// Vertical tolerance.
 	{
 	bool bValidatedPosition	= false;	// Assume failure.
 
 	double	dCrawlerNewX;
 	double	dCrawlerNewY;
 	double	dCrawlerNewZ;
-	int16_t		sTerrainH;
+	short		sTerrainH;
 
 	// Make sure the position has not changed since our crawlage.
 	ASSERT(m_dX == m_dLastCrawledToPosX);
@@ -5003,14 +4982,14 @@ void CDude::OnShotMsg(			// Returns nothing.
 	// Give the msg to CThing3d before we alter it.
 	CThing3d::OnShotMsg(pshotmsg);
 
-	int16_t	sInitKevlarLayers	= m_stockpile.m_sKevlarLayers;
+	short	sInitKevlarLayers	= m_stockpile.m_sKevlarLayers;
 
 	if (m_stockpile.m_sKevlarLayers > 0)
 		{
 		pshotmsg->sDamage	/= m_stockpile.m_sKevlarLayers * KEVLAR_PROTECTION_MULTIPLIER;
 
 		// Choclate melts vest.
-		m_stockpile.m_sKevlarLayers = MAX((int16_t)(m_stockpile.m_sKevlarLayers - (GetRand() & 0x3)), (int16_t)0);
+		m_stockpile.m_sKevlarLayers = MAX((short)(m_stockpile.m_sKevlarLayers - (GetRand() & 0x3)), (short)0);
 		}
 
 	CCharacter::OnShotMsg(pshotmsg);
@@ -5038,7 +5017,7 @@ void CDude::OnShotMsg(			// Returns nothing.
 		PlaySample(g_smidBulletIntoVest, SampleMaster::Weapon);
 		double	dHitY	= m_dY + m_sprite.m_sRadius + RAND_SWAY(VEST_HIT_SWAY);
 		// X/Z position depends on angle of shot (it is opposite).
-		int16_t	sDeflectionAngle	= rspMod360(pshotmsg->sAngle + 180);
+		short	sDeflectionAngle	= rspMod360(pshotmsg->sAngle + 180);
 		double	dHitX	= m_dX + COSQ[sDeflectionAngle] * TORSO_RADIUS;
 		double	dHitZ	= m_dZ - SINQ[sDeflectionAngle] * TORSO_RADIUS;
 
@@ -5157,7 +5136,7 @@ void CDude::OnBurnMsg(			// Returns nothing.
 		DropAllFlags( (GameMessage*)pburnmsg);
 		}
 
-	int16_t sDamage = MAX((int16_t) 1, (int16_t) ((double) pburnmsg->sDamage * (((double) m_pRealm->m_flags.sDifficulty) / 10.0)));
+	short sDamage = MAX((short) 1, (short) ((double) pburnmsg->sDamage * (((double) m_pRealm->m_flags.sDifficulty) / 10.0)));
 	Damage(sDamage, pburnmsg->u16ShooterID);
 	}
 
@@ -5221,7 +5200,7 @@ bool CDude::WhileBlownUp(void)	// Returns true until state is complete.
 	double	dNewX, dNewY, dNewZ;
 
 	// Get time from last call in seconds.
-	int32_t		lCurTime	= m_pRealm->m_time.GetGameTime();
+	long		lCurTime	= m_pRealm->m_time.GetGameTime();
 	double	dSeconds	= double(lCurTime - m_lPrevTime) / 1000.0;
 
 	// Update Velocities ////////////////////////////////////////////////////////
@@ -5289,7 +5268,7 @@ void CDude::OnExecute(void)		// Returns nothing.
 		&dMuzzleZ);														// Out: Point speicfied.
 
 	// Get current weapon and stockpile.
-	int16_t*		psNumLeft;
+	short*		psNumLeft;
 	ClassIDType	idWeapon;
 	GetWeaponInfo(SemiAutomatic, &idWeapon, &psNumLeft);
 	if (*psNumLeft > 0)
@@ -5441,43 +5420,25 @@ void CDude::Revive(				// Returns nothing.
 ////////////////////////////////////////////////////////////////////////////////
 void CDude::ShowTarget()
 {
-	//Old crossha
 	if (m_bTargetingHelpEnabled && m_bDead == false)
 	{
-		float fRateX = 0.0f;
-		float fRateZ = 0.0f;
+		// sAngle must be between 0 and 359.
+		short sRotY = rspMod360((short) m_dRot);
+		short sRangeXZ = 100;
+		short sRadius = 20;
 
-		if (g_InputSettings.m_sUseNewMouse && rspIsBackground() == FALSE) {
-		
-			fRateX = m_dMousePosX - m_dX;
-			fRateZ = m_dMousePosY - m_dZ;
+		float	fRateX = COSQ[sRotY] * sRangeXZ;
+		float	fRateZ = -SINQ[sRotY] * sRangeXZ;
+		float	fRateY = 0.0;	// If we ever want vertical movement . . .
 
-		}
-		else {
-
-			// sAngle must be between 0 and 359.
-			int16_t sRotY = rspMod360((int16_t)m_dRot);
-			int16_t sRangeXZ = 100;
-			//This is unused
-			//int16_t sRadius = 20;
-
-			fRateX = COSQ[sRotY] * sRangeXZ;
-			fRateZ = -SINQ[sRotY] * sRangeXZ;
-
-			//float	fRateY = 0.0;	// If we ever want vertical movement . . .
-
-			// Set initial position to first point to check (NEVER checks original position).
-			// !Unused
-			//float	fPosX = m_dX + fRateX;
-			//float	fPosY = m_dY + fRateY;
-			//float	fPosZ = m_dZ + fRateZ;
-
-		}
+		// Set initial position to first point to check (NEVER checks original position).
+		float	fPosX = m_dX + fRateX;
+		float	fPosY = m_dY + fRateY;
+		float	fPosZ = m_dZ + fRateZ;
 
 		if (m_TargetSprite.m_psprParent)
 			m_TargetSprite.m_psprParent->RemoveChild(&m_TargetSprite);
 		((CThing3d*)this)->m_sprite.AddChild(&m_TargetSprite);
-
 		// Map from 3d to 2d coords
 		Map3Dto2D(
 			fRateX - m_sprite.m_sRadius / 2,
@@ -5485,7 +5446,6 @@ void CDude::ShowTarget()
 			fRateZ,
 			&m_TargetSprite.m_sX2,
 			&m_TargetSprite.m_sY2);
-
 		m_TargetSprite.m_sInFlags &= ~CSprite::InHidden;
 		m_TargetSprite.m_sLayer = CRealm::LayerSprite16;
 	}
@@ -5538,8 +5498,8 @@ void CDude::ShowTarget(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CDude::NextWeapon(void)
 	{
-	int16_t	sNumTried	= 0;
-	int16_t	sCurWeapon	= m_weapontypeCur;
+	short	sNumTried	= 0;
+	short	sCurWeapon	= m_weapontypeCur;
 
 	while (sNumTried < NumWeaponTypes)
 		{
@@ -5568,8 +5528,8 @@ void CDude::NextWeapon(void)
 ////////////////////////////////////////////////////////////////////////////////
 void CDude::PrevWeapon(void)
 	{
-	int16_t	sNumTried	= 0;
-	int16_t	sCurWeapon	= m_weapontypeCur;
+	short	sNumTried	= 0;
+	short	sCurWeapon	= m_weapontypeCur;
 
 	while (sNumTried < NumWeaponTypes)
 		{
@@ -5677,7 +5637,7 @@ bool CDude::SetWeapon(					// Returns true if weapon could be set as current.
 
 	// Get info on this weapon.
 	ClassIDType	idDummy;
-	int16_t*		psNum;
+	short*		psNum;
 	GetWeaponInfo(weapon, &idDummy, &psNum);
 
 	// If weapon was available . . .
@@ -5717,7 +5677,7 @@ bool CDude::SetWeapon(					// Returns true if weapon could be set as current.
 				GameMessage msg;
 				msg.msg_WeaponSelect.eType = typeWeaponSelect;
 				msg.msg_WeaponSelect.sPriority = 0;
-				msg.msg_WeaponSelect.sWeapon = (int16_t) m_weapontypeCur;
+				msg.msg_WeaponSelect.sWeapon = (short) m_weapontypeCur;
 				CThing* pDemon = m_pRealm->m_aclassHeads[CThing::CDemonID].GetNext();
 				if (pDemon)
 					SendThingMessage(&msg, pDemon);				
@@ -5760,9 +5720,9 @@ CPowerUp* CDude::DropPowerUp(		// Returns new powerup on success; NULL on failur
 				// Note whether we had the weapon.  Not sure how it would be possible
 				// but just in case we can somehow have a weapon selected that we do
 				// hot have.
-				int16_t	sHasWeapon	= ppowerup->m_stockpile.GetWeapon(m_weapontypeCur);
+				short	sHasWeapon	= ppowerup->m_stockpile.GetWeapon(m_weapontypeCur);
 				// Remove all but our current weapon.
-				int16_t	sIndex;
+				short	sIndex;
 				for (sIndex = SemiAutomatic; sIndex <= DoubleBarrel; sIndex++)
 					{
 					// Zero.
@@ -5871,8 +5831,8 @@ bool CDude::TrackExecutee(		// Returns true to persist, false, if we lost the ta
 			dVictimZ	= pthing->GetZ();
 			}
 
-		int16_t	sDistX			= dVictimX - m_dX;
-		int16_t	sDistZ			= m_dZ - dVictimZ;
+		short	sDistX			= dVictimX - m_dX;
+		short	sDistZ			= m_dZ - dVictimZ;
 		double	dSqrDistanceXZ	= ABS2(sDistX, sDistZ);
 
 		// Determine angle to target.
@@ -6058,7 +6018,7 @@ CPowerUp* CDude::CreateCheat(	// Returns new powerup on success; NULL on failure
 ////////////////////////////////////////////////////////////////////////////////
 void CDude::TossPowerUp(		// Returns nothing.
 	CPowerUp*	ppowerup,		// In:  Powerup to toss.
-	int16_t			sVelocity)		// In:  Velocity of toss.
+	short			sVelocity)		// In:  Velocity of toss.
 	{
 	// Blow it up.
 	GameMessage	msg;
@@ -6142,9 +6102,9 @@ void CDude::DropAllFlags(	// Returns nothing.
 		msg.msg_Explosion.eType = typeExplosion;
 		msg.msg_Explosion.sPriority = 0;
 		msg.msg_Explosion.sDamage = 10;
-		msg.msg_Explosion.sX = (int16_t) m_dX;
-		msg.msg_Explosion.sY = (int16_t) m_dY;
-		msg.msg_Explosion.sZ = (int16_t) m_dZ;
+		msg.msg_Explosion.sX = (short) m_dX;
+		msg.msg_Explosion.sY = (short) m_dY;
+		msg.msg_Explosion.sZ = (short) m_dZ;
 		msg.msg_Explosion.sVelocity = 30;
 		msg.msg_Explosion.u16ShooterID = GetInstanceID();
 
@@ -6186,8 +6146,8 @@ void CDude::DropAllFlags(	// Returns nothing.
 		if (pmsg->msg_Generic.eType == typeExplosion)
 			{
 			// Tweak the message a little.
-			pmsg->msg_Explosion.sX = (int16_t) m_dX + RAND_SWAY(30);
-			pmsg->msg_Explosion.sZ = (int16_t) m_dZ + RAND_SWAY(30);
+			pmsg->msg_Explosion.sX = (short) m_dX + RAND_SWAY(30);
+			pmsg->msg_Explosion.sZ = (short) m_dZ + RAND_SWAY(30);
 			}
 
 		// Forward the specified message.

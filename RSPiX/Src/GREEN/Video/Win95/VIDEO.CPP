@@ -98,11 +98,11 @@ CVideo::CVideo(void)
 //						05/18/95, PPL, Rewrote using the MCIWnd Class.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CVideo::CVideo(char* szFilename,						// filename of the video
-					int32_t x, 									// left edge of playback window
-					int32_t y, 									// top of the playback window
-					int32_t w, 									// width of the playback window
-					int32_t h, 									// height of the playback window
-					int16_t sClip) 							// clipping flag
+					long x, 									// left edge of playback window
+					long y, 									// top of the playback window
+					long w, 									// width of the playback window
+					long h, 									// height of the playback window
+					short sClip) 							// clipping flag
 	{
 	// Call the default constructor.
 	CVideo();
@@ -152,12 +152,12 @@ CVideo::~CVideo(void)
 // History:			05/17/95, PPL,	Started coding.
 //						05/18/95, PPL, Rewrote using the MCIWnd Class.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Create(void)
+short CVideo::Create(void)
 	{
 	// Let's create the avi video window if one has not already been created.
 	if (m_lhwnd == 0)
 		{
-		m_lhwnd = (int32_t)MCIWndCreate(gsi.hWnd, 
+		m_lhwnd = (long)MCIWndCreate(gsi.hWnd, 
 											  gsi.hInstance,
 											  (DWORD)(WS_CHILD |
 //											  			 WS_EX_TOPMOST |
@@ -225,22 +225,22 @@ void CVideo::Destroy(void)
 // History:			05/17/95, PPL,	Started coding.
 //						05/18/95, PPL, Rewrote using MCIWnd Class.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Open(char* szFilename,						// name of the video file
-						 int32_t x,									// left edge of the playback window
-						 int32_t y,									// top of the playback window
-						 int32_t w,									// width of the playback window
-						 int32_t h,									// height of the playback window
-						 int16_t sClip)								// clipping flag, use following values:
+short CVideo::Open(char* szFilename,						// name of the video file
+						 long x,									// left edge of the playback window
+						 long y,									// top of the playback window
+						 long w,									// width of the playback window
+						 long h,									// height of the playback window
+						 short sClip)								// clipping flag, use following values:
 				 														//    0: no clipping, window will be resized to 
 																		//			actual video's size.
 																		//		1:	video will be clipped to the size supplied.
 																		//		2:	video will not be clipped, video will be
 																		//			stretched/shrinked to the window's size.
 	{
-	int16_t		sResult;
+	short		sResult;
 	RECT		rect;
-	int32_t 		lXdelta;
-	int32_t		lYdelta;
+	long 		lXdelta;
+	long		lYdelta;
 
 	sResult = VIDEO_SUCCESS;		// initially no error.
 
@@ -361,9 +361,9 @@ int16_t CVideo::Open(char* szFilename,						// name of the video file
 //						05/18/95, PPL, Rewrote using MCIWnd Class.
 //						08/10/95, JMI, Altered to be aware of possibility of HWND not being valid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Close(void)
+short CVideo::Close(void)
 	{
-	int16_t	sRes = VIDEO_ERR_CLOSE;
+	short	sRes = VIDEO_ERR_CLOSE;
 
 	// If there is a window . . .
 	if (m_lhwnd != NULL)
@@ -395,9 +395,9 @@ int16_t CVideo::Close(void)
 // History:			05/17/95, PPL,	Started coding.
 //						05/18/95, PPL, Rewrote using MCIWnd Class.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Play(int16_t sMode, int32_t lStart, int32_t lEnd)
+short CVideo::Play(short sMode, long lStart, long lEnd)
 	{
-	int32_t lResult;
+	long lResult;
 
 	if (m_lhwnd)
 		{
@@ -445,9 +445,9 @@ int16_t CVideo::Play(int16_t sMode, int32_t lStart, int32_t lEnd)
 // History:			05/17/95, PPL,	Started coding.
 //						08/10/95, JMI, Altered to be aware of possibility of HWND not being valid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Pause(void)
+short CVideo::Pause(void)
 	{
-	int16_t sRes = VIDEO_ERR_PAUSE;
+	short sRes = VIDEO_ERR_PAUSE;
 
 	if (m_lhwnd != NULL)
 		{
@@ -473,9 +473,9 @@ int16_t CVideo::Pause(void)
 // History:			05/17/95, PPL,	Started coding.
 //						08/10/95, JMI, Altered to be aware of possibility of HWND not being valid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Resume(void)
+short CVideo::Resume(void)
 	{
-	int16_t sRes = VIDEO_ERR_RESUME;
+	short sRes = VIDEO_ERR_RESUME;
 
 	if (m_lhwnd != NULL)
 		{
@@ -500,9 +500,9 @@ int16_t CVideo::Resume(void)
 //						1 - Error.  (more detailed error codes may be defined later.)
 // History:			05/17/95, PPL,	Started coding.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::Stop(void)
+short CVideo::Stop(void)
 	{
-	int32_t lResult;
+	long lResult;
 
 	lResult = MCIWndStop((HWND)m_lhwnd);
 	if (lResult != 0)
@@ -521,9 +521,9 @@ int16_t CVideo::Stop(void)
 // Output:			long: current frame number.
 // History:			05/17/95, PPL,	Started coding.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int32_t CVideo::GetFrame(void)
+long CVideo::GetFrame(void)
 	{
-	int16_t sResult;
+	short sResult;
 
 	sResult = VIDEO_SUCCESS;
 
@@ -548,9 +548,9 @@ int32_t CVideo::GetFrame(void)
 // Output:			long: current position
 // History:			05/17/95, PPL,	Started coding.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int32_t CVideo::GetPosition(void)
+long CVideo::GetPosition(void)
 	{
-	int16_t sResult;
+	short sResult;
 
 	sResult = VIDEO_SUCCESS;
 
@@ -575,9 +575,9 @@ int32_t CVideo::GetPosition(void)
 // Output:			short: TRUE/FALSE
 // History:			05/22/95, PPL,	Started coding.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::IsOpened(void)
+short CVideo::IsOpened(void)
 	{
-	int32_t lResult;
+	long lResult;
 
 	lResult = MCIWndGetMode((HWND)m_lhwnd, ms_szBuf, 80);
 
@@ -604,9 +604,9 @@ int16_t CVideo::IsOpened(void)
 // History:			05/22/95, PPL,	Started coding.
 //						08/10/95, JMI, Altered to be aware of possibility of HWND not being valid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::IsPlaying(void)
+short CVideo::IsPlaying(void)
 	{
-	int16_t sRes = FALSE;
+	short sRes = FALSE;
 
 	if (m_lhwnd != NULL)
 		{
@@ -629,9 +629,9 @@ int16_t CVideo::IsPlaying(void)
 // History:			05/22/95, PPL,	Started coding.
 //						08/10/95, JMI, Altered to be aware of possibility of HWND not being valid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::IsPaused(void)
+short CVideo::IsPaused(void)
 	{
-	int16_t	sRes	= FALSE;
+	short	sRes	= FALSE;
 
 	if (m_lhwnd != NULL)
 		{
@@ -655,9 +655,9 @@ int16_t CVideo::IsPaused(void)
 // History:			05/22/95, PPL,	Started coding.
 //						08/10/95, JMI, Altered to be aware of possibility of HWND not being valid.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int16_t CVideo::IsStopped(void)
+short CVideo::IsStopped(void)
 	{
-	int16_t	sRes = FALSE;
+	short	sRes = FALSE;
 
 	if (m_lhwnd != NULL)
 		{
@@ -703,9 +703,9 @@ void CVideo::Init(void)
 //								else, the error number is returned.
 // History:			05/17/95, PPL,	Started coding.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int32_t CVideo::TraceMCIError(char* szFunctionName)
+long CVideo::TraceMCIError(char* szFunctionName)
 	{
-	int32_t lResult;
+	long lResult;
 
 	lResult = MCIWndGetError((HWND)m_lhwnd, ms_szBuf, 80);
 
@@ -717,3 +717,4 @@ int32_t CVideo::TraceMCIError(char* szFunctionName)
 
 	return lResult;
 	}
+

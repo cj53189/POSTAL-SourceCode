@@ -131,14 +131,14 @@ CMenuSettings::~CMenuSettings()
 //////////////////////////////////////////////////////////////////////////////
 // Read settings that are stored in preference file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CMenuSettings::LoadPrefs(
+short CMenuSettings::LoadPrefs(
 	RPrefs* pPrefs)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	// Check for entries for all our menus.
-	int16_t	sMenu;
-	int16_t	sMenuItem;
+	short	sMenu;
+	short	sMenuItem;
 	char	szSection[256];
 	for (sMenu = 0; sMenu < NUM_ELEMENTS(ms_apmenus); sMenu++)
 		{
@@ -168,7 +168,7 @@ int16_t CMenuSettings::LoadPrefs(
 //////////////////////////////////////////////////////////////////////////////
 // Write settings that are stored in preference file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CMenuSettings::SavePrefs(
+short CMenuSettings::SavePrefs(
 	RPrefs* pPrefs)
 	{
 	return pPrefs->IsError();
@@ -177,7 +177,7 @@ int16_t CMenuSettings::SavePrefs(
 //////////////////////////////////////////////////////////////////////////////
 // Load settings that are stored in game file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CMenuSettings::LoadGame(
+short CMenuSettings::LoadGame(
 	RFile* pFile)
 	{
 	return 0;
@@ -187,7 +187,7 @@ int16_t CMenuSettings::LoadGame(
 //////////////////////////////////////////////////////////////////////////////
 // Save settings that are stored in game file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CMenuSettings::SaveGame(
+short CMenuSettings::SaveGame(
 	RFile* pFile)
 	{
 	return 0;
@@ -197,7 +197,7 @@ int16_t CMenuSettings::SaveGame(
 //////////////////////////////////////////////////////////////////////////////
 // Temporarily set settings for demo mode (file is for saving current settings)
 //////////////////////////////////////////////////////////////////////////////
-int16_t CMenuSettings::PreDemo(
+short CMenuSettings::PreDemo(
 	RFile* pFile)
 	{
 	return 0;
@@ -207,7 +207,7 @@ int16_t CMenuSettings::PreDemo(
 //////////////////////////////////////////////////////////////////////////////
 // Restore settings to what they were prior to demo mode
 //////////////////////////////////////////////////////////////////////////////
-int16_t CMenuSettings::PostDemo(
+short CMenuSettings::PostDemo(
 	RFile* pFile)
 	{
 	return 0;

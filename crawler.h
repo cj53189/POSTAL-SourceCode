@@ -66,10 +66,10 @@ class CCrawler
 		typedef struct
 			{
 			// These values are supplied by the user
-			int16_t sX;
-			int16_t sZ;
-			int16_t sHard;
-			int16_t sPushDir;
+			short sX;
+			short sZ;
+			short sHard;
+			short sPushDir;
 			double dPushMag;
 
 			// These values are for internal use only
@@ -78,14 +78,14 @@ class CCrawler
 //			double dDragX;
 //			double dDragZ;
 
-			int16_t	sHeight;		// Stored height used only by IsGood().
+			short	sHeight;		// Stored height used only by IsGood().
 			} Nub;
 
 	//------------------------------------------------------------------------------
 	// Variables
 	//------------------------------------------------------------------------------
 	protected:
-		int16_t m_sNum;
+		short m_sNum;
 		Nub* m_pnub;
 		double m_dPushX;
 		double m_dPushZ;
@@ -95,7 +95,7 @@ class CCrawler
 	public:
 		CRealm*	m_prealm;			// Used to access the height map, the effect map,
 											// the scene, all that good stuff.
-		int16_t	m_sVertTolerance;		// Maximum amount crawler can step up.
+		short	m_sVertTolerance;		// Maximum amount crawler can step up.
 
 	//------------------------------------------------------------------------------
 	// Functions
@@ -126,7 +126,7 @@ class CCrawler
 		// Setup crawler
 		////////////////////////////////////////////////////////////////////////////////
 		void Setup(
-			int16_t sNum,										// In:  Number of Nub's in array
+			short sNum,										// In:  Number of Nub's in array
 			Nub* pnub,										// In:  Pointer to array of Nub's
 			double dPushMaxX,								// In:  Maximum push in x direction
 			double dPushMaxZ)								// In:  Maximum push in z direction
@@ -138,7 +138,7 @@ class CCrawler
 			m_dPushMaxZ	= dPushMaxZ;
 
 			// Precalculate push and drag values based on specified directions and magnitudes
-			for (int16_t s = 0; s < m_sNum; s++)
+			for (short s = 0; s < m_sNum; s++)
 				{
 				m_pnub[s].dPushX =  rspCos(rspMod360(m_pnub[s].sPushDir)) * m_pnub[s].dPushMag;
 				m_pnub[s].dPushZ = -rspSin(rspMod360(m_pnub[s].sPushDir)) * m_pnub[s].dPushMag;
@@ -165,7 +165,7 @@ class CCrawler
 		// is important to note that it may only APPEAR to be valid -- there is no way
 		// to know whether it is ACTUALLY valid.
 		////////////////////////////////////////////////////////////////////////////////
-		int16_t Move(											// Returns 0 if successfull, non-zero otherwise
+		short Move(											// Returns 0 if successfull, non-zero otherwise
 			double dx1,										// In:  Position #1 xcoord
 			double dy1,										// In:  Position #1 ycoord
 			double dz1,										// In:  Position #1 zcoord
@@ -175,26 +175,26 @@ class CCrawler
 			double* pdx,									// Out: Final position xcoord
 			double* pdy,									// Out: Final position ycoord
 			double* pdz,									// Out: Final position zcoord
-			int16_t* psTerrainH)							// Out: Final terrain height
+			short* psTerrainH)							// Out: Final terrain height
 
 			{
-			int16_t sResult = 0;
+			short sResult = 0;
 
-			int16_t sx1 = (int16_t)dx1;
-			int16_t sy1 = (int16_t)dy1;
-			int16_t sz1 = (int16_t)dz1;
-			int16_t sx2 = (int16_t)dx2;
-			int16_t sy2 = (int16_t)dy2;
-			int16_t sz2 = (int16_t)dz2;
+			short sx1 = (short)dx1;
+			short sy1 = (short)dy1;
+			short sz1 = (short)dz1;
+			short sx2 = (short)dx2;
+			short sy2 = (short)dy2;
+			short sz2 = (short)dz2;
 
 			// Check if starting position is valid
 			if (IsGood(sx1, sy1, sz1, psTerrainH))
 				{
 
 				// Creep as far as possible towards new position
-				int16_t sx;
-				int16_t sy;
-				int16_t	sz;
+				short sx;
+				short sy;
+				short	sz;
 				CrawlWhileGood(sx1, sy1, sz1, sx2, sy2, sz2, &sx, &sy, &sz, psTerrainH);
 
 				double dx	= sx;
@@ -228,10 +228,10 @@ class CCrawler
 				double dx2 = dx + m_dPushX;
 				double dy2 = dy;
 				double dz2 = dz + m_dPushZ;
-				int16_t  sTerrainH	= *psTerrainH;	// Start with a good value b/c CrawlWhileGood() 
+				short  sTerrainH	= *psTerrainH;	// Start with a good value b/c CrawlWhileGood() 
 															// won't update the value unless there's movement.
-				CrawlWhileGood((int16_t)dx, (int16_t)dy, (int16_t)dz, (int16_t)dx2, (int16_t)dy2, (int16_t)dz2, &sx, &sy, &sz, &sTerrainH);
-				if ((int16_t)dx2 == sx && (int16_t)dy2 == sy && (int16_t)dz2 == sz)
+				CrawlWhileGood((short)dx, (short)dy, (short)dz, (short)dx2, (short)dy2, (short)dz2, &sx, &sy, &sz, &sTerrainH);
+				if ((short)dx2 == sx && (short)dy2 == sy && (short)dz2 == sz)
 					{
 					// Use pushed position
 					*pdx = dx2;
@@ -251,7 +251,7 @@ class CCrawler
 				{
 				// Starting position is invalid, so we're pretty much screwed.  As a
 				// last-ditch effort, check if the ending position is miraculously valid.
-				int16_t  sTerrainH;
+				short  sTerrainH;
 				if (IsGood(sx2, sy2, sz2, &sTerrainH) )
 					{
 					// Use the ending position.  This might make things worse by moving to
@@ -291,47 +291,47 @@ class CCrawler
 		// bets are off!!!
 		////////////////////////////////////////////////////////////////////////////////
 		void CrawlWhileGood(
-			int16_t sx1,
-			int16_t sy1,
-			int16_t sz1,
-			int16_t sx2,
-			int16_t sy2,
-			int16_t sz2,
-			int16_t* psOutX,
-			int16_t* psOutY,
-			int16_t* psOutZ,
-			int16_t* psTerrainH)	// In/Out: Terrain height.
+			short sx1,
+			short sy1,
+			short sz1,
+			short sx2,
+			short sy2,
+			short sz2,
+			short* psOutX,
+			short* psOutY,
+			short* psOutZ,
+			short* psTerrainH)	// In/Out: Terrain height.
 			{
-			int16_t	sMaxTerrainH;
+			short	sMaxTerrainH;
 
 			// Clear push values
 			m_dPushX = 0.0;
 			m_dPushZ = 0.0;
 
 			// Make a copy of the starting position
-			int16_t sx = sx1;
-			int16_t sy = sy1;
-			int16_t sz = sz1;
+			short sx = sx1;
+			short sy = sy1;
+			short sz = sz1;
 
 			// Set initial "known good" position
-			int16_t sGoodX = sx;
-			int16_t sGoodY = sy;
-			int16_t sGoodZ = sz;
-			int16_t	sGoodH = *psTerrainH;
+			short sGoodX = sx;
+			short sGoodY = sy;
+			short sGoodZ = sz;
+			short	sGoodH = *psTerrainH;
 
 			// Calculate delta x and delta y
-			int16_t sdx = sx2 - sx;
-			int16_t sdy = sy2 - sy;
-			int16_t sdz = sz2 - sz;
+			short sdx = sx2 - sx;
+			short sdy = sy2 - sy;
+			short sdz = sz2 - sz;
 
 			// Make sure there's some movement, otherwise don't bother
 			if (sdx || sdy || sdz)
 				{
 
 				// Calculate offsets for each delta
-				int16_t saddx = (sdx >= 0) ? +1 : -1;
-				int16_t saddy = (sdy >= 0) ? +1 : -1;
-				int16_t saddz = (sdz >= 0) ? +1 : -1;
+				short saddx = (sdx >= 0) ? +1 : -1;
+				short saddy = (sdy >= 0) ? +1 : -1;
+				short saddz = (sdz >= 0) ? +1 : -1;
 
 				// Make all deltas positive
 				sdx = ABS(sdx);
@@ -341,9 +341,9 @@ class CCrawler
 				// This uses a Bresenham-like algorithm to move one pixel at a time along the
 				// line from (sx,sy,sz) to (sx2,sy2,sz2).	 We basically continue along until
 				// we hit an invalid position or the ending position, whichever comes first.
-				int16_t serry;
-				int16_t serrx;
-				int16_t serrz;
+				short serry;
+				short serrx;
+				short serrz;
 				if ((sdx >= sdy) && (sdx >= sdz))
 					{
 					// dx is largest
@@ -440,20 +440,20 @@ class CCrawler
 		// Also updates push values as specified by any nubs are not valid.
 		////////////////////////////////////////////////////////////////////////////////
 		bool IsGood(
-			int16_t sBaseX,				// In
-			int16_t sBaseY,				// In
-			int16_t sBaseZ,				// In
-			int16_t* psMaxTerrainH)	// Out: Maximum terrain height from scan.
+			short sBaseX,				// In
+			short sBaseY,				// In
+			short sBaseZ,				// In
+			short* psMaxTerrainH)	// Out: Maximum terrain height from scan.
 			{
 			bool bResult = true;
 
-			int16_t sMaxTerrainH	= -32768;	// Default to lowest value.
+			short sMaxTerrainH	= -32768;	// Default to lowest value.
 
-			int16_t	sTerrainH;
-			for (int16_t s = 0; s < m_sNum; s++)
+			short	sTerrainH;
+			for (short s = 0; s < m_sNum; s++)
 				{
-				int16_t sx = sBaseX + m_pnub[s].sX;
-				int16_t sz = sBaseZ + m_pnub[s].sZ;
+				short sx = sBaseX + m_pnub[s].sX;
+				short sz = sBaseZ + m_pnub[s].sZ;
 
 				if (CanWalk(sx, sBaseY, sz, &sTerrainH) == true)
 					{
@@ -491,10 +491,10 @@ class CCrawler
 		// them.
 		////////////////////////////////////////////////////////////////////////////////
 		bool CanWalk(	// Returns true if we can walk there, false otherwise.
-			int16_t sx,	// In:  X position on attribute map.
-			int16_t	sy,	// In:  Y position on attribute map.
-			int16_t sz,	// In:  Z position on attribute map.
-			int16_t* psH)	// Out: Terrain height at X/Z.
+			short sx,	// In:  X position on attribute map.
+			short	sy,	// In:  Y position on attribute map.
+			short sz,	// In:  Z position on attribute map.
+			short* psH)	// Out: Terrain height at X/Z.
 			{
 			bool	bCanWalk;
 			bool	bCannotWalk;
@@ -517,9 +517,9 @@ class CCrawler
 		////////////////////////////////////////////////////////////////////////////////
 		void Plot(		// Returns nothing.
 			U8	u8Color,	// Color index.
-			int16_t	sx,	// In:  X position.
-			int16_t	sy,	// In:  Y position.
-			int16_t sz)	// In:  Z position.
+			short	sx,	// In:  X position.
+			short	sy,	// In:  Y position.
+			short sz)	// In:  Z position.
 			{
 			// Create a line sprite.
 			CSpriteLine2d*	psl2d	= new CSpriteLine2d;

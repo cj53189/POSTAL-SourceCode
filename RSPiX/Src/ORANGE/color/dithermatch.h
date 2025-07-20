@@ -53,18 +53,18 @@ typedef	short (*PDitherCallBack) (double dProgress);
 // time based!)  I find 32000 good for a P6/200, but
 // smaller numbers can be used for slower machines.
 //	
-extern	int16_t	rspDither(	
+extern	short	rspDither(	
 					RImage* pimSrc,	// MUST BE 24-bit!
 					RImage* pimDst,	// MUST be 8-bit
-					int16_t sStartMap,	// palette index
-					int16_t sNumMap,		// # of colors
-					uint8_t*	pRed,		// Palette to match to
-					uint8_t*	pGreen,
-					uint8_t*	pBlue,
-					int32_t	lInc = 4,
+					short sStartMap,	// palette index
+					short sNumMap,		// # of colors
+					UCHAR*	pRed,		// Palette to match to
+					UCHAR*	pGreen,
+					UCHAR*	pBlue,
+					long	lInc = 4,
 					// User interaction
 					PDitherCallBack func = NULL,
-					int32_t  lMilli = 500 // time between callbacks
+					long  lMilli = 500 // time between callbacks
 					);
 	
 //==============================================
@@ -80,18 +80,18 @@ extern	int16_t	rspDither(
 // time based!)  I find 32000 good for a P6/200, but
 // smaller numbers can be used for slower machines.
 //	
-extern	int16_t	rspSimpleMap(	
+extern	short	rspSimpleMap(	
 					RImage* pimSrc,	// MUST BE 24-bit!
 					RImage* pimDst,	// MUST be 8-bit
-					int16_t sStartMap,	// palette index
-					int16_t sNumMap,		// # of colors
-					uint8_t*	pRed,		// Palette to match to
-					uint8_t*	pGreen,
-					uint8_t*	pBlue,
-					int32_t	lInc = 4,
+					short sStartMap,	// palette index
+					short sNumMap,		// # of colors
+					UCHAR*	pRed,		// Palette to match to
+					UCHAR*	pGreen,
+					UCHAR*	pBlue,
+					long	lInc = 4,
 					// User interaction
 					PDitherCallBack func = NULL,
-					int32_t  lMilli = 500 // time between callbacks
+					long  lMilli = 500 // time between callbacks
 					);
 
 //==============================================
@@ -105,22 +105,22 @@ extern	int16_t	rspSimpleMap(
 // Returns 0 for SUCCESS, -1 for ERROR, 1 for user cancel
 //==============================================
 //	
-extern	int16_t	rspDither(	
-					int32_t lBackR,		// Don't dither to this color!
-					int32_t lBackG,
-					int32_t lBackB,
-					uint8_t ucBack,		// index to make BKGD
+extern	short	rspDither(	
+					long lBackR,		// Don't dither to this color!
+					long lBackG,
+					long lBackB,
+					UCHAR ucBack,		// index to make BKGD
 					RImage* pimSrc,	// MUST BE 24-bit!
 					RImage* pimDst,	// MUST be 8-bit
-					int16_t sStartMap,	// palette index
-					int16_t sNumMap,		// # of colors
-					uint8_t*	pRed,		// Palette to match to
-					uint8_t*	pGreen,
-					uint8_t*	pBlue,
-					int32_t	lInc = 4,
+					short sStartMap,	// palette index
+					short sNumMap,		// # of colors
+					UCHAR*	pRed,		// Palette to match to
+					UCHAR*	pGreen,
+					UCHAR*	pBlue,
+					long	lInc = 4,
 					// User interaction
 					PDitherCallBack func = NULL,
-					int32_t  lMilli = 500 // time between callbacks
+					long  lMilli = 500 // time between callbacks
 					);
 
 //==============================================
@@ -136,20 +136,20 @@ extern	int16_t	rspDither(
 // Returns 0 for SUCCESS, -1 for ERROR, 1 for user cancel
 //==============================================
 //	
-int16_t	rspDither(	
-					uint8_t ucForeAlpha,		// lower limit for foreground
-					uint8_t ucBack,		// index to make BKGD
+short	rspDither(	
+					UCHAR ucForeAlpha,		// lower limit for foreground
+					UCHAR ucBack,		// index to make BKGD
 					RImage* pimSrc,	// MUST BE 24-bit!
 					RImage* pimDst,	// MUST be 8-bit
-					int16_t sStartMap,	// palette index
-					int16_t sNumMap,		// # of colors
-					uint8_t*	pRed,		// Palette to match to
-					uint8_t*	pGreen,
-					uint8_t*	pBlue,
-					int32_t	lInc = 4,
+					short sStartMap,	// palette index
+					short sNumMap,		// # of colors
+					UCHAR*	pRed,		// Palette to match to
+					UCHAR*	pGreen,
+					UCHAR*	pBlue,
+					long	lInc = 4,
 					// User interaction
 					PDitherCallBack func = NULL,
-					int32_t  lMilli = 500 // time between callbacks
+					long  lMilli = 500 // time between callbacks
 					);
 
 //==============================================
@@ -168,20 +168,20 @@ int16_t	rspDither(
 // treatment will occur.
 //==============================================
 //	
-int16_t	rspSimpleMap(	
-					uint8_t	ucForeAlpha,	// alpha threshhold
-					uint8_t ucBack,			// map background to this index
+short	rspSimpleMap(	
+					UCHAR	ucForeAlpha,	// alpha threshhold
+					UCHAR ucBack,			// map background to this index
 					RImage* pimSrc,	// MUST BE 32-bit!
 					RImage* pimDst,	// MUST be 8-bit
-					int16_t sStartMap,	// palette index
-					int16_t sNumMap,		// # of colors
-					uint8_t*	pRed,		// Palette to match to
-					uint8_t*	pGreen,
-					uint8_t*	pBlue,
-					int32_t	lInc = 4,
+					short sStartMap,	// palette index
+					short sNumMap,		// # of colors
+					UCHAR*	pRed,		// Palette to match to
+					UCHAR*	pGreen,
+					UCHAR*	pBlue,
+					long	lInc = 4,
 					// User interaction
 					PDitherCallBack func = NULL,
-					int32_t  lMilli = 500 // time between callbacks
+					long  lMilli = 500 // time between callbacks
 					);
 
 //==============================================

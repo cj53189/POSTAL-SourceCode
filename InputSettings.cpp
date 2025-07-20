@@ -234,15 +234,14 @@ CInputSettings::CInputSettings(void)
 	// them at anytime.
 	DefaultRotations();
 
-	m_sUseMouse						    = FALSE;
-	m_sUseNewMouse						= FALSE;
+	m_sUseMouse							= FALSE;
 	m_sUseJoy							= FALSE;
 
 	m_dMouseSensitivityX				= 1.00;	// 100%
 	m_dMouseSensitivityY				= 1.00;	// 100%
 
 	// Set default inputs (in case no INI is loaded).
-	int16_t i;
+	short i;
 	for (i = 0; i < NumInputFunctions; i++)
 		{
 		m_asPlayKeys[i]			= ms_ainputinfo[i].u8DefaultKey;
@@ -261,10 +260,10 @@ CInputSettings::~CInputSettings()
 //////////////////////////////////////////////////////////////////////////////
 // Read settings that are stored in preference file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CInputSettings::LoadPrefs(
+short CInputSettings::LoadPrefs(
 	RPrefs* pPrefs)
 	{
-	int16_t sResult = 0;
+	short sResult = 0;
 
 	pPrefs->GetVal("Input", "WalkTurnRate", m_dMovingSlowDegreesPerSec, &m_dMovingSlowDegreesPerSec);
 	pPrefs->GetVal("Input", "RunTurnRate", m_dMovingFastDegreesPerSec, &m_dMovingFastDegreesPerSec);
@@ -276,7 +275,6 @@ int16_t CInputSettings::LoadPrefs(
 	pPrefs->GetVal("Input", "MouseSensitivityY", m_dMouseSensitivityY, &m_dMouseSensitivityY);
 
 	pPrefs->GetVal("Input", "UseMouse", m_sUseMouse, &m_sUseMouse);
-	pPrefs->GetVal("Input", "UseNewMouse", m_sUseNewMouse, &m_sUseNewMouse);
 
 
 	pPrefs->GetVal("Input", "UseJoystick", m_sUseJoy, &m_sUseJoy);
@@ -296,7 +294,7 @@ int16_t CInputSettings::LoadPrefs(
 	pPrefs->GetVal("Input", "JoyButtonMenuDeleteKeybind", 5, &m_sJoyMenuDeleteKeybindButton);
 
 	// Game play keys.
-	int16_t	i;
+	short	i;
 	char	szDescriptor[256];
 	for (i = 0; i < NumInputFunctions; i++)
 		{
@@ -355,7 +353,7 @@ int16_t CInputSettings::LoadPrefs(
 //////////////////////////////////////////////////////////////////////////////
 // Write settings that are stored in preference file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CInputSettings::SavePrefs(
+short CInputSettings::SavePrefs(
 	RPrefs* pPrefs)
 	{
 	pPrefs->SetVal("Input", "WalkTurnRate", m_dMovingSlowDegreesPerSec);
@@ -369,12 +367,11 @@ int16_t CInputSettings::SavePrefs(
 	pPrefs->SetVal("Input", "MouseSensitivityY", m_dMouseSensitivityY);
 
 	pPrefs->SetVal("Input", "UseMouse", m_sUseMouse);
-	pPrefs->SetVal("Input", "UseNewMouse", m_sUseNewMouse);
 
 	pPrefs->SetVal("Input", "UseJoystick", m_sUseJoy);
 
 	// Game play input.
-	int16_t	i;
+	short	i;
 	for (i = 0; i < NumInputFunctions; i++)
 		{
 		pPrefs->SetVal(
@@ -402,7 +399,7 @@ int16_t CInputSettings::SavePrefs(
 //////////////////////////////////////////////////////////////////////////////
 // Load settings that are stored in game file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CInputSettings::LoadGame(
+short CInputSettings::LoadGame(
 	RFile* pFile)
 	{
 	return 0;
@@ -412,7 +409,7 @@ int16_t CInputSettings::LoadGame(
 //////////////////////////////////////////////////////////////////////////////
 // Save settings that are stored in game file
 //////////////////////////////////////////////////////////////////////////////
-int16_t CInputSettings::SaveGame(
+short CInputSettings::SaveGame(
 	RFile* pFile)
 	{
 	return 0;
@@ -422,7 +419,7 @@ int16_t CInputSettings::SaveGame(
 //////////////////////////////////////////////////////////////////////////////
 // Temporarily set settings for demo mode (file is for saving current settings)
 //////////////////////////////////////////////////////////////////////////////
-int16_t CInputSettings::PreDemo(
+short CInputSettings::PreDemo(
 	RFile* pFile)
 	{
 	// Store current keys?
@@ -434,7 +431,7 @@ int16_t CInputSettings::PreDemo(
 //////////////////////////////////////////////////////////////////////////////
 // Restore settings to what they were prior to demo mode
 //////////////////////////////////////////////////////////////////////////////
-int16_t CInputSettings::PostDemo(
+short CInputSettings::PostDemo(
 	RFile* pFile)
 	{
 	// Restore user keys?

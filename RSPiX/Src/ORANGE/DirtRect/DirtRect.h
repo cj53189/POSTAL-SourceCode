@@ -47,10 +47,10 @@
 // This structure is used to encapsulate a rectangle used by RDirtyRects.
 typedef struct
 	{
-	int16_t	sX;
-	int16_t	sY;
-	int16_t	sW;
-	int16_t	sH;
+	short	sX;
+	short	sY;
+	short	sW;
+	short	sH;
 	} RDRect;
 
 
@@ -65,10 +65,10 @@ class RDirtyRects : public RList<RDRect>
 
 	public:	// Con/Destruction.
 		RDirtyRects();
-		RDirtyRects(	int16_t sMinDistX,		// Copied into m_sMinDistanceX.
-						int16_t sMinDistY,		// Copied into m_sMinDistanceY.
-						int16_t sClipX	= -1,	// Copied into m_sClipX.
-						int16_t	sClipY	= -1);// Copied into m_sClipY.
+		RDirtyRects(	short sMinDistX,		// Copied into m_sMinDistanceX.
+						short sMinDistY,		// Copied into m_sMinDistanceY.
+						short sClipX	= -1,	// Copied into m_sClipX.
+						short	sClipY	= -1);// Copied into m_sClipY.
 		~RDirtyRects();
 
 	public:	// Implementation.
@@ -78,8 +78,8 @@ class RDirtyRects : public RList<RDRect>
 		// Add a rectangle to the list of dirty rectangles.
 		// The rectangle may get combined with another.
 		// Returns 0 on success.
-		int16_t Add(RDRect* pdr);
-		int16_t Add(int16_t sX, int16_t sY, int16_t sW, int16_t sH);
+		short Add(RDRect* pdr);
+		short Add(short sX, short sY, short sW, short sH);
 
 		// Empty the list of dirty rectangles.
 		void Empty(void);
@@ -88,22 +88,22 @@ class RDirtyRects : public RList<RDRect>
 		// Combine a rectangle with rectangles already in
 		// the list if possible.
 		// Returns 0 if combined.
-		int16_t Combine(RDRect* pdr);
+		short Combine(RDRect* pdr);
 
 		// Expand pdrExpand by pdrNew.
 		void Expand(RDRect* pdrExpand, RDRect* pdrNew);
 
 		// Clip sPos + sDistance to 0 to sClipDistance.
 		// Returns non-zero if clipped out.
-		int16_t Clip(int16_t* psPos, int16_t* psDistance, int16_t sClipDistance);
+		short Clip(short* psPos, short* psDistance, short sClipDistance);
 
 	public:		// User may/should modify these.
-		int16_t	m_sMinDistanceX;	// Minimum x-distance between rectangles.
+		short	m_sMinDistanceX;	// Minimum x-distance between rectangles.
 										// All rectangles closer will be combined.
-		int16_t	m_sMinDistanceY;	// Minimum y-distance between rectangles.
+		short	m_sMinDistanceY;	// Minimum y-distance between rectangles.
 										// All rectangles closer will be combined.
-		int16_t	m_sClipX;			// Clip input rectangles in the x direction.
-		int16_t	m_sClipY;			// Clip input rectangles in the y direction.
+		short	m_sClipX;			// Clip input rectangles in the x direction.
+		short	m_sClipY;			// Clip input rectangles in the y direction.
 	};
 
 #endif // DIRTRECT

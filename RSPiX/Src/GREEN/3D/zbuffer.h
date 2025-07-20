@@ -31,30 +31,30 @@
 // Note that z-buffer assumes that positive z is
 // towards the viewer.
 //================================================== 
-const int16_t ZB_MIN_Z = -32768;
+const short ZB_MIN_Z = -32768;
 
 class	RZBuffer // a 16-bit signed z-buffer
 	{
 public:
-	int16_t m_sW;
-	int16_t m_sH;
-	int32_t m_lP; // pitch in WORDS! (Not a real pitch!)
-	int16_t* m_pBuf; // for now, don't have great need for alignment!
+	short m_sW;
+	short m_sH;
+	long m_lP; // pitch in WORDS! (Not a real pitch!)
+	short* m_pBuf; // for now, don't have great need for alignment!
 	//----------------------------------------------
 	void	Init();
 	RZBuffer();
-	RZBuffer(int16_t sW,int16_t sH);
-	int16_t Create(int16_t sW,int16_t sH);
+	RZBuffer(short sW,short sH);
+	short Create(short sW,short sH);
 	~RZBuffer();
-	int16_t Destroy();
+	short Destroy();
 	//----------------------------------------------
-	void Clear(int16_t sVal = ZB_MIN_Z);
+	void Clear(short sVal = ZB_MIN_Z);
 	//----------------------------------------------
 	// debugging stuff
-	int16_t* GetZPtr(int16_t sX,int16_t sY){return (m_pBuf + sX + m_lP*sY);}
-	void TestHeight(RImage* pimDst,int16_t sDepth,
-		int16_t sX,int16_t sY,int16_t sW,int16_t sH);
-	void Dump(RImage* pimDst,int16_t sX,int16_t sY,int16_t sW,int16_t sH,uint8_t* pZCol);
+	short* GetZPtr(short sX,short sY){return (m_pBuf + sX + m_lP*sY);}
+	void TestHeight(RImage* pimDst,short sDepth,
+		short sX,short sY,short sW,short sH);
+	void Dump(RImage* pimDst,short sX,short sY,short sW,short sH,UCHAR* pZCol);
 	};
 
 

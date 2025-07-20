@@ -225,7 +225,7 @@ void RAttributeMap::FreeMap()
 //		Allocates memory for a map of the given size
 //
 // Parameters:
-//		uint32_t ulSize = size of buffer to allocate
+//		ULONG ulSize = size of buffer to allocate
 //
 // Returns:
 //		SUCCESS if memory was allocated
@@ -233,15 +233,15 @@ void RAttributeMap::FreeMap()
 //
 //////////////////////////////////////////////////////////////////////
 
-int16_t RAttributeMap::AllocateMap(uint32_t ulSize, uint32_t ulDetailMapSize)
+short RAttributeMap::AllocateMap(ULONG ulSize, ULONG ulDetailMapSize)
 {
-	int16_t sReturn = SUCCESS;
+	short sReturn = SUCCESS;
 
 	if (m_pusMap == NULL)
-		m_pusMap = new uint16_t[ulSize];
+		m_pusMap = new USHORT[ulSize];
 
 	if (m_pusDetailMap == NULL)
-		m_pusDetailMap = new uint16_t[ulDetailMapSize];
+		m_pusDetailMap = new USHORT[ulDetailMapSize];
 
 	if (m_pusMap == NULL || m_pusDetailMap == NULL)
 		return FAILURE;
@@ -258,30 +258,30 @@ int16_t RAttributeMap::AllocateMap(uint32_t ulSize, uint32_t ulDetailMapSize)
 //		at the given position on the map.
 //
 // Parameters:
-//		uint32_t ulX = x position of point
-//		uint32_t ulY = y position of point
+//		ULONG ulX = x position of point
+//		ULONG ulY = y position of point
 //
 // Returns:
-//		uint16_t = attribute at the specified point
+//		USHORT = attribute at the specified point
 //
 //////////////////////////////////////////////////////////////////////
 /*
-uint16_t RAttributeMap::GetAttribute(long lX, long lY)
+USHORT RAttributeMap::GetAttribute(long lX, long lY)
 {
 	if ((lX/m_sScaleX) > m_lWidth || (lY/m_sScaleY) > m_lHeight || lX < 0 || lY < 0)
 		return ATTRIBUTE_NOT_WALKABLE;
 
 	m_usLastAttribute = m_pusMap[(lY/m_sScaleY)*m_lWidth + (lX/m_sScaleX)];
-	m_ucFlags = (uint8_t) (m_usLastAttribute & 0x00ff);
-	m_ucMinHeight = m_ucMaxHeight = (uint8_t) ((m_usLastAttribute & 0xff00) >> 8);
+	m_ucFlags = (UCHAR) (m_usLastAttribute & 0x00ff);
+	m_ucMinHeight = m_ucMaxHeight = (UCHAR) ((m_usLastAttribute & 0xff00) >> 8);
 
 	return m_usLastAttribute;
 }
 */
 
-uint16_t RAttributeMap::GetAttribute(int32_t lX, int32_t lY)
+USHORT RAttributeMap::GetAttribute(long lX, long lY)
 {
-	uint16_t usBlockData;
+	USHORT usBlockData;
 
 	if ((lX/m_sScaleX) >= m_lWidth || (lY/m_sScaleY) >= m_lHeight || lX < 0 || lY < 0)
 		return ATTRIBUTE_NOT_WALKABLE;
@@ -293,14 +293,14 @@ uint16_t RAttributeMap::GetAttribute(int32_t lX, int32_t lY)
 	// Lookup the value for this pixel
 	{
 		m_usLastAttribute = m_pusDetailMap[((usBlockData & 0x7fff) * m_sBlockDataSize) + (((lY % m_sScaleY)*m_sScaleY) + (lX % m_sScaleX))];
-		m_ucFlags = (uint8_t) ((m_usLastAttribute & 0xff00) >> 8);
-		m_ucMinHeight = m_ucMaxHeight = (uint8_t) (m_usLastAttribute & 0x00ff); 
+		m_ucFlags = (UCHAR) ((m_usLastAttribute & 0xff00) >> 8);
+		m_ucMinHeight = m_ucMaxHeight = (UCHAR) (m_usLastAttribute & 0x00ff); 
 	}
 	else
 	{
 		m_usLastAttribute = usBlockData;
-		m_ucFlags = (uint8_t) ((usBlockData & 0xff00) >> 8);
-		m_ucMinHeight = m_ucMaxHeight = (uint8_t) (usBlockData & 0x00ff);
+		m_ucFlags = (UCHAR) ((usBlockData & 0xff00) >> 8);
+		m_ucMinHeight = m_ucMaxHeight = (UCHAR) (usBlockData & 0x00ff);
 	}
 	return m_usLastAttribute;		
 }	
@@ -335,12 +335,12 @@ uint16_t RAttributeMap::GetAttribute(int32_t lX, int32_t lY)
 //		ulRightCoord = right side of box to check
 //
 // Returns
-//		uint16_t = ORed combination of attribute bits within this rectangle
+//		USHORT = ORed combination of attribute bits within this rectangle
 //
 //////////////////////////////////////////////////////////////////////
 
 /*
-uint16_t RAttributeMap::GetAttribute(long lTopCoord, long lBottomCoord,
+USHORT RAttributeMap::GetAttribute(long lTopCoord, long lBottomCoord,
 											 long lLeftCoord, long lRightCoord)
 {
 	long lTop = lTopCoord / m_sScaleY;
@@ -368,11 +368,11 @@ uint16_t RAttributeMap::GetAttribute(long lTopCoord, long lBottomCoord,
 
 	long lRow;
 	long lCol;
-	uint16_t usResult = 0;
-	uint16_t usAttrib = 0;
-	uint16_t usMin = m_pusMap[lTop*m_lWidth + lLeft];
-	uint16_t usMax = m_pusMap[lTop*m_lWidth + lLeft];
-	uint16_t usFlags = 0;
+	USHORT usResult = 0;
+	USHORT usAttrib = 0;
+	USHORT usMin = m_pusMap[lTop*m_lWidth + lLeft];
+	USHORT usMax = m_pusMap[lTop*m_lWidth + lLeft];
+	USHORT usFlags = 0;
 
 	for (lRow = lTop; lRow <= lBottom; lRow++)
 		for (lCol = lLeft; lCol <= lRight; lCol++)
@@ -383,9 +383,9 @@ uint16_t RAttributeMap::GetAttribute(long lTopCoord, long lBottomCoord,
 			usMax = MAX(usMax, usAttrib);
 		}
 
-	m_ucFlags = (uint8_t) (usFlags & 0x00ff);
-	m_ucMinHeight = (uint8_t) (usMin >> 8);
-	m_ucMaxHeight = (uint8_t) (usMax >> 8);
+	m_ucFlags = (UCHAR) (usFlags & 0x00ff);
+	m_ucMinHeight = (UCHAR) (usMin >> 8);
+	m_ucMaxHeight = (UCHAR) (usMax >> 8);
 
 	usResult = (usMax & 0xff00) | (usFlags & 0x00ff);
 
@@ -393,13 +393,13 @@ uint16_t RAttributeMap::GetAttribute(long lTopCoord, long lBottomCoord,
 }
 */
 
-uint16_t RAttributeMap::GetAttribute(int32_t lTopCoord, int32_t lBottomCoord,
-											 int32_t lLeftCoord, int32_t lRightCoord)
+USHORT RAttributeMap::GetAttribute(long lTopCoord, long lBottomCoord,
+											 long lLeftCoord, long lRightCoord)
 {
-	int32_t lTop = lTopCoord;// / m_sScaleY;
-	int32_t lBottom = lBottomCoord;// / m_sScaleY;
-	int32_t lLeft = lLeftCoord;// / m_sScaleX;
-	int32_t lRight = lRightCoord;// / m_sScaleX;
+	long lTop = lTopCoord;// / m_sScaleY;
+	long lBottom = lBottomCoord;// / m_sScaleY;
+	long lLeft = lLeftCoord;// / m_sScaleX;
+	long lRight = lRightCoord;// / m_sScaleX;
 
 	// Clip the box to the map size if necessary
 	if (lTop >= m_lWorldHeight)
@@ -419,11 +419,11 @@ uint16_t RAttributeMap::GetAttribute(int32_t lTopCoord, int32_t lBottomCoord,
 	if (lRight < 0)
 		lRight = 0;
 
-	int32_t lRow;
-	int32_t lCol;
-	uint16_t usResult = 0;
-	uint16_t usAttrib = 0;
-	uint16_t usFlags = 0;
+	long lRow;
+	long lCol;
+	USHORT usResult = 0;
+	USHORT usAttrib = 0;
+	USHORT usFlags = 0;
 	char cMax = (char) 0x80;
 
 	for (lRow = lTop; lRow <= lBottom; lRow++)
@@ -481,10 +481,10 @@ uint16_t RAttributeMap::GetAttribute(int32_t lTopCoord, int32_t lBottomCoord,
 //
 //////////////////////////////////////////////////////////////////////
 
-int16_t RAttributeMap::Load(char* pszFilename)
+short RAttributeMap::Load(char* pszFilename)
 {
 	RFile cf;
-	int16_t sReturn = SUCCESS;
+	short sReturn = SUCCESS;
 
 	if (cf.Open(pszFilename, "rb", RFile::LittleEndian) != SUCCESS)
 	{
@@ -499,11 +499,11 @@ int16_t RAttributeMap::Load(char* pszFilename)
 	return sReturn;
 }
 
-int16_t RAttributeMap::Load(RFile* prf)
+short RAttributeMap::Load(RFile* prf)
 {
-	int16_t sReturn = SUCCESS;
-	uint32_t ulFileType;
-	uint32_t ulVersion;
+	short sReturn = SUCCESS;
+	ULONG ulFileType;
+	ULONG ulVersion;
 
 	if (prf && prf->IsOpen())
 	{
@@ -527,7 +527,7 @@ int16_t RAttributeMap::Load(RFile* prf)
 										{
 											if (AllocateMap(m_lWidth * m_lHeight, m_sNumDetailMaps * m_sScaleX * m_sScaleY) == SUCCESS)
 											{
-												if (prf->Read(m_pusMap, m_lWidth*m_lHeight) == (int32_t) (m_lWidth*m_lHeight))
+												if (prf->Read(m_pusMap, m_lWidth*m_lHeight) == (long) (m_lWidth*m_lHeight))
 												{
 													if (prf->Read(m_pusDetailMap, m_sNumDetailMaps*m_sScaleX*m_sScaleY) == m_sNumDetailMaps*m_sScaleX*m_sScaleY)
 													{

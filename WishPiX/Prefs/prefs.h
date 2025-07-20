@@ -51,23 +51,23 @@ class RPrefs
 
 	private:
 		FILE*						m_pFile;				// Currently open file, or NULL if none
-		int16_t						m_sReadOnly;		// Read-only flag (1 = read-only, 0 = not)
-		int16_t						m_sErrorStatus;	// Error status (non-zero = error, 0 = not)
-		int16_t						m_sModified;		//	Indicates if ini in memory has been modified
-		int16_t						m_sDidRead;			// Indicates if ini file has been read yet
-		int16_t						m_sUseCRLF;			// Indicates if ini file is using CR/LF pairs
+		short						m_sReadOnly;		// Read-only flag (1 = read-only, 0 = not)
+		short						m_sErrorStatus;	// Error status (non-zero = error, 0 = not)
+		short						m_sModified;		//	Indicates if ini in memory has been modified
+		short						m_sDidRead;			// Indicates if ini file has been read yet
+		short						m_sUseCRLF;			// Indicates if ini file is using CR/LF pairs
 		char						*m_pszFileName;	// Name of file
 		char						*m_pszFileMode;	// Mode file was opened in
 		RPrefsLineList			m_pllLines;			// List of lines read from ini file.
 
 		// Get iterator to a variable 
-		int16_t	GetIteratorToVariable(				// Returns 0 if successfull, non-zero otherwise
+		short	GetIteratorToVariable(				// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,					// In:  Section name (without brackets)
 			const char* pszVariable,				// In:  Variable name
 			RPrefsLineList::Pointer* i);			// Out: iterator to line in list
 
 		// Get iterator to a section
-		int16_t	GetIteratorToSection(				// Returns 0 if successfull, non-zero otherwise
+		short	GetIteratorToSection(				// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,					// In:  Section name (without brackets)
 			RPrefsLineList::Pointer* i);			// Out: iterator to line in list
 
@@ -85,36 +85,36 @@ class RPrefs
 		// attempts to open the file in read/write mode.  If this fails, it attempts
 		// to open the file in read-only mode.  If this fails, too, it attempts to
 		// create an empty file.
-		int16_t Open(								// Returns 0 if successfull, non-zero otherwise
+		short Open(								// Returns 0 if successfull, non-zero otherwise
 			const char* pszFile,				// In:  Name of preference file
 			const char* pszMode);			// In:  Open mode (same as fopen())
 
-		int16_t Open(								// Returns 0 if successfull, non-zero otherwise
+		short Open(								// Returns 0 if successfull, non-zero otherwise
 			const char* pszFile);			// In:  Name of preference file
 
 		// Read ini file into list of lines.
-		int16_t Read();
+		short Read();
 
 		// Write ini file back out to disk.
-		int16_t Write();
+		short Write();
 
 		// Close current preference file
-		int16_t Close();
+		short Close();
 
 		// Check if any I/O errors have occurred.  This includes the most recent Open()
 		// and any I/O errors since then.  Once an error occurs, the only way to clear
 		// it is via a successfull Open().
-		int16_t IsError(void)					// Returns non-zero if error occurred, 0 otherwise
+		short IsError(void)					// Returns non-zero if error occurred, 0 otherwise
 			{ return m_sErrorStatus; }
 
 		// Check if file is marked as "read only".  If so, then the file cannot be
 		// modified or written to.  If this is called at a time when there is no open
 		// file, then the return value will be 0.
-		int16_t IsReadOnly(void)				// Returns non-zero if read-only, 0 otherwise
+		short IsReadOnly(void)				// Returns non-zero if read-only, 0 otherwise
 			{ return m_sReadOnly; }
 
 		// Check if copy of file in memory has been modified
-		int16_t IsModified()
+		short IsModified()
 			{ return m_sModified; }
 
 		// Unset modified status
@@ -122,12 +122,12 @@ class RPrefs
 			{ m_sModified = 0; }
 
 		// Delete the specified variable in the specified section
-		int16_t DeleteVariable(					// Returns 0 if successfull, non-zero otherwise
+		short DeleteVariable(					// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable);		// In:  Variable name
 
 		// Delete the specified section
-		int16_t DeleteSection(					// Returns 0 if successfull, non-zero otherwise
+		short DeleteSection(					// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection);		// In:  Section name (without brackets)
 
 		// Set specified entry in the specified section to the specified value.
@@ -140,47 +140,47 @@ class RPrefs
 		// does not exist, it will be created.
 		//
 		// If an I/O error occurs, the function returns a non-zero negative value.
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			const char* pszValue);			// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			S8 s8Value);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			U8 u8Value);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			S16 s16Value);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			U16 u16Value);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			S32 s32Value);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			U32 u32Value);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			float fValue);						// In:  Value
 
-		int16_t SetVal(							// Returns 0 if successfull, non-zero otherwise
+		short SetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			double dValue);					// In:  Value
@@ -200,61 +200,61 @@ class RPrefs
 		//
 		// If an I/O error occurs, then the function returns a non-zero, negative
 		// value to indicate the error.
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			const char* pszDefault,			// In:  Default value
 			char* pszValue);					// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			S8 s8Default,						// In:  Default value
 			S8* s8Value);						// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			U8 u8Default,						// In:  Default value
 			U8* u8Value);						// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			S16 s16Default,					// In:  Default value
 			S16* s16Value);					// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			U16 u16Default,					// In:  Default value
 			U16* u16Value);					// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			S32 s32Default,					// In:  Default value
 			S32* s32Value);					// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			U32 u32Default,					// In:  Default value
 			U32* u32Value);					// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			float fDefault,					// In:  Default value
 			float* fValue);					// Out: Value returned here
 
-		int16_t GetVal(							// Returns 0 if successfull, non-zero otherwise
+		short GetVal(							// Returns 0 if successfull, non-zero otherwise
 			const char* pszSection,			// In:  Section name (without brackets)
 			const char* pszVariable,		// In:  Variable name
 			double dDefault,					// In:  Default value
 			double* dValue);					// Out: Value returned here
 
-		int16_t Print();							// Used for error checking
+		short Print();							// Used for error checking
 	};
 
 

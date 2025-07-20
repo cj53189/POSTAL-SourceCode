@@ -79,14 +79,14 @@
 class RAttributeMap
 {
 	public:
-		int32_t m_lWidth;
-		int32_t m_lHeight;
-		int32_t m_lWorldWidth;
-		int32_t m_lWorldHeight;
-		int16_t m_sScaleX;
-		int16_t m_sScaleY;
-		int16_t m_sNumDetailMaps;
-		int16_t m_sBlockDataSize;
+		long m_lWidth;
+		long m_lHeight;
+		long m_lWorldWidth;
+		long m_lWorldHeight;
+		short m_sScaleX;
+		short m_sScaleY;
+		short m_sNumDetailMaps;
+		short m_sBlockDataSize;
 
 		// General Constructor
 		RAttributeMap();
@@ -98,50 +98,50 @@ class RAttributeMap
 		~RAttributeMap();
 
 		// Load function - to load a map
-		int16_t Load(char* pszFilename);
+		short Load(char* pszFilename);
 
 		// Load function that takes an open RFile pointer
-		int16_t Load(RFile* prf);
+		short Load(RFile* prf);
 
 		// Single point attribute
-		uint16_t GetAttribute(int32_t lX, int32_t lY);
+		USHORT GetAttribute(long lX, long lY);
 
 		// Rectangle attribute
-		uint16_t GetAttribute(int32_t lTop, int32_t lBottom, int32_t lLeft, int32_t lRight);
+		USHORT GetAttribute(long lTop, long lBottom, long lLeft, long lRight);
 
 		// Get just the low 8 bits (flags) from the last GetAttribute Call
-		uint8_t GetFlags()
+		UCHAR GetFlags()
 			{return m_ucFlags;};
 		
 		// Get the maximum height from the last GetAttribute Call
-		uint8_t GetMaxHeight()
+		UCHAR GetMaxHeight()
 			{return m_ucMaxHeight;};
 
 		// Get the minimum height from the last GetAttribute Call
-		uint8_t GetMinHeight()
+		UCHAR GetMinHeight()
 			{return m_ucMinHeight;};
 
 	private:
 		// pointer to map buffer
-		uint16_t* m_pusMap;
+		USHORT* m_pusMap;
 
 		// pointer to detail map buffer
-		uint16_t* m_pusDetailMap;
+		USHORT* m_pusDetailMap;
 
 		// The attribute stored since the last GetAttribute Call
-		uint16_t m_usLastAttribute;
+		USHORT m_usLastAttribute;
 
 		// The Max height stored since the last GetAttribute Call
-		uint8_t m_ucMaxHeight;
+		UCHAR m_ucMaxHeight;
 
 		// The Min height stored since the last GetAttribute Call
-		uint8_t m_ucMinHeight;
+		UCHAR m_ucMinHeight;
 
 		// The flags stored since the last GetAttribute Call
-		uint8_t m_ucFlags;
+		UCHAR m_ucFlags;
 
 		// Allocate buffer for map
-		int16_t AllocateMap(uint32_t ulSize, uint32_t ulDetailMapSize);
+		short AllocateMap(ULONG ulSize, ULONG ulDetailMapSize);
 			
 	public:
 		// Deallocate buffer for map
@@ -155,3 +155,10 @@ class RAttributeMap
 //////////////////////////////////////////////////////////////////////
 // EOF
 //////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+

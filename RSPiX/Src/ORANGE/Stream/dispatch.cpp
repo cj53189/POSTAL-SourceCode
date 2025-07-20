@@ -118,7 +118,7 @@ CDispatch::~CDispatch()
 //////////////////////////////////////////////////////////////////////////////
 void CDispatch::Set(void)
 	{
-	for (int32_t l = 0L; l < NUM_TYPES; l++)
+	for (long l = 0L; l < NUM_TYPES; l++)
 		{
 		m_afnAlloc[l]	= NULL;
 		m_afnFree[l]	= NULL;
@@ -164,8 +164,8 @@ void CDispatch::Reset(void)
 // Handles data callbacks from filter.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::UseCall(uint8_t* pucBuffer, int32_t lSize, uint16_t usType, 
-								uint8_t ucFlags, int32_t lTime)
+void CDispatch::UseCall(UCHAR* pucBuffer, long lSize, USHORT usType, 
+								UCHAR ucFlags, long lTime)
 	{
 	// If data handled . . .
 	if (m_afnUse[usType] != NULL)
@@ -193,8 +193,8 @@ void CDispatch::UseCall(uint8_t* pucBuffer, int32_t lSize, uint16_t usType,
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::UseCallStatic(uint8_t* pucBuffer, int32_t lSize, uint16_t usType, 
-										uint8_t ucFlags, int32_t lTime, int32_t l_pDispatch)
+void CDispatch::UseCallStatic(UCHAR* pucBuffer, long lSize, USHORT usType, 
+										UCHAR ucFlags, long lTime, long l_pDispatch)
 	{
 	((CDispatch*)l_pDispatch)->UseCall(pucBuffer, lSize, usType, ucFlags, lTime);
 	}
@@ -204,9 +204,9 @@ void CDispatch::UseCallStatic(uint8_t* pucBuffer, int32_t lSize, uint16_t usType
 // Handles alloc callbacks from filter.
 //
 //////////////////////////////////////////////////////////////////////////////
-uint8_t* CDispatch::AllocCall(int32_t lSize, uint16_t usType, uint8_t ucFlags)
+UCHAR* CDispatch::AllocCall(long lSize, USHORT usType, UCHAR ucFlags)
 	{
-	uint8_t*	puc	= NULL;
+	UCHAR*	puc	= NULL;
 
 	if (m_afnAlloc[usType] != NULL)
 		{
@@ -217,7 +217,7 @@ uint8_t* CDispatch::AllocCall(int32_t lSize, uint16_t usType, uint8_t ucFlags)
 		// Only allocate if there is a use handler (otherwise, data is useless).
 		if (m_afnUse[usType] != NULL)
 			{
-			puc = (uint8_t*)malloc(lSize);
+			puc = (UCHAR*)malloc(lSize);
 			}
 		else
 			{
@@ -245,9 +245,9 @@ uint8_t* CDispatch::AllocCall(int32_t lSize, uint16_t usType, uint8_t ucFlags)
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-uint8_t* CDispatch::AllocCallStatic(	int32_t lSize, 
-												uint16_t usType, uint8_t ucFlags,  
-												int32_t l_pDispatch)
+UCHAR* CDispatch::AllocCallStatic(	long lSize, 
+												USHORT usType, UCHAR ucFlags,  
+												long l_pDispatch)
 	{
 	return ((CDispatch*)l_pDispatch)->AllocCall(lSize, usType, ucFlags);
 	}
@@ -257,7 +257,7 @@ uint8_t* CDispatch::AllocCallStatic(	int32_t lSize,
 // Handles free callbacks from filter.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::FreeCall(uint8_t* puc, uint16_t usType, uint8_t ucFlags)
+void CDispatch::FreeCall(UCHAR* puc, USHORT usType, UCHAR ucFlags)
 	{
 	if (puc != NULL)
 		{
@@ -284,8 +284,8 @@ void CDispatch::FreeCall(uint8_t* puc, uint16_t usType, uint8_t ucFlags)
 // (static)
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::FreeCallStatic(	uint8_t* pucBuffer, uint16_t usType, 
-											uint8_t ucFlags, int32_t l_pDispatch)
+void CDispatch::FreeCallStatic(	UCHAR* pucBuffer, USHORT usType, 
+											UCHAR ucFlags, long l_pDispatch)
 	{
 	((CDispatch*)l_pDispatch)->FreeCall(pucBuffer, usType, ucFlags);
 	}
@@ -296,10 +296,10 @@ void CDispatch::FreeCallStatic(	uint8_t* pucBuffer, uint16_t usType,
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t CDispatch::AddItem(	uint8_t* puc, int32_t lSize, uint16_t usType, 
-									uint8_t ucFlags, int32_t lTime)
+short CDispatch::AddItem(	UCHAR* puc, long lSize, USHORT usType, 
+									UCHAR ucFlags, long lTime)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	// Attempt to allocate a RTITEM for this chunk.
 	PRTITEM	pri	= new RTITEM;
@@ -350,7 +350,7 @@ void CDispatch::Blow(void)
 	// Get the lowest time (always the head, since it is sorted).
 	PRTITEM	pri	= m_slistRtItems.GetHead();
 	// Get the current time.
-	int32_t		lTime	= GetTime();
+	long		lTime	= GetTime();
 
 	// Do until none left or time exceeds current.
 	while (pri != NULL && pri->lTime < lTime)
@@ -383,7 +383,7 @@ void CDispatch::Blow(void)
 // to implied this Blow().
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::BlowStatic(int32_t l_pDispatch)
+void CDispatch::BlowStatic(long l_pDispatch)
 	{
 	((CDispatch*)l_pDispatch)->Blow();
 	}
@@ -397,7 +397,7 @@ void CDispatch::BlowStatic(int32_t l_pDispatch)
 // Sets the type handler for usType to fnUse.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::SetDataHandler(uint16_t usType, USE_DISPATCHFUNC fnUse)
+void CDispatch::SetDataHandler(USHORT usType, USE_DISPATCHFUNC fnUse)
 	{
 	ASSERT(usType < NUM_TYPES);
 
@@ -409,7 +409,7 @@ void CDispatch::SetDataHandler(uint16_t usType, USE_DISPATCHFUNC fnUse)
 // Sets the data handler for usType to fnAlloc.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::SetAllocHandler(uint16_t usType, ALLOC_DISPATCHFUNC fnAlloc)
+void CDispatch::SetAllocHandler(USHORT usType, ALLOC_DISPATCHFUNC fnAlloc)
 	{
 	ASSERT(usType < NUM_TYPES);
 
@@ -421,7 +421,7 @@ void CDispatch::SetAllocHandler(uint16_t usType, ALLOC_DISPATCHFUNC fnAlloc)
 // Sets the type handler for usType to fnFree.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::SetFreeHandler(uint16_t usType, FREE_DISPATCHFUNC fnFree)
+void CDispatch::SetFreeHandler(USHORT usType, FREE_DISPATCHFUNC fnFree)
 	{
 	ASSERT(usType < NUM_TYPES);
 
@@ -433,7 +433,7 @@ void CDispatch::SetFreeHandler(uint16_t usType, FREE_DISPATCHFUNC fnFree)
 // Sets the user value for usType to lUser.
 //
 //////////////////////////////////////////////////////////////////////////////
-void CDispatch::SetUserVal(uint16_t usType, int32_t lUser)
+void CDispatch::SetUserVal(USHORT usType, long lUser)
 	{
 	ASSERT(usType < NUM_TYPES);
 
@@ -464,7 +464,7 @@ void CDispatch::SetFilter(CFilter* pfilter)
 		m_pfilter->m_fnAlloc	= AllocCallStatic;
 		m_pfilter->m_fnFree	= FreeCallStatic;
 		m_pfilter->m_fnUse	= UseCallStatic;
-		m_pfilter->m_lUser	= (int32_t)this;
+		m_pfilter->m_lUser	= (long)this;
 		}
 	}
 
@@ -474,13 +474,13 @@ void CDispatch::SetFilter(CFilter* pfilter)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t CDispatch::Start(void)
+short CDispatch::Start(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (m_sActive == FALSE)
 		{
-		if (Blu_AddCritical((CRITICALL)BlowStatic, (int32_t)this) == 0)
+		if (Blu_AddCritical((CRITICALL)BlowStatic, (long)this) == 0)
 			{
 			// Success.
 			m_sActive = TRUE;
@@ -501,9 +501,9 @@ int16_t CDispatch::Start(void)
 // Returns 0 on success.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t CDispatch::Suspend(void)
+short CDispatch::Suspend(void)
 	{
-	int16_t	sRes	= 0;	// Assume success.
+	short	sRes	= 0;	// Assume success.
 
 	if (m_sActive == TRUE)
 		{
@@ -528,11 +528,11 @@ int16_t CDispatch::Suspend(void)
 // Returns the number of handlers that returned an error.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t CDispatch::SendHandlerMessage(uint16_t usMsg)
+short CDispatch::SendHandlerMessage(USHORT usMsg)
 	{
-	int16_t sNum	= 0;
+	short sNum	= 0;
 
-	for (int32_t l = 0L; l < NUM_TYPES; l++)
+	for (long l = 0L; l < NUM_TYPES; l++)
 		{
 		if (m_afnMsg[l] != NULL)
 			{

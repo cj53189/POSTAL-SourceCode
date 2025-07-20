@@ -75,7 +75,7 @@ static RInputEvent	ms_ieMouse		=			// Next mouse input event.
 	RInputEvent::Mouse,
 	};
 
-static int16_t			ms_sMouseEvent	= FALSE;	// TRUE, if ms_ieMouse contains
+static short			ms_sMouseEvent	= FALSE;	// TRUE, if ms_ieMouse contains
 															// a valid input event.
 
 static RInputEvent	ms_ieKey			=			// Next key input event.
@@ -83,7 +83,7 @@ static RInputEvent	ms_ieKey			=			// Next key input event.
 	RInputEvent::Key,
 	};
 
-static int16_t			ms_sKeyEvent	= FALSE;	// TRUE, if ms_ieKey contains
+static short			ms_sKeyEvent	= FALSE;	// TRUE, if ms_ieKey contains
 															// a valid input event.
 
 static XInputState	ms_XInputState = {};		// CURRENT XInput state.
@@ -101,10 +101,10 @@ static XInputState	ms_XInputState = {};		// CURRENT XInput state.
 // Gets the next input event.
 //
 //////////////////////////////////////////////////////////////////////////////
-int16_t rspGetNextInputEvent(	// Returns 1 if there is an event, 0 if none.
+short rspGetNextInputEvent(	// Returns 1 if there is an event, 0 if none.
 	RInputEvent*	pie)			// Out: Filled with input event type and details.
 	{
-	int16_t	sGotEvent	= 1;	// Assume we have one.
+	short	sGotEvent	= 1;	// Assume we have one.
 
 	// If no current mouse event . . .
 	if (ms_sMouseEvent == FALSE)
@@ -238,12 +238,12 @@ void ClearXInputState()
 ///////////////////////////////////////////////////////////////////////////////
 // Updates joystick and returns current button state.
 ///////////////////////////////////////////////////////////////////////////////
-int16_t GetXInputState(XInputState* xis)
+short GetXInputState(XInputState* xis)
 {
 	rspUpdateJoy(0);
 	return GetXInputStateNoUpdate(xis);
 }
-int16_t GetLastXInputState(XInputState* xis)
+short GetLastXInputState(XInputState* xis)
 {
 	if (xis)
 	{
@@ -252,7 +252,7 @@ int16_t GetLastXInputState(XInputState* xis)
 	}
 	return 0;
 }
-int16_t GetXInputStateNoUpdate(XInputState* xis)
+short GetXInputStateNoUpdate(XInputState* xis)
 {
 	// Get current input state from Blue
 	U32 u32Buttons = 0;
@@ -492,7 +492,7 @@ int16_t GetXInputStateNoUpdate(XInputState* xis)
 ///////////////////////////////////////////////////////////////////////////////
 // Checks current joystick state and returns 1 if any button is pressed.
 ///////////////////////////////////////////////////////////////////////////////
-int16_t IsXInputButtonPressed()
+short IsXInputButtonPressed()
 {
 	XInputState xis = {};
 

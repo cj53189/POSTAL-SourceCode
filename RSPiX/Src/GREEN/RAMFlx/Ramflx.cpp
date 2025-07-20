@@ -129,12 +129,12 @@ CRamFlx::~CRamFlx()
 //						so that the next time this function is called, it doesn't fail
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::Open(
+short CRamFlx::Open(
 			char* pszFileName,		// Full path and filename of flic file
 			FLX_FILE_HDR* pfilehdr,	// Copy of header returned here if not NULL
 			CImage* pimage)			// Memory allocated within struct if not NULL
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	// Close in case it was left open
 	Close();
@@ -180,7 +180,7 @@ int16_t CRamFlx::Open(
 			// previous frame and the previous color palette.
 			if (pimage == NULL)
 				{
-				sError = AllocBuf(&m_imagePrev, (int32_t)m_filehdr.sWidth, (int32_t)m_filehdr.sHeight, 256);
+				sError = AllocBuf(&m_imagePrev, (long)m_filehdr.sWidth, (long)m_filehdr.sHeight, 256);
 				}
 			}
 		else
@@ -202,7 +202,7 @@ int16_t CRamFlx::Open(
 	
 	// If pointer to buf not NULL, then allocate memory
 	if ((sError == 0) && (pimage != NULL))
-		sError = CreateBuf(pimage, (int32_t)m_filehdr.sWidth, (int32_t)m_filehdr.sHeight, 256);
+		sError = CreateBuf(pimage, (long)m_filehdr.sWidth, (long)m_filehdr.sHeight, 256);
 	
 	// If no errors, then file is finally marked "open for reading"
 	if (sError == 0)
@@ -221,9 +221,9 @@ int16_t CRamFlx::Open(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::Close(CImage* pimage)
+short CRamFlx::Close(CImage* pimage)
 	{
-	int16_t sError = 1;
+	short sError = 1;
 	
 	// If file is open, try to close it.
 	if (m_sOpenForRead)
@@ -266,9 +266,9 @@ int16_t CRamFlx::Close(CImage* pimage)
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::GetHeader(FLX_FILE_HDR* pFileHdr)
+short CRamFlx::GetHeader(FLX_FILE_HDR* pFileHdr)
 	{
-	int16_t sError = 1;
+	short sError = 1;
 	
 	if (m_sOpenForRead)
 		{
@@ -289,7 +289,7 @@ int16_t CRamFlx::GetHeader(FLX_FILE_HDR* pFileHdr)
 // Otherwise, the number will be from 1 to n.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::GetFrameNum(void)
+short CRamFlx::GetFrameNum(void)
 	{
 	return m_sFrameNum;
 	}
@@ -306,11 +306,11 @@ int16_t CRamFlx::GetFrameNum(void)
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::ReadFrame(
-	int16_t sFrameNum,			// Frame number to be read
+short CRamFlx::ReadFrame(
+	short sFrameNum,			// Frame number to be read
 	CImage* pimageRead)		// Buffer for frame being read
 	{
-	int16_t sError = 0;
+	short sError = 0;
 	
 	if (m_sOpenForRead && 
 	    (sFrameNum >= 1) && 
@@ -333,8 +333,8 @@ int16_t CRamFlx::ReadFrame(
 			{
 			if (sFrameNum != m_sFrameNum)
 				{
-				int16_t	sColorsModified	= FALSE;
-				int16_t	sPixelsModified	= FALSE;
+				short	sColorsModified	= FALSE;
+				short	sPixelsModified	= FALSE;
 
 				// If specified frame is before (or equal to) the current frame,
 				// we need to restart the animation.
@@ -389,10 +389,10 @@ int16_t CRamFlx::ReadFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::ReadNextFrame(
+short CRamFlx::ReadNextFrame(
 	CImage* pimageRead)		// Buffer for frame being read
 	{
-	int16_t sError = 0;
+	short sError = 0;
 
 	if (m_sOpenForRead)
 		{
@@ -420,7 +420,7 @@ int16_t CRamFlx::ReadNextFrame(
 // Returns 0 if successfull, non-zero otherwise.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int16_t CRamFlx::CreateBuf(CImage* pimage, int32_t lWidth, int32_t lHeight, int16_t sColors)
+short CRamFlx::CreateBuf(CImage* pimage, long lWidth, long lHeight, short sColors)
 	{
 	InitBuf(pimage);
 	return AllocBuf(pimage, lWidth, lHeight, sColors);
