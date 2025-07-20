@@ -1,0 +1,30 @@
+modules = ["c-clang14", "cpp-clang14", "python-3.12"]
+compile = "make"
+run = "run = \"python3 app.py\""
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+build = ["sh", "-c", "make"]
+run = ["sh", "-c", "run = \"python3 app.py\""]
+
+[workflows]
+runButton = "Build and Run Game"
+
+[[workflows.workflow]]
+name = "Build and Run Game"
+author = 36777077
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "make clean"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "make -j2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./postal"
