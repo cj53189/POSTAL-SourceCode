@@ -339,8 +339,8 @@ debugon:
 	$(eval CFLAGS += -DDEBUG -D_DEBUG -O0 -g)
 
 debugoff:
-	$(eval OPTFLAG := -O3)
-	$(eval CFLAGS += -DNDEBUG -D_NDEBUG -O2)
+	$(eval OPTFLAG := -O0)
+	$(eval CFLAGS += -DNDEBUG -D_NDEBUG -O0)
 
 $(BINDIR)/%.o: $(SRCDIR)/%.s
 	$(CC) $(CFLAGS) -DELF -x assembler-with-cpp -o $@ -c $<
